@@ -12,28 +12,29 @@ On remplacera les points-virgules par des virgules pour respecter le format csv 
 """
 
 import sys
-# csv_filename = "../csv_files/" + sys.argv[1]
-csv_filename = "../csv_files/budget_nov23_fev24.csv"
+# import copy
+csv_filename = "../csv_files/" + sys.argv[1]
 
-useless_characters = ["VIR.PERMANENT ", "VIREMENT ", "VIR ", "PRLV ", "CB "]
+useless_parameters = ["VIR.PERMANENT ", "VIREMENT ", "VIR ", "PRLV ", "CB "]
 clean_lines = []
 
+# reformater le fichier csv donné en entrée
 with open(csv_filename, "r", encoding="utf-8") as csvfile:
     for line in csvfile:
+        # on remplace les virgules par des points dans chaque champ pour avoir un csv propre
+        line = line.replace(",", ".")
+        # on retire les caractères inutiles
+        for parameter in useless_parameters:
+            line = line.replace(parameter, "")
         fields = line.split(";")
-        # nettoyer chaque champ
-        # retirer les champs vides et inutiles ainsi que les caractères inutiles
-        clean_fields = []
-        for field in fields:
-            if field:
-                for character in useless_characters:
-                    clean_field = field[:-2].replace(character, "")
-                # remplacer les virgules par des points dans chaque champ
-                clean_field = clean_field.replace(",", ".")
-                clean_fields.append(clean_field)
+        # on retire les deux derniers champs inutiles et les champs vides
+        clean_fields = [field for field in fields[:-2] if field]
         clean_line = ",".join(clean_fields)
+        # ajouter un retour à la ligne
+        clean_line += "\n"
         clean_lines.append(clean_line)
 
+# réécrire proprement le csv dans un autre fichier
 clean_csv_filename = "../csv_files/clean.csv"
 
 with open(clean_csv_filename, "w", encoding="utf-8") as clean_csv_file:
