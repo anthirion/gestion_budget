@@ -12,11 +12,14 @@ On remplacera les points-virgules par des virgules pour respecter le format csv 
 """
 
 import sys
+import re
 # import copy
 csv_filename = "../csv_files/" + sys.argv[1]
 
 useless_parameters = ["VIR.PERMANENT ", "VIREMENT ", "VIR ", "PRLV ", "CB "]
 clean_lines = []
+# Expression régulière pour identifier les dates jj/mm/aa
+pattern = r'\b\d{1,2}/\d{1,2}/\d{2}\b'
 
 # reformater le fichier csv donné en entrée
 with open(csv_filename, "r", encoding="utf-8") as csvfile:
@@ -26,7 +29,9 @@ with open(csv_filename, "r", encoding="utf-8") as csvfile:
         # on retire les caractères inutiles
         for parameter in useless_parameters:
             line = line.replace(parameter, "")
-        fields = line.split(";")
+        # on retire les dates
+        line_without_dates = re.sub(pattern, '', line)
+        fields = line_without_dates.split(";")
         # on retire les deux derniers champs inutiles et les champs vides
         clean_fields = [field for field in fields[:-2] if field]
         clean_line = ",".join(clean_fields)
