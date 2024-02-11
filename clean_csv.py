@@ -78,7 +78,7 @@ clean_csv_filename = "../csv_files/cleancsv_" + "_".join(periode)
 
 with open(clean_csv_filename, "w", encoding="utf-8") as clean_csv_file:
     # indiquer en première ligne les noms des colonnes
-    column_names = "Date, Montant, Type, Description\n"
+    column_names = "Date,Montant,Type,Description\n"
     clean_csv_file.write(column_names)
     # ecrire dans le nouveau csv les lignes écrites proprement
     for clean_line in clean_lines:
