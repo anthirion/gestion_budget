@@ -3,41 +3,31 @@ L'objectif de ce code est de construire un camembert des dépenses du mois en fo
 de dépenses
 """
 import sys
-import pandas as pd
 import matplotlib.pyplot as plt
-# from pprint import pprint
+from collections import defaultdict
 
 
-def changer_signe_debits(budget):
-    """ 
-    pour afficher un camembert, les valeurs doivent être positives
-    or dans le csv les débits sont négatifs
-    donc on retire les valeurs positives (crédits > débits; très rare) et on prend
-    la valeur absolue pour les valeurs négatives
+def calculer_depenses_par_categories(filename):
     """
-    # on ne garde que les colonnes où le montant est négatif (débits)
-    debits = budget[budget["Montant"] < 0]
-    # on change le signe des débits pour les rendre positifs
-    debits.loc[:, "Montant"] = -debits.loc[:, "Montant"]
-    return debits
-
-
-def get_depenses(transactions):
+    retourne un dictionnaire dont la valeur correspond à une catégorie de dépense
+    et la valeur correspondante est la somme des montants dépensés dans cette catégorie
     """
-    on somme les dépenses pour chaque catégorie de dépenses
-    """
-    transactions_par_categorie = transactions.groupby("Description")
-    return transactions_par_categorie.sum()["Montant"]
-
-
-def get_categories_depenses(transactions):
-    transactions_without_duplicates = transactions.drop_duplicates(
-        subset="Description")
-    tuple_categories = transactions_without_duplicates.groupby("Description")[
-        "Description"]
-    # on souhaite uniquement récupérer le nom de la categorie
-    # ie le premier élément du tuple catégorie
-    return [categorie[0] for categorie in tuple_categories]
+    depenses = defaultdict(int)
+    with open(filename, "r", encoding="utf-8") as csv_file:
+        # ignorer la première ligne
+        next(csv_file)
+        for line in csv_file:
+            try:
+                _, montant, type_transaction, description = line.split(",")
+                # on ne prend en compte que les transactions par carte
+                if str(type_transaction) == "Carte":
+                    depenses[description] += -float(montant)
+            except ValueError as e:
+                print(type(e), e)
+                # on retire le saut de ligne lors du print
+                print("Ligne qui pose problème: ", line[:-1])
+                print("Si c'est la dernière ligne, c'est ok ;) \n")
+    return depenses
 
 
 def display_pie_chart():
@@ -45,17 +35,12 @@ def display_pie_chart():
     Fonction principale
     """
     csv_filename = "../csv_files/" + sys.argv[1]
-    budget = pd.read_csv(csv_filename)
-    # rendre les montants positifs pour afficher le camembert
-    budget = changer_signe_debits(budget)
-    # on ne s'intéresse qu'aux transactions par carte
-    transactions_carte = budget[budget["Type"] == "Carte"]
-    # on récupère les catégories et dépenses à afficher sur le camembert
-    depenses = get_depenses(transactions_carte)
-    categories_depenses = get_categories_depenses(transactions_carte)
+    depenses = calculer_depenses_par_categories(csv_filename)
     # afficher le camembert des dépenses avec les dépenses arrondies au centime près
-    plt.pie(depenses, labels=categories_depenses,
-            autopct=lambda val: round(val/100. * depenses.sum(), 2),
+    somme_depenses = sum(depenses.values())
+    # plt.bar(depenses.keys(), depenses.values())
+    plt.pie(depenses.values(), depenses.keys(),
+            autopct=lambda val: round(val/100. * somme_depenses, 2),
             )
     plt.show()
 
