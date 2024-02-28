@@ -85,11 +85,21 @@ def line_cleaning(line):
 def fields_cleaning(fields):
     """
     retourne une ligne propre en nettoyant chaque champ séparé par un ;
+    et on ajoute le moyen de paiement Carte pour les transactions au montant positif (crédits)
     """
     # on retire les deux derniers champs inutiles et les champs vides
     clean_fields = [field.strip() for field in fields[:-2] if field]
+    # ajouter le moyen de paiement Carte pour les crédits
+    if len(clean_fields) < 4:
+        try:
+            montant = float(clean_fields[-2])
+            if montant > 0:
+                # ajouter le moyen de paiement Carte
+                clean_fields.insert(-2, "Carte")
+        except ValueError as e:
+            print("Problème: le montant n'est pas entier", e)
+
     clean_line = ",".join(clean_fields)
-    # ajouter un retour à la ligne
     clean_line += "\n"
     return clean_line
 
