@@ -1,5 +1,5 @@
 """
-L'objectif de ce code est de construire un camembert des dépenses du mois en fonction des catégories
+L'objectif de ce module est de construire un camembert des dépenses du mois en fonction des catégories
 de dépenses
 """
 import sys
@@ -32,14 +32,15 @@ def calculer_depenses_par_categories(filename, condenser=False):
                 print("Ligne qui pose problème: ", line[:-1])
                 print("Si c'est la dernière ligne, c'est ok ;) \n")
 
-        """ 
-        Pour éviter que les valeurs du dictionnaire soient illisibles sur un 
-        camembert, on classe toutes les catégories dont le montant est inférieur
-        à 5% de la somme des dépenses dans une catégorie "Autre"
-        """
+    """ 
+    Pour éviter que les valeurs du dictionnaire soient illisibles sur un 
+    camembert, on classe toutes les catégories dont le montant est inférieur
+    à 2% de la somme des dépenses dans une catégorie "Autre"
+    """
+    if condenser is True:
         somme_depenses = sum(montant for montant in depenses.values())
         # limite sous laquelle on retire la catégorie et on classe la dépense dans "Autre"
-        limite = 0.05*somme_depenses
+        limite = 0.02*somme_depenses
         # on crée un nouveau dictionnaire de dépenses condensé qui regroupe les valeurs sous la limite
         # dans une catégorie "Autre" pour ne pas toucher au dictionnaire créé précédemment
         # une shallow copie suffit car les clés et valeurs sont des types immuables
@@ -55,11 +56,10 @@ def calculer_depenses_par_categories(filename, condenser=False):
     return (depenses if condenser is False else depenses_condensees)
 
 
-def display_pie_chart():
+def display_pie_chart(csv_filename):
     """
-    Fonction principale
+    Affiche un camembert des dépenses indiquées dans le fichier passé en paramètre
     """
-    csv_filename = "../csv_files/" + sys.argv[1]
     depenses = calculer_depenses_par_categories(csv_filename, condenser=True)
     # afficher le camembert des dépenses avec les dépenses arrondies au centime près
     somme_depenses = sum(depenses.values())
@@ -69,9 +69,16 @@ def display_pie_chart():
     plt.pie(montants, labels=categories,
             autopct=lambda val: round(val/100. * somme_depenses, 2),
             )
-    plt.title("Depenses du mois passé")
+    plt.title(f"Depenses totales du mois passé: {round(somme_depenses, 2)}€")
     plt.show()
 
 
 if __name__ == "__main__":
-    display_pie_chart()
+    try:
+        csv_filename = "../csv_files/clean_csv_files/" + sys.argv[1]
+        display_pie_chart(csv_filename)
+    except IndexError as e:
+        print("Nombre d'arguments fournis incorrect !")
+        print(
+            "Vous devez fournir le nom du fichier csv qui servira à dessiner le camembert")
+        print("L'erreur est la suivante :", e)
