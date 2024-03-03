@@ -1,3 +1,3 @@
 """
-L'objectif de ce code est de produire un dashboard des dépenses
+L'objectif de ce module est de produire un dashboard des dépenses
 """
