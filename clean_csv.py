@@ -1,5 +1,5 @@
 """
-L'objectif de ce code est de nettoyer le csv fourni et de créer un nouveau csv propre.
+L'objectif de ce module est de nettoyer le csv fourni et de créer un nouveau csv propre.
 Le nouveau fichier csv produit retirera les colonnes vides, "divers" et "0" qui n'apportent rien
 On enlèvera aussi quelques caractères inutiles comme:
     - "VIR.PERMANENT "
@@ -41,9 +41,12 @@ pattern = r'\b\d{1,2}/\d{1,2}/\d{2}\b'
 
 def delete_line(line):
     """
-    Returns a boolean if line contains a parameter in transactions_to_delete element
+    Returns True if line contains a parameter in transactions_to_delete element
+    or is not a transaction (the number of fields is less than 7)
     If true, the line should be deleted
     """
+    if len(line.split(";")) < 7:
+        return True
     for pattern in transactions_to_delete:
         if pattern in line:
             return True
@@ -97,7 +100,8 @@ def fields_cleaning(fields):
                 # ajouter le moyen de paiement Carte
                 clean_fields.insert(-2, "Carte")
         except ValueError as e:
-            print("Problème: le montant n'est pas entier", e)
+            print("Problème: le montant n'est pas entier : ", montant)
+            print("L'erreur est la suivante :", e)
 
     clean_line = ",".join(clean_fields)
     clean_line += "\n"
@@ -122,7 +126,7 @@ def get_new_filename(csv_filename):
     # reprendre la période du budget
     periode = csv_filename.split("/")[-1].split("_")[1:]
     # utiliser la période pour nommer le nouveau fichier csv propre
-    clean_csv_filename = "../csv_files/cleancsv_" + "_".join(periode)
+    clean_csv_filename = "../csv_files/clean_csv_files/" + "_".join(periode)
     return clean_csv_filename
 
 
@@ -137,7 +141,12 @@ def write_new_file(clean_csv_filename, clean_lines):
 
 
 if __name__ == "__main__":
-    csv_filename = "../csv_files/" + sys.argv[1]
-    clean_lines = clean_entry_file(csv_filename)
-    clean_csv_filename = get_new_filename(csv_filename)
-    write_new_file(clean_csv_filename, clean_lines)
+    try:
+        csv_filename = "../csv_files/raw_csv_files/" + sys.argv[1]
+        clean_lines = clean_entry_file(csv_filename)
+        clean_csv_filename = get_new_filename(csv_filename)
+        write_new_file(clean_csv_filename, clean_lines)
+    except IndexError as e:
+        print("Nombre d'arguments fournis incorrect !")
+        print("Vous devez fournir le nom du fichier csv à nettoyer")
+        print("L'erreur est la suivante :", e)
