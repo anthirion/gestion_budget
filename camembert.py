@@ -75,7 +75,8 @@ def display_pie_chart(csv_filename):
 
 if __name__ == "__main__":
     try:
-        csv_filename = "../csv_files/clean_csv_files/" + sys.argv[1]
+        csv_filename = "/home/thiran/projets_persos/gestion_budget/csv_files/clean_csv_files/" + \
+            sys.argv[1]
         display_pie_chart(csv_filename)
     except IndexError as e:
         print("Nombre d'arguments fournis incorrect !")
