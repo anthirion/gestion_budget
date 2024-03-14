@@ -67,7 +67,7 @@ def split_csv_by_month(csv_lines):
 
 def write_csv_content(csv_content):
     for filename, content in csv_content.items():
-        filename = "../csv_files/clean_csv_files/" + filename
+        filename = "/home/thiran/projets_persos/gestion_budget/csv_files/clean_csv_files/" + filename
         with open(filename, "w", encoding="utf-8") as file:
             for line in content:
                 file.write(line)
@@ -75,7 +75,8 @@ def write_csv_content(csv_content):
 
 if __name__ == "__main__":
     try:
-        raw_csv_filename = "../csv_files/raw_csv_files/" + sys.argv[1]
+        raw_csv_filename = "/home/thiran/projets_persos/gestion_budget/csv_files/raw_csv_files/" + \
+            sys.argv[1]
         clean_file_lines = clean_csv.clean_entry_file(raw_csv_filename)
         csv_content = split_csv_by_month(clean_file_lines)
         write_csv_content(csv_content)
