@@ -109,6 +109,10 @@ def fields_cleaning(fields):
 
 
 def clean_entry_file(csv_filename):
+    """
+    Nettoie les lignes du fichier donné en entrée
+    et retourne la liste des lignes propres
+    """
     clean_lines = []
     with open(csv_filename, "r", encoding="utf-8") as csvfile:
         for line in csvfile:
@@ -126,7 +130,8 @@ def get_new_filename(csv_filename):
     # reprendre la période du budget
     periode = csv_filename.split("/")[-1].split("_")[1:]
     # utiliser la période pour nommer le nouveau fichier csv propre
-    clean_csv_filename = "../csv_files/clean_csv_files/" + "_".join(periode)
+    clean_csv_filename = "/home/thiran/projets_persos/gestion_budget/csv_files/clean_csv_files/" + \
+        "_".join(periode)
     return clean_csv_filename
 
 
