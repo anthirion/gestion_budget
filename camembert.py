@@ -69,5 +69,5 @@ def display_pie_chart(transactions):
             )
     plt.suptitle(
         f"Depenses totales de la période choisie: {round(somme_depenses, 2)}€")
-    plt.xlabel("Catégories de dépenses et leur pourcentage associé")
+    plt.xlabel("Catégories de dépenses et la somme associée")
     plt.show()
