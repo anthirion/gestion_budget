@@ -19,7 +19,6 @@ Le procédé de nettoyage se déroule comme suit:
 - Remplacer les points-virgules par des virgules pour respecter le format csv et les virgules par des points
 """
 
-import sys
 import re
 
 # global variables
@@ -127,14 +126,3 @@ def clean_entry_file(csv_filename):
                 clean_line = ajouter_moyen_paiement(line_with_clean_fields)
                 clean_lines.append(clean_line)
     return clean_lines
-
-
-if __name__ == "__main__":
-    try:
-        csv_filename = "../csv_files/raw_csv_files/" + sys.argv[1]
-        clean_lines = clean_entry_file(csv_filename)
-        print(clean_lines)
-    except IndexError as e:
-        print("Nombre d'arguments fournis incorrect !")
-        print("Vous devez fournir le nom du fichier csv à nettoyer")
-        print("L'erreur est la suivante :", e)
