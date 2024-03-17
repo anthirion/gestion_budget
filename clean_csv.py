@@ -1,21 +1,22 @@
 """
-L'objectif de ce module est de nettoyer le csv fourni et de créer un nouveau csv propre.
-Le nouveau fichier csv produit retirera les colonnes vides, "divers" et "0" qui n'apportent rien
-On enlèvera aussi quelques caractères inutiles comme:
+L'objectif de ce module est de nettoyer le csv fourni et de retourner les lignes "propres" avec la fonction clean_entry_file.
+Le procédé de nettoyage se déroule comme suit:
+- Retire les colonnes vides, "divers" et "0" qui n'apportent rien.
+- Enlever les caractères inutiles suivants:
     - "VIR.PERMANENT "
     - "VIREMENT "
     - "VIR "
     - "PRLV "
     - "CB " 
-déjà indiqués dans un autre champ
-On renommera certaines catégories pour les rendre plus explicites:
+    déjà indiqués dans un autre champ
+- Renommer les catégories suivantes pour les rendre plus explicites:
     - "AMAZON PAYMENTS" -> "AMAZON"
     - "AMAZON EU SARL" -> "AMAZON"
     - "SNCF INTERNET" -> "SNCF"
     - "DRI*NVIDIA" -> "NVIDIA"
     - "FRANPRIX 1029" -> "FRANPRIX"
     - "DECAT 1994" -> "DECATHLON"
-On remplacera enfin les points-virgules par des virgules pour respecter le format csv et les virgules par des points
+- Remplacer les points-virgules par des virgules pour respecter le format csv et les virgules par des points
 """
 
 import sys
@@ -23,6 +24,8 @@ import re
 
 # global variables
 useless_parameters = ["VIR.PERMANENT ", "VIREMENT ", "VIR ", "PRLV ", "CB "]
+# caractère bizzare \ufeff
+# useless_parameters.append(r"\ufeff")
 # liste de transactions à supprimer du csv car non-pertinentes
 transactions_to_delete = ["TOTAL OPTION SYSTEM' EPARGNE"]
 # dictionnaire indiquant les transactions à remplacer (clés) par
@@ -126,31 +129,11 @@ def clean_entry_file(csv_filename):
     return clean_lines
 
 
-def get_new_filename(csv_filename):
-    # reprendre la période du budget
-    periode = csv_filename.split("/")[-1].split("_")[1:]
-    # utiliser la période pour nommer le nouveau fichier csv propre
-    clean_csv_filename = "/home/thiran/projets_persos/gestion_budget/csv_files/clean_csv_files/" + \
-        "_".join(periode)
-    return clean_csv_filename
-
-
-def write_new_file(clean_csv_filename, clean_lines):
-    with open(clean_csv_filename, "w", encoding="utf-8") as clean_csv_file:
-        # indiquer en première ligne les noms des colonnes
-        column_names = "Date,Montant,Type,Description\n"
-        clean_csv_file.write(column_names)
-        # ecrire dans le nouveau csv les lignes écrites proprement
-        for clean_line in clean_lines:
-            clean_csv_file.write(clean_line)
-
-
 if __name__ == "__main__":
     try:
         csv_filename = "../csv_files/raw_csv_files/" + sys.argv[1]
         clean_lines = clean_entry_file(csv_filename)
-        clean_csv_filename = get_new_filename(csv_filename)
-        write_new_file(clean_csv_filename, clean_lines)
+        print(clean_lines)
     except IndexError as e:
         print("Nombre d'arguments fournis incorrect !")
         print("Vous devez fournir le nom du fichier csv à nettoyer")
