@@ -3,6 +3,7 @@ import clean_csv
 import select_transactions
 import camembert
 from pathlib import Path
+import argparse
 
 
 if __name__ == "__main__":
@@ -30,10 +31,21 @@ if __name__ == "__main__":
     """
     source_of_truth_path = Path(clean_csv_filename)
     transactions = source_of_truth_path.read_text(encoding="utf-8")
+    # on split le fichier par transaction
+    transactions = transactions.split(("\n"))
     # on retire la première ligne qui correspond aux colonnes
-    begin_index = transactions.find("\n")
-    assert isinstance(begin_index, int)
-    transactions_dernier_mois = select_transactions.select_transactions(transactions[begin_index:],
-                                                                        month=1,
-                                                                        year=0)
-    print(transactions_dernier_mois)
+    transactions = transactions[1:]
+    # on récupère les arguments mois et année fournis par l'utilisateur à travers la ligne de commande
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--mois", help="le nombre de mois à analyser", type=int, default=1)
+    parser.add_argument(
+        "--annee", help="le nombre d'années à analyser", type=int, default=0)
+    args = parser.parse_args()
+    transactions_dernier_mois = select_transactions.select_transactions(transactions,
+                                                                        n_month=args.mois,
+                                                                        n_year=args.annee)
+    """
+    Afficher le camembert sur les transactions souhaitées
+    """
+    camembert.display_pie_chart(transactions_dernier_mois)
