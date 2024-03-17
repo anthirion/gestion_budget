@@ -2,7 +2,6 @@
 L'objectif de ce module est de construire un camembert des dépenses du mois en fonction des catégories
 de dépenses. Il prend en entrée une liste des transactions à traiter.
 """
-import sys
 import matplotlib.pyplot as plt
 from collections import defaultdict
 import copy
@@ -68,5 +67,7 @@ def display_pie_chart(transactions):
     plt.pie(montants, labels=categories,
             autopct=lambda val: round(val/100. * somme_depenses, 2),
             )
-    plt.title(f"Depenses totales du mois passé: {round(somme_depenses, 2)}€")
+    plt.suptitle(
+        f"Depenses totales de la période choisie: {round(somme_depenses, 2)}€")
+    plt.xlabel("Catégories de dépenses et leur pourcentage associé")
     plt.show()
