@@ -71,26 +71,38 @@ def select_transactions(transactions, n_month=1, n_year=0):
     """
     selected_transactions = []
     last_month, last_year = get_last_month_year(transactions)
+    first_year = last_year
     # on définit les premiers jour, mois et année où commencer la sélection
-    n_month += n_year * 12 + 1
-    first_month = last_month - n_month
-    if first_month < 0:
+    n_month += n_year * 12
+    first_month = last_month - (n_month-1)
+    if first_month == 0:
+        first_year = last_year - 1
+        first_month = 12
+    elif first_month < 0:
         first_year = last_year + first_month//12
-        first_month = first_month % 12 + 1
+        first_month = first_month % 12
     for transaction in transactions:
         if is_a_transaction(transaction):
             _, current_month, current_year = transaction.split(",")[
                 0].split("/")
-            # pour selectionner la transaction, on distingue trois cas:
-            # si l'annee courante est égale à la premiere annee, on laisse passer
-            # les transactions correspondantes aux mois >= first_month
-            # si l'annee courante est égale à la dernière annee, on laisse passer
-            # les transactions correspondantes aux mois <= last_month
-            # sinon, on laisse passer les transactions correspondantes à tous les mois
-            if (int(current_year) == first_year and int(current_month) >= first_month):
-                selected_transactions.append(transaction)
-            elif (int(current_year) == last_year and int(current_month) <= last_month):
-                selected_transactions.append(transaction)
-            elif (first_year < int(current_year) < last_year):
-                selected_transactions.append(transaction)
+            if first_year < last_year:
+                # pour selectionner la transaction, on distingue trois cas:
+                # si l'annee courante est égale à la premiere annee, on laisse passer
+                # les transactions correspondantes aux mois >= first_month
+                # si l'annee courante est égale à la dernière annee, on laisse passer
+                # les transactions correspondantes aux mois <= last_month
+                # sinon, on laisse passer les transactions correspondantes à tous les mois
+                if (int(current_year) == first_year and int(current_month) >= first_month):
+                    selected_transactions.append(transaction)
+                elif (int(current_year) == last_year and int(current_month) <= last_month):
+                    selected_transactions.append(transaction)
+                elif (first_year < int(current_year) < last_year):
+                    selected_transactions.append(transaction)
+            elif first_year == last_year:
+                if (int(current_year) == last_year and
+                        first_month <= int(current_month) <= last_month):
+                    selected_transactions.append(transaction)
+            else:
+                raise ValueError(
+                    "L'année de fin est supérieure à l'année de début\n")
     return selected_transactions
