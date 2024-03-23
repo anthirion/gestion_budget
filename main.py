@@ -66,4 +66,6 @@ if __name__ == "__main__":
     """
     Afficher le diagramme en batons des dépenses des 6 derniers mois
     """
-    barplot_depenses.spending_barplot(transactions_six_derniers_mois)
+    transactions_carte_six_derniers_mois = select_transactions.select_transactions_by_card(
+        transactions_six_derniers_mois)
+    barplot_depenses.spending_barplot(transactions_carte_six_derniers_mois)
