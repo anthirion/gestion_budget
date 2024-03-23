@@ -23,8 +23,6 @@ import re
 
 # global variables
 useless_parameters = ["VIR.PERMANENT ", "VIREMENT ", "VIR ", "PRLV ", "CB "]
-# caractère bizzare \ufeff
-# useless_parameters.append(r"\ufeff")
 # liste de transactions à supprimer du csv car non-pertinentes
 transactions_to_delete = ["TOTAL OPTION SYSTEM' EPARGNE"]
 # dictionnaire indiquant les transactions à remplacer (clés) par
@@ -100,7 +98,7 @@ def fields_cleaning(fields):
             montant = float(clean_fields[-2])
             if montant > 0:
                 # ajouter le moyen de paiement Carte
-                clean_fields.insert(-2, "Carte")
+                clean_fields.insert(-1, "Carte")
         except ValueError as e:
             print("Problème: le montant n'est pas entier : ", montant)
             print("L'erreur est la suivante :", e)
@@ -116,7 +114,7 @@ def clean_entry_file(csv_filename):
     et retourne la liste des lignes propres
     """
     clean_lines = []
-    with open(csv_filename, "r", encoding="utf-8") as csvfile:
+    with open(csv_filename, "r", encoding="utf-8-sig") as csvfile:
         for line in csvfile:
             if delete_line(line) is False:
                 new_line = line_cleaning(line)
