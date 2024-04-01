@@ -1,13 +1,8 @@
 from PySide6.QtWidgets import (
-    QMainWindow, QApplication,
-    QLabel, QToolBar, QStatusBar, QCheckBox,
-    QFileDialog, QHBoxLayout, QVBoxLayout
+    QMainWindow, QApplication, QFileDialog
 )
-from PySide6.QtGui import QPainter
-from PySide6.QtCore import Qt
-from PySide6.QtCharts import QChartView, QPieSeries, QChart
+from PySide6.QtGui import QAction
 
-from pathlib import Path
 from MonthExpensesWidget import MonthExpensesWidget
 
 
@@ -23,42 +18,48 @@ class MainWindow(QMainWindow):
             - sélectionner le fichier "source de vérité" contenant les dépenses traitées
             - quitter l'application
         """
-        # création de la barre de menus avec un seul menu Fichier
         menu = self.menuBar()
         file_menu = menu.addMenu("Fichier")
-        # création des actions dans le menu fichier
+
         # action de sélectionner le dossier contenant les fichiers csv de dépenses brutes
-        # select_directory = QAction(
-        #     "Sélectionner un dossier des dépenses brutes")
-        # select_directory.setStatusTip("Opening directory")
-        # select_directory.triggered.connect(self.open_directory)
-        # # action de sélectionner le fichier "source de vérité" contenant les dépenses traitées
-        # select_source_of_truth = QAction(
-        #     "Sélectionner un fichier des dépenses")
-        # select_source_of_truth.setStatusTip("Opening source of truth file")
-        # select_source_of_truth.triggered.connect(self.open_source_of_truth)
+        select_directory = QAction(
+            "Ouvrir un dossier des dépenses brutes", self)
+        file_menu.addAction(select_directory)
+        select_directory.triggered.connect(self.open_directory)
+
+        # action de sélectionner le fichier "source de vérité" contenant les dépenses traitées
+        select_source_of_truth = QAction(
+            "Sélectionner un fichier des dépenses", self)
+        file_menu.addAction(select_source_of_truth)
+        select_source_of_truth.triggered.connect(self.open_source_of_truth)
+
         # action de quitter l'application
         exit = file_menu.addAction("Exit", self.close)
         exit.setShortcut("Ctrl+Q")
 
-        """
-        Fonction qui gère l'importation d'un dossier de dépenses brutes
-        """
-
-        # def open_directory(self):
-        #     dialog = QFileDialog(self)
-        #     dialog.setFileMode(QFileDialog.Directory)
-        #     dialog.exec()
-
-        # def open_directory(self):
-        #     dialog = QFileDialog(self)
-        #     dialog.setFileMode(QFileDialog.Directory)
-        #     dialog.exec()
-
-        """
-        Fonction qui gère l'importation d'un fichier de dépenses traité (source de vérité)
-        """
+        # centralise le widget passé en paramètre
         self.setCentralWidget(widget)
+
+    """
+    Slots associés à la barre de menus
+    """
+
+    def open_directory(self):
+        """
+        Gère l'importation d'un dossier contenant les dépenses brutes
+        """
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.Directory)
+        dialog.exec()
+
+    def open_source_of_truth(self):
+        """
+        Gère l'importation d'un fichier de dépenses traité (source de vérité)
+        """
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.ExistingFile)
+        dialog.setNameFilter(tr("Images (*.png *.xpm *.jpg)"))
+        dialog.exec()
 
 
 if __name__ == "__main__":
