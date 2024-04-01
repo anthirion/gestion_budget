@@ -111,7 +111,7 @@ def select_transactions(transactions, n_month=1, n_year=0):
 def select_transactions_by_card(transactions):
     transactions_carte = []
     for transaction in transactions:
-        if "Carte" in transaction:
+        if transaction.split(",")[2].strip() == "Carte":
             transactions_carte.append(transaction)
     return transactions_carte
 
@@ -119,6 +119,6 @@ def select_transactions_by_card(transactions):
 def select_transactions_by_bank_transfer(transactions):
     transactions_virement = []
     for transaction in transactions:
-        if "Virement" in transaction:
+        if transaction.split(",")[2].strip() == "Virement":
             transactions_virement.append(transaction)
     return transactions_virement
