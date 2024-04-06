@@ -1,18 +1,21 @@
 from PySide6.QtWidgets import (
-    QMainWindow, QApplication, QFileDialog
+    QMainWindow, QApplication, QFileDialog,
+    QTabWidget
 )
 from PySide6.QtGui import QAction
 
-from MonthExpensesWidget import MonthExpensesWidget
+from ExpensesWidget import ExpensesWidget
+from RevenuesWidget import RevenuesWidget
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, widget):
+
+    def __init__(self, widget_depenses, widget_revenus):
         super().__init__()
         self.setWindowTitle("Mon super logiciel de visualisation des dépenses")
 
         """
-        Création d'une barre de menus avec un seul menu: Fichier
+        Création d'une barre de menus avec un seul menu Fichier
         Le menu permettra de :
             - sélectionner le dossier contenant les fichiers csv de dépenses brutes
             - sélectionner le fichier "source de vérité" contenant les dépenses traitées
@@ -20,25 +23,40 @@ class MainWindow(QMainWindow):
         """
         menu = self.menuBar()
         file_menu = menu.addMenu("Fichier")
+        open_menu = menu.addMenu("Ouvrir")
 
-        # action de sélectionner le dossier contenant les fichiers csv de dépenses brutes
+        # sélectionner le dossier contenant les fichiers csv de dépenses brutes
         select_directory = QAction(
             "Ouvrir un dossier des dépenses brutes", self)
-        file_menu.addAction(select_directory)
+        open_menu.addAction(select_directory)
+        select_directory.setShortcut("Ctrl+Shift+O")
         select_directory.triggered.connect(self.open_directory)
 
-        # action de sélectionner le fichier "source de vérité" contenant les dépenses traitées
+        # sélectionner le fichier "source de vérité" contenant les dépenses traitées
         select_source_of_truth = QAction(
             "Sélectionner un fichier des dépenses", self)
-        file_menu.addAction(select_source_of_truth)
+        open_menu.addAction(select_source_of_truth)
+        select_source_of_truth.setShortcut("Ctrl+O")
         select_source_of_truth.triggered.connect(self.open_source_of_truth)
 
-        # action de quitter l'application
-        exit = file_menu.addAction("Exit", self.close)
+        # ouvrir une nouvelle fenetre
+        new_window = QAction("Ouvrir une nouvelle fenêtre", self)
+        file_menu.addAction(new_window)
+        new_window.setShortcut("Ctrl+N")
+        # quitter l'application
+        exit = file_menu.addAction("Quitter", self.close)
         exit.setShortcut("Ctrl+Q")
 
-        # centralise le widget passé en paramètre
-        self.setCentralWidget(widget)
+        """
+        Création de plusieurs tabs:
+            - dépenses
+            - revenus
+            - épargne
+        """
+        tabs = QTabWidget()
+        tabs.addTab(widget_depenses, "Dépenses")
+        tabs.addTab(widget_revenus, "Revenus")
+        self.setCentralWidget(tabs)
 
     """
     Slots associés à la barre de menus
@@ -58,13 +76,15 @@ class MainWindow(QMainWindow):
         """
         dialog = QFileDialog(self)
         dialog.setFileMode(QFileDialog.ExistingFile)
-        dialog.setNameFilter(tr("Images (*.png *.xpm *.jpg)"))
+        dialog.setNameFilter("CSV files (*.csv)")
         dialog.exec()
 
 
 if __name__ == "__main__":
+    clean_csv_filename = "/home/thiran/projets_persos/gestion_budget/csv_files/clean_csv_files/source_of_truth.csv"
     app = QApplication()
-    expenses_widget = MonthExpensesWidget()
-    window = MainWindow(expenses_widget)
+    expenses_widget = ExpensesWidget(clean_csv_filename)
+    revenues_widget = RevenuesWidget()
+    window = MainWindow(expenses_widget, revenues_widget)
     window.show()
     app.exec()
