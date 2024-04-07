@@ -111,7 +111,7 @@ def select_transactions_of_one_month(transactions, n_month=1, n_year=2024):
     """
     @parameter month: sélectionner la liste des transactions réaliséees le mois n 
     @parameter year: sélectionner la liste des transactions réaliséees l'année n
-    Par défaut, sélectionner la liste des transactions dde janvier 2024
+    Par défaut, sélectionner la liste des transactions de janvier 2024
     """
     pass
 

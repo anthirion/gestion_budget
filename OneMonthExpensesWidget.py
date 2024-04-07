@@ -38,14 +38,16 @@ class OneMonthExpensesWidget(QWidget):
         self.month_selection = QComboBox()
         from_one_to_eleven_strings = [str(i) for i in range(1, 12)]
         self.month_selection.insertItems(0, from_one_to_eleven_strings)
+        # définir le mois par défaut à 10
+        self.month_selection.setCurrentText("10")
         parameters_layout.addWidget(self.month_selection)
         # periode en années
         parameters_layout.addWidget(QLabel("/"))
         self.year_selection = QComboBox()
-        from_two_thousand_twenty_to_two_thousand_thirty = [
-            str(i) for i in range(2020, 2031)]
-        self.year_selection.insertItems(
-            0, from_two_thousand_twenty_to_two_thousand_thirty)
+        from_2023_to_2026 = [str(i) for i in range(2020, 2031)]
+        self.year_selection.insertItems(0, from_2023_to_2026)
+        # définir l'année par défaut à 2023
+        self.year_selection.setCurrentText("2023")
         parameters_layout.addWidget(self.year_selection)
 
         # sélectionner la banque
