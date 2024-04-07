@@ -62,9 +62,8 @@ def get_last_month_year(transactions):
             f"La première ligne n'est pas une transaction: {transactions[0]}")
 
 
-def select_transactions(transactions, n_month=1, n_year=0):
+def select_transactions_of_several_months(transactions, n_month=1, n_year=0):
     """
-    @parameter day: sélectionner la liste des transactions réaliséees les n derniers jours
     @parameter month: sélectionner la liste des transactions réaliséees les n derniers mois
     @parameter year: sélectionner la liste des transactions réaliséees les n dernières années
     Par défaut, sélectionner la liste des transactions du mois passé (mois courant)
@@ -87,11 +86,11 @@ def select_transactions(transactions, n_month=1, n_year=0):
                 0].split("/")
             if first_year < last_year:
                 # pour selectionner la transaction, on distingue trois cas:
-                # si l'annee courante est égale à la premiere annee, on laisse passer
+                # si l'annee courante est égale à la premiere annee, on ignore
                 # les transactions correspondantes aux mois >= first_month
-                # si l'annee courante est égale à la dernière annee, on laisse passer
+                # si l'annee courante est égale à la dernière annee, on ignore
                 # les transactions correspondantes aux mois <= last_month
-                # sinon, on laisse passer les transactions correspondantes à tous les mois
+                # sinon, on ignore les transactions correspondantes à tous les mois
                 if (int(current_year) == first_year and int(current_month) >= first_month):
                     selected_transactions.append(transaction)
                 elif (int(current_year) == last_year and int(current_month) <= last_month):
@@ -106,6 +105,15 @@ def select_transactions(transactions, n_month=1, n_year=0):
                 raise ValueError(
                     "L'année de fin est supérieure à l'année de début\n")
     return selected_transactions
+
+
+def select_transactions_of_one_month(transactions, n_month=1, n_year=2024):
+    """
+    @parameter month: sélectionner la liste des transactions réaliséees le mois n 
+    @parameter year: sélectionner la liste des transactions réaliséees l'année n
+    Par défaut, sélectionner la liste des transactions dde janvier 2024
+    """
+    pass
 
 
 def select_transactions_by_card(transactions):
