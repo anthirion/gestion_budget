@@ -4,13 +4,13 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QAction
 
-from ExpensesWidget import ExpensesWidget
-from RevenuesWidget import RevenuesWidget
+from OneMonthExpensesWidget import OneMonthExpensesWidget
+from SeveralMonthsExpensesWidget import SeveralMonthsExpensesWidget
 
 
 class MainWindow(QMainWindow):
 
-    def __init__(self, widget_depenses, widget_revenus):
+    def __init__(self, widget_depenses_one_month, widget_depenses_several_months):
         super().__init__()
         self.setWindowTitle("Mon super logiciel de visualisation des dépenses")
 
@@ -62,8 +62,9 @@ class MainWindow(QMainWindow):
             - épargne
         """
         tabs = QTabWidget()
-        tabs.addTab(widget_depenses, "Dépenses")
-        tabs.addTab(widget_revenus, "Revenus")
+        tabs.addTab(widget_depenses_one_month, "Dépenses sur un mois")
+        tabs.addTab(widget_depenses_several_months,
+                    "Dépenses sur plusieurs mois")
         self.setCentralWidget(tabs)
 
     """
@@ -90,9 +91,10 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     clean_csv_filename = "/home/thiran/projets_persos/gestion_budget/csv_files/clean_csv_files/source_of_truth.csv"
-    app = QApplication()
-    expenses_widget = ExpensesWidget(clean_csv_filename)
-    revenues_widget = RevenuesWidget()
-    window = MainWindow(expenses_widget, revenues_widget)
+    app = QApplication([])
+    depenses_sur_un_mois = OneMonthExpensesWidget(clean_csv_filename)
+    depenses_sur_plusieurs_mois = SeveralMonthsExpensesWidget(
+        clean_csv_filename)
+    window = MainWindow(depenses_sur_un_mois, depenses_sur_plusieurs_mois)
     window.show()
     app.exec()

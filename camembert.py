@@ -52,22 +52,3 @@ def calculer_depenses_par_categories(transactions, condenser=False):
                 del depenses_condensees[categorie]
 
     return (depenses if condenser is False else depenses_condensees)
-
-
-def display_pie_chart(transactions):
-    """
-    Affiche un camembert des dépenses de la liste transactions
-    """
-    depenses = calculer_depenses_par_categories(transactions, condenser=True)
-    # afficher le camembert des dépenses avec les dépenses arrondies au centime près
-    somme_depenses = sum(depenses.values())
-    # plt.bar(depenses.keys(), depenses.values())
-    categories = [k for k in depenses.keys()]
-    montants = [v for v in depenses.values()]
-    plt.pie(montants, labels=categories,
-            autopct=lambda val: round(val/100. * somme_depenses, 2),
-            )
-    plt.suptitle(
-        f"Depenses totales de la période choisie: {round(somme_depenses, 2)}€")
-    plt.xlabel("Catégories de dépenses et la somme associée")
-    plt.show()
