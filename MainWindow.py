@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import (
-    QMainWindow, QApplication, QFileDialog,
-    QTabWidget
+    QMainWindow, QApplication,
+    QTabWidget, QFileDialog
 )
 from PySide6.QtGui import QAction
 
@@ -15,16 +15,32 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Mon super logiciel de visualisation des dépenses")
 
         """
-        Création d'une barre de menus avec un seul menu Fichier
-        Le menu permettra de :
+        Création d'une barre de menus avec un deux menus: Fichier et ouvrir
+        Le menu Fichier permettra de :
+            - ouvrir une nouvelle fenetre
+            - quitter l'application
+        Le menu Ouvrir permettra de :
             - sélectionner le dossier contenant les fichiers csv de dépenses brutes
             - sélectionner le fichier "source de vérité" contenant les dépenses traitées
-            - quitter l'application
         """
-        menu = self.menuBar()
-        file_menu = menu.addMenu("Fichier")
-        open_menu = menu.addMenu("Ouvrir")
+        menubar = self.menuBar()
+        file_menu = menubar.addMenu("Fichier")
+        open_menu = menubar.addMenu("Ouvrir")
 
+        """
+        Menu Fichier
+        """
+        # ouvrir une nouvelle fenetre
+        new_window = QAction("Ouvrir une nouvelle fenêtre", self)
+        file_menu.addAction(new_window)
+        new_window.setShortcut("Ctrl+N")
+        # quitter l'application
+        exit = file_menu.addAction("Quitter", self.close)
+        exit.setShortcut("Ctrl+Q")
+
+        """
+        Menu Ouvrir
+        """
         # sélectionner le dossier contenant les fichiers csv de dépenses brutes
         select_directory = QAction(
             "Ouvrir un dossier des dépenses brutes", self)
@@ -38,14 +54,6 @@ class MainWindow(QMainWindow):
         open_menu.addAction(select_source_of_truth)
         select_source_of_truth.setShortcut("Ctrl+O")
         select_source_of_truth.triggered.connect(self.open_source_of_truth)
-
-        # ouvrir une nouvelle fenetre
-        new_window = QAction("Ouvrir une nouvelle fenêtre", self)
-        file_menu.addAction(new_window)
-        new_window.setShortcut("Ctrl+N")
-        # quitter l'application
-        exit = file_menu.addAction("Quitter", self.close)
-        exit.setShortcut("Ctrl+Q")
 
         """
         Création de plusieurs tabs:
