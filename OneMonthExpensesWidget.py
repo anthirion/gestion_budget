@@ -10,7 +10,7 @@ from PySide6.QtCharts import (
 
 from pathlib import Path
 import transactions_statistics
-from select_transactions import select_transactions_of_several_months
+from select_transactions import select_transactions_of_one_month
 import camembert
 import CommonWidgets
 
@@ -22,9 +22,9 @@ class OneMonthExpensesWidget(QWidget):
         self.transactions_selectionnees = []
 
         # Mise en page
-        page_layout = QVBoxLayout(self)
+        self.page_layout = QVBoxLayout(self)
         # ajouter un espace entre les éléments du layout
-        page_layout.setSpacing(20)
+        self.page_layout.setSpacing(20)
 
         """
         Le premier widget permet à l'utilisateur de sélectionner
@@ -38,8 +38,8 @@ class OneMonthExpensesWidget(QWidget):
         self.month_selection = QComboBox()
         from_one_to_eleven_strings = [str(i) for i in range(1, 12)]
         self.month_selection.insertItems(0, from_one_to_eleven_strings)
-        # définir le mois par défaut à 10
-        self.month_selection.setCurrentText("10")
+        # définir le mois par défaut à 11
+        self.month_selection.setCurrentText("11")
         parameters_layout.addWidget(self.month_selection)
         # periode en années
         parameters_layout.addWidget(QLabel("/"))
@@ -64,33 +64,38 @@ class OneMonthExpensesWidget(QWidget):
         launch_compute_button = QPushButton("Lancer les calculs")
         launch_compute_button.clicked.connect(self.lancer_calculs)
 
+        # ajouter les widgets et layouts à la mise en page
+        self.page_layout.addLayout(parameters_layout)
+        self.page_layout.addWidget(launch_compute_button)
+
         """"
         Afficher la somme des dépenses sur le mois sélectionné
         """
         title = QLabel("Somme des dépenses sur le mois sélectionné:")
         title.setAlignment(Qt.AlignCenter)
-        self.display_sum = QLabel("0")
+        self.display_sum = QLabel()
         self.display_sum.setAlignment(Qt.AlignCenter)
+        self.page_layout.addWidget(title)
+        self.page_layout.addWidget(self.display_sum)
 
         """
-        Afficher le camembert des dépenses avec les catégories de dépenses et
+        Ajouter le camembert des dépenses avec les catégories de dépenses et
         leur montant associé
         """
-        chart_layout = QHBoxLayout()
-        self.piechart_view = QChartView()
-        self.piechart_view.setRenderHint(QPainter.Antialiasing)
-        checkbox = QCheckBox("Afficher la catégorie Autres", self)
-        checkbox.toggled.connect(self.checkbox_enclenchee)
+        self.chart_layout = QHBoxLayout()
+        self.pie_chart_view = QChartView()
+        self.pie_chart_view.setRenderHint(QPainter.Antialiasing)
+        self.checkbox = QCheckBox("Afficher la catégorie Autres", self)
+        self.checkbox.toggled.connect(self.checkbox_enclenchee)
+        self.chart_layout.addWidget(self.pie_chart_view)
+        self.chart_layout.addWidget(self.checkbox)
+        self.page_layout.addLayout(self.chart_layout)
 
-        chart_layout.addWidget(self.piechart_view)
-        chart_layout.addWidget(checkbox)
+    """
+    Méthodes
+    """
 
-        # ajouter les widgets et layouts à la mise en page
-        page_layout.addLayout(parameters_layout)
-        page_layout.addWidget(launch_compute_button)
-        page_layout.addLayout(chart_layout)
-
-    def plot_piechart(self, condenser_value):
+    def update_pie_chart(self, condenser_value):
         """
         Cette méthode calcule puis affiche le camembert des dépenses
         """
@@ -102,7 +107,7 @@ class OneMonthExpensesWidget(QWidget):
         chart = QChart()
         chart.addSeries(series)
         chart.legend().setAlignment(Qt.AlignLeft)
-        self.piechart_view.setChart(chart)
+        self.pie_chart_view.setChart(chart)
 
     """
     Button slot
@@ -117,20 +122,21 @@ class OneMonthExpensesWidget(QWidget):
         transactions = source_of_truth_path.read_text(encoding="utf-8-sig")
         # on split le fichier par transaction
         transactions = transactions.split(("\n"))
-        # on retire la première ligne qui correspond aux colonnes
-        transactions = transactions[1:]
-        nb_month = int(self.month_selection.currentText())
-        nb_year = int(self.year_selection.currentText())
-        self.transactions_selectionnees = select_transactions_of_several_months(transactions,
-                                                                                n_month=nb_month,
-                                                                                n_year=nb_year)
+        # on retire la première ligne qui correspond aux noms des colonnes
+        # et la dernière transaction qui est vide
+        transactions = transactions[1:-1]
+        n_month = int(self.month_selection.currentText())
+        n_year = int(self.year_selection.currentText())
+        self.transactions_selectionnees = select_transactions_of_one_month(transactions,
+                                                                           n_month=n_month,
+                                                                           n_year=n_year)
         # calculer la somme des dépenses et l'afficher
         sum_expenses = transactions_statistics.compute_sum(
             self.transactions_selectionnees)
         self.display_sum.setNum(sum_expenses)
 
-        # afficher le camembert des dépenses
-        self.plot_piechart(condenser_value=False)
+        # mettre à jour le camembert des dépenses
+        self.update_pie_chart(condenser_value=False)
 
     """
     Checkbox slot
@@ -138,4 +144,4 @@ class OneMonthExpensesWidget(QWidget):
     @Slot()
     def checkbox_enclenchee(self, checked):
         condenser_local = True if checked else False
-        self.plot_piechart(condenser_value=condenser_local)
+        self.update_pie_chart(condenser_value=condenser_local)

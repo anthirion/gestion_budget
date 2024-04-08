@@ -119,7 +119,8 @@ class SeveralMonthsExpensesWidget(QWidget):
         # on split le fichier par transaction
         transactions = transactions.split(("\n"))
         # on retire la première ligne qui correspond aux colonnes
-        transactions = transactions[1:]
+        # et la dernière transaction qui est vide
+        transactions = transactions[1:-1]
         nb_month = int(self.month_selection.currentText())
         nb_year = int(self.year_selection.currentText())
         self.transactions_selectionnees = select_transactions_of_one_month(transactions,

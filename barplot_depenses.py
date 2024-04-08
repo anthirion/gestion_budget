@@ -17,15 +17,22 @@ def spending_barplot(transactions):
     _, month, year = transactions[0].split(",")[0].split("/")
     somme = -float(transactions[0].split(",")[1])
     for transaction in transactions[1:]:
-        _, current_month, current_year = transaction.split(",")[
-            0].split("/")
-        if (month == current_month and year == current_year):
-            somme += -float(transaction.split(",")[1])
-        else:
-            mois.append("/".join([month, year]))
-            sommes_depenses_mensuelles.append(round(somme, 2))
-            month, year = current_month, current_year
-            somme = -float(transaction.split(",")[1])
+        try:
+            _, current_month, current_year = transaction.split(",")[
+                0].split("/")
+            if (month == current_month and year == current_year):
+                somme += -float(transaction.split(",")[1])
+            else:
+                mois.append("/".join([month, year]))
+                sommes_depenses_mensuelles.append(round(somme, 2))
+                month, year = current_month, current_year
+                somme = -float(transaction.split(",")[1])
+        except ValueError as e:
+            # dans le cas où le sequence unpacking ne marche pas
+            print(type(e), e)
+            # transaction[:-1] pour retirer le saut de ligne lors du print
+            print("La transaction suivante est incorrecte: ", transaction[:-1])
+            print("Si c'est la dernière ligne, c'est ok ;) \n")
     # inclure le dernier mois et la dernière somme
     mois.append("/".join([month, year]))
     sommes_depenses_mensuelles.append(round(somme, 2))

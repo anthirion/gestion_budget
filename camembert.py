@@ -26,7 +26,7 @@ def calculer_depenses_par_categories(transactions, condenser=False):
             # dans le cas où le sequence unpacking ne marche pas
             print(type(e), e)
             # transaction[:-1] pour retirer le saut de ligne lors du print
-            print("Ligne qui pose problème: ", transaction[:-1])
+            print("La transaction suivante est incorrecte: ", transaction[:-1])
             print("Si c'est la dernière ligne, c'est ok ;) \n")
 
     """ 

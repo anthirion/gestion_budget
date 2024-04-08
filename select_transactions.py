@@ -49,13 +49,20 @@ def get_last_month_year(transactions):
     if is_a_transaction(transactions[0]):
         _, month, year = transactions[0].split(",")[0].split("/")
         for transaction in transactions[1:]:
-            if is_a_transaction(transaction):
+            try:
                 _, current_month, current_year = transaction.split(",")[
                     0].split("/")
                 if (current_month != month):
                     month = current_month
                 if (current_year != year):
                     year = current_year
+            except ValueError as e:
+                # dans le cas où le sequence unpacking ne marche pas
+                print(type(e), e)
+                # transaction[:-1] pour retirer le saut de ligne lors du print
+                print("La transaction suivante est incorrecte: ",
+                      transaction[:-1])
+                print("Si c'est la dernière ligne, c'est ok ;) \n")
         return (int(month), int(year))
     else:
         raise ValueError(
@@ -81,7 +88,7 @@ def select_transactions_of_several_months(transactions, n_month=1, n_year=0):
         first_year = last_year + first_month//12
         first_month = first_month % 12
     for transaction in transactions:
-        if is_a_transaction(transaction):
+        try:
             _, current_month, current_year = transaction.split(",")[
                 0].split("/")
             if first_year < last_year:
@@ -104,6 +111,12 @@ def select_transactions_of_several_months(transactions, n_month=1, n_year=0):
             else:
                 raise ValueError(
                     "L'année de fin est supérieure à l'année de début\n")
+        except ValueError as e:
+            # dans le cas où le sequence unpacking ne marche pas
+            print(type(e), e)
+            # transaction[:-1] pour retirer le saut de ligne lors du print
+            print("La transaction suivante est incorrecte: ", transaction[:-1])
+            print("Si c'est la dernière ligne, c'est ok ;) \n")
     return selected_transactions
 
 
@@ -113,7 +126,25 @@ def select_transactions_of_one_month(transactions, n_month=1, n_year=2024):
     @parameter year: sélectionner la liste des transactions réaliséees l'année n
     Par défaut, sélectionner la liste des transactions de janvier 2024
     """
-    pass
+    selected_transactions = []
+    for transaction in transactions:
+        try:
+            _, current_month, current_year = transaction.split(",")[
+                0].split("/")
+            current_month, current_year = int(current_month), int(current_year)
+            if (current_month == n_month and current_year == n_year):
+                selected_transactions.append(transaction)
+            elif (current_month > n_month and current_year == n_year):
+                # arreter de parcourir la liste des transactions
+                # puisque les transactions sont rangées par ordre chronologique
+                break
+        except ValueError as e:
+            # dans le cas où le sequence unpacking ne marche pas
+            print(type(e), e)
+            # transaction[:-1] pour retirer le saut de ligne lors du print
+            print("La transaction suivante est incorrecte: ", transaction[:-1])
+            print("Si c'est la dernière ligne, c'est ok ;) \n")
+    return selected_transactions
 
 
 def select_transactions_by_card(transactions):
