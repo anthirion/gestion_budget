@@ -130,6 +130,11 @@ class OneMonthExpensesWidget(QWidget):
         self.transactions_selectionnees = select_transactions_of_one_month(transactions,
                                                                            n_month=n_month,
                                                                            n_year=n_year)
+        if not self.transactions_selectionnees:
+            # pas de transaction sélectionnée
+            # afficher un message à l'utilisateur
+            print("ATTENTION: pas de transaction sélectionnée !")
+
         # calculer la somme des dépenses et l'afficher
         sum_expenses = transactions_statistics.compute_sum(
             self.transactions_selectionnees)
