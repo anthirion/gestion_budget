@@ -36,8 +36,8 @@ class OneMonthExpensesWidget(QWidget):
         parameters_layout.addWidget(QLabel("Mois sélectionné :"))
         # sélectionner la période en mois
         self.month_selection = QComboBox()
-        from_one_to_eleven_strings = [str(i) for i in range(1, 12)]
-        self.month_selection.insertItems(0, from_one_to_eleven_strings)
+        from_one_to_twelve_strings = [str(i) for i in range(1, 13)]
+        self.month_selection.insertItems(0, from_one_to_twelve_strings)
         # définir le mois par défaut à 11
         self.month_selection.setCurrentText("11")
         parameters_layout.addWidget(self.month_selection)
@@ -104,10 +104,21 @@ class OneMonthExpensesWidget(QWidget):
         series = QPieSeries()
         for categorie, montant in expenses.items():
             series.append(categorie, montant)
+        # afficher les labels sur le camembert
+        series.setLabelsVisible(True)
+        # ajout d'une action si la souris passe sur le camembert (hovered)
+        slices = series.slices()
+        for slice in slices:
+            slice.hovered.connect(lambda self: print("hovered"))
+
         chart = QChart()
         chart.addSeries(series)
-        chart.legend().setAlignment(Qt.AlignLeft)
+        # masquer la légende
+        chart.legend().hide()
         self.pie_chart_view.setChart(chart)
+
+    def series_hovered(self):
+        print("hovered")
 
     """
     Button slot
