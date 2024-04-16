@@ -106,10 +106,6 @@ class OneMonthExpensesWidget(QWidget):
             series.append(categorie, montant)
         # afficher les labels sur le camembert
         series.setLabelsVisible(True)
-        # ajout d'une action si la souris passe sur le camembert (hovered)
-        slices = series.slices()
-        for slice in slices:
-            slice.hovered.connect(lambda self: print("hovered"))
 
         chart = QChart()
         chart.addSeries(series)
