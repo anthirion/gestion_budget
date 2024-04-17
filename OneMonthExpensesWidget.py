@@ -4,14 +4,12 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QPainter
 from PySide6.QtCore import Qt, Slot
-from PySide6.QtCharts import (
-    QChartView, QPieSeries, QChart
-)
+from PySide6 import QtCharts
 
 from pathlib import Path
 import transactions_statistics
 from select_transactions import select_transactions_of_one_month
-import camembert
+import PieChart
 import CommonWidgets
 
 
@@ -83,7 +81,8 @@ class OneMonthExpensesWidget(QWidget):
         leur montant associé
         """
         self.chart_layout = QHBoxLayout()
-        self.pie_chart_view = QChartView()
+        self.pie_chart_view = QtCharts.QChartView()
+        self.chart = QtCharts.QChart()
         self.pie_chart_view.setRenderHint(QPainter.Antialiasing)
         self.checkbox = QCheckBox("Afficher la catégorie Autres", self)
         self.checkbox.toggled.connect(self.checkbox_enclenchee)
@@ -99,22 +98,8 @@ class OneMonthExpensesWidget(QWidget):
         """
         Cette méthode calcule puis affiche le camembert des dépenses
         """
-        expenses = camembert.calculer_depenses_par_categories(
-            self.transactions_selectionnees, condenser=condenser_value)
-        series = QPieSeries()
-        for categorie, montant in expenses.items():
-            series.append(categorie, montant)
-        # afficher les labels sur le camembert
-        series.setLabelsVisible(True)
-
-        chart = QChart()
-        chart.addSeries(series)
-        # masquer la légende
-        chart.legend().hide()
-        self.pie_chart_view.setChart(chart)
-
-    def series_hovered(self):
-        print("hovered")
+        self.updated_chart = self.chart.compute_pie_chart(condenser_value)
+        self.pie_chart_view.setChart(self.updated_chart)
 
     """
     Button slot
@@ -128,7 +113,7 @@ class OneMonthExpensesWidget(QWidget):
         source_of_truth_path = Path(self.clean_csv_filename)
         transactions = source_of_truth_path.read_text(encoding="utf-8-sig")
         # on split le fichier par transaction
-        transactions = transactions.split(("\n"))
+        transactions = transactions.split("\n")
         # on retire la première ligne qui correspond aux noms des colonnes
         # et la dernière transaction qui est vide
         transactions = transactions[1:-1]
@@ -148,6 +133,7 @@ class OneMonthExpensesWidget(QWidget):
         self.display_sum.setNum(sum_expenses)
 
         # mettre à jour le camembert des dépenses
+        self.chart = PieChart.ExpensesPieChart(self.transactions_selectionnees)
         self.update_pie_chart(condenser_value=False)
 
     """

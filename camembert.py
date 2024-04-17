@@ -4,6 +4,7 @@ de dépenses. Il prend en entrée une liste des transactions à traiter.
 """
 from collections import defaultdict
 import copy
+import GlobalVariables
 
 
 def calculer_depenses_par_categories(transactions, condenser=False):
@@ -37,7 +38,7 @@ def calculer_depenses_par_categories(transactions, condenser=False):
     if condenser is True:
         somme_depenses = sum(montant for montant in depenses.values())
         # limite sous laquelle on retire la catégorie et on classe la dépense dans "Autre"
-        limite = 0.02*somme_depenses
+        limite = GlobalVariables.pourcentage_cat_autres*somme_depenses
         # on crée un nouveau dictionnaire de dépenses condensé qui regroupe les valeurs sous la limite
         # dans une catégorie "Autre" pour ne pas toucher au dictionnaire créé précédemment
         # une shallow copie suffit car les clés et valeurs sont des types immuables
