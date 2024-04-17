@@ -25,7 +25,7 @@ class ExpensesPieChart(QtCharts.QChart):
         slices = []
         for categorie, montant in expenses.items():
             pie_slice = QtCharts.QPieSlice("", montant)
-            label = f"<p align='center'> {categorie} <br> {round(pie_slice.value(), 2)}</p>"
+            label = f"<p align='center'> {categorie} <br> {round(pie_slice.value(), 2)} €</p>"
             pie_slice.setLabel(label)
             slices.append(pie_slice)
             series.append(pie_slice)
@@ -48,7 +48,7 @@ class ExpensesPieChart(QtCharts.QChart):
         # afficher les labels sur le camembert
         series.setLabelsVisible(True)
 
-        # mettre à jour le chart
+        # mettre à jour le graphe
         chart.addSeries(series)
         # masquer la légende
         chart.legend().hide()

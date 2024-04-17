@@ -19,9 +19,7 @@ def calculer_depenses_par_categories(transactions, condenser=False):
     for transaction in transactions:
         try:
             _, montant, type_transaction, description = transaction.split(",")
-            # on ne prend en compte que les transactions par carte
-            if str(type_transaction) == "Carte":
-                depenses[description] += -float(montant)
+            depenses[description] += -float(montant)
         except ValueError as e:
             # dans le cas où le sequence unpacking ne marche pas
             print(type(e), e)

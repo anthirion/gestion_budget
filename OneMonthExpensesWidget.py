@@ -8,7 +8,10 @@ from PySide6 import QtCharts
 
 from pathlib import Path
 import transactions_statistics
-from select_transactions import select_transactions_of_one_month
+from select_transactions import (
+    select_transactions_of_one_month,
+    select_transactions_by_card
+)
 import PieChart
 import CommonWidgets
 
@@ -69,7 +72,7 @@ class OneMonthExpensesWidget(QWidget):
         """"
         Afficher la somme des dépenses sur le mois sélectionné
         """
-        title = QLabel("Somme des dépenses sur le mois sélectionné:")
+        title = QLabel("Somme des dépenses par carte sur le mois sélectionné:")
         title.setAlignment(Qt.AlignCenter)
         self.display_sum = QLabel()
         self.display_sum.setAlignment(Qt.AlignCenter)
@@ -122,6 +125,10 @@ class OneMonthExpensesWidget(QWidget):
         self.transactions_selectionnees = select_transactions_of_one_month(transactions,
                                                                            n_month=n_month,
                                                                            n_year=n_year)
+        # on ne prend en compte que les transactions par carte
+        self.transactions_selectionnees = select_transactions_by_card(
+            self.transactions_selectionnees)
+
         if not self.transactions_selectionnees:
             # pas de transaction sélectionnée
             # afficher un message à l'utilisateur
