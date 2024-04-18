@@ -140,11 +140,12 @@ class OneMonthWidget(QWidget):
     Méthodes
     """
 
-    def update_pie_chart(self, chart, pie_chart_view, condenser_value):
+    def update_pie_chart(self, chart, pie_chart_view, title, condenser_value):
         """
         Cette méthode calcule puis affiche le camembert des dépenses
         """
         self.updated_chart = chart.compute_pie_chart(condenser_value)
+        self.updated_chart.setTitle(title)
         pie_chart_view.setChart(self.updated_chart)
 
     """
@@ -192,24 +193,28 @@ class OneMonthWidget(QWidget):
 
         # mettre à jour le camembert des dépenses
         self.card_chart = PieChart.ExpensesPieChart(self.depenses_cartes)
+        title = "Dépenses par carte"
         self.update_pie_chart(
-            self.card_chart, self.pie_card_chart_view, condenser_value=False)
+            self.card_chart, self.pie_card_chart_view, title, condenser_value=False)
+
         self.bank_transfer_chart = PieChart.ExpensesPieChart(
             self.depenses_virement)
+        title = "Dépenses par virement"
         self.update_pie_chart(
-            self.bank_transfer_chart, self.pie_bank_transfer_chart_view, condenser_value=False)
+            self.bank_transfer_chart, self.pie_bank_transfer_chart_view, title, condenser_value=False)
+        self.bank_transfer_chart.setTitle("Dépenses par virement")
 
     """
     Checkbox slots
     """
     @Slot()
-    def card_checkbox_enclenchee(self, chart, pie_chart_view, checked):
+    def card_checkbox_enclenchee(self, checked):
         condenser_local = True if checked else False
         self.update_pie_chart(self.card_chart, self.pie_card_chart_view,
                               condenser_value=condenser_local)
 
     @Slot()
-    def bank_transfer_checkbox_enclenchee(self, chart, pie_chart_view, checked):
+    def bank_transfer_checkbox_enclenchee(self, checked):
         condenser_local = True if checked else False
         self.update_pie_chart(self.bank_transfer_chart, self.pie_bank_transfer_chart_view,
                               condenser_value=condenser_local)
