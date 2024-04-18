@@ -17,6 +17,10 @@ from select_transactions import (
 import PieChart
 import CommonWidgets
 
+# Variables globales
+card_chart_title = "Dépenses par carte"
+bank_transfer_chart_title = "Dépenses par virement"
+
 
 class OneMonthWidget(QWidget):
     def __init__(self, clean_csv_filename):
@@ -193,16 +197,15 @@ class OneMonthWidget(QWidget):
 
         # mettre à jour le camembert des dépenses
         self.card_chart = PieChart.ExpensesPieChart(self.depenses_cartes)
-        title = "Dépenses par carte"
+        title = card_chart_title
         self.update_pie_chart(
             self.card_chart, self.pie_card_chart_view, title, condenser_value=False)
 
         self.bank_transfer_chart = PieChart.ExpensesPieChart(
             self.depenses_virement)
-        title = "Dépenses par virement"
+        title = bank_transfer_chart_title
         self.update_pie_chart(
             self.bank_transfer_chart, self.pie_bank_transfer_chart_view, title, condenser_value=False)
-        self.bank_transfer_chart.setTitle("Dépenses par virement")
 
     """
     Checkbox slots
@@ -210,11 +213,13 @@ class OneMonthWidget(QWidget):
     @Slot()
     def card_checkbox_enclenchee(self, checked):
         condenser_local = True if checked else False
+        title = card_chart_title
         self.update_pie_chart(self.card_chart, self.pie_card_chart_view,
-                              condenser_value=condenser_local)
+                              title, condenser_value=condenser_local)
 
     @Slot()
     def bank_transfer_checkbox_enclenchee(self, checked):
         condenser_local = True if checked else False
+        title = bank_transfer_chart_title
         self.update_pie_chart(self.bank_transfer_chart, self.pie_bank_transfer_chart_view,
-                              condenser_value=condenser_local)
+                              title, condenser_value=condenser_local)
