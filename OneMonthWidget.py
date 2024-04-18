@@ -75,26 +75,30 @@ class OneMonthWidget(QWidget):
         Afficher la somme des dépenses par carte et par virement
         sur le mois sélectionné
         """
-        sums_layout = QVBoxLayout()
-        # définition des titres
-        title_card = QLabel(
+        sums_layout = QHBoxLayout()
+        card_sum_layout = QVBoxLayout()
+        # définition du titre et label pour les dépenses par carte
+        card_title = QLabel(
             "Somme des dépenses par carte sur le mois sélectionné:")
-        title_card.setAlignment(Qt.AlignCenter)
-        title_bank_transfer = QLabel(
-            "Somme des dépenses par virement sur le mois sélectionné:")
-        title_bank_transfer.setAlignment(Qt.AlignCenter)
-
-        # définition des labels contenant les valeurs des sommes
+        card_title.setAlignment(Qt.AlignCenter)
         self.sum_card_expenses = QLabel()
         self.sum_card_expenses.setAlignment(Qt.AlignCenter)
+        card_sum_layout.addWidget(card_title)
+        card_sum_layout.addWidget(self.sum_card_expenses)
+
+        bank_transfer_sum_layout = QVBoxLayout()
+        # définition du titre et label pour les dépenses par virement
+        bank_transfer_title = QLabel(
+            "Somme des dépenses par virement sur le mois sélectionné:")
+        bank_transfer_title.setAlignment(Qt.AlignCenter)
         self.sum_bank_transfer_expenses = QLabel()
         self.sum_bank_transfer_expenses.setAlignment(Qt.AlignCenter)
+        bank_transfer_sum_layout.addWidget(bank_transfer_title)
+        bank_transfer_sum_layout.addWidget(self.sum_bank_transfer_expenses)
 
         # affichage des widgets précédemment définis
-        sums_layout.addWidget(title_card)
-        sums_layout.addWidget(self.sum_card_expenses)
-        sums_layout.addWidget(title_bank_transfer)
-        sums_layout.addWidget(self.sum_bank_transfer_expenses)
+        sums_layout.addLayout(card_sum_layout)
+        sums_layout.addLayout(bank_transfer_sum_layout)
         self.page_layout.addLayout(sums_layout)
 
         """
