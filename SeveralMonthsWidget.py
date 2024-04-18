@@ -16,7 +16,7 @@ import barplot_depenses
 import CommonWidgets
 
 
-class SeveralMonthsExpensesWidget(QWidget):
+class SeveralMonthsWidget(QWidget):
     def __init__(self, clean_csv_filename):
         super().__init__()
         self.clean_csv_filename = clean_csv_filename

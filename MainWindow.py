@@ -6,7 +6,7 @@ from PySide6.QtGui import QAction
 
 class MainWindow(QMainWindow):
 
-    def __init__(self, widget_expenses_one_month, widget_expenses_several_months):
+    def __init__(self, widget_one_month, widget_several_months):
         super().__init__()
         self.setWindowTitle("Mon super logiciel de visualisation des dépenses")
 
@@ -58,8 +58,8 @@ class MainWindow(QMainWindow):
             - épargne
         """
         tabs = QTabWidget()
-        tabs.addTab(widget_expenses_one_month, "Dépenses sur un mois")
-        tabs.addTab(widget_expenses_several_months,
+        tabs.addTab(widget_one_month, "Dépenses sur un mois")
+        tabs.addTab(widget_several_months,
                     "Dépenses sur plusieurs mois")
         # placer les onglets sur la gauche
         tabs.setTabPosition(QTabWidget.West)

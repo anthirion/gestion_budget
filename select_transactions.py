@@ -148,16 +148,30 @@ def select_transactions_of_one_month(transactions, n_month=1, n_year=2024):
 
 
 def select_transactions_by_card(transactions):
-    transactions_carte = []
-    for transaction in transactions:
-        if transaction.split(",")[2].strip() == "Carte":
-            transactions_carte.append(transaction)
-    return transactions_carte
+    "Sélectionne uniquement les transactions faites par carte"
+    return [transaction for transaction in transactions
+            if transaction.split(",")[2].strip() == "Carte"]
 
 
 def select_transactions_by_bank_transfer(transactions):
-    transactions_virement = []
+    "Sélectionne uniquement les transactions faites par virement"
+    return [transaction for transaction in transactions
+            if transaction.split(",")[2].strip() == "Virement"]
+
+
+def extract_expenses_revenus(transactions):
+    """
+    Extrait les dépenses et revenus à partir de la liste de
+    transactions fournie
+    """
+    expenses = []
+    revenus = []
     for transaction in transactions:
-        if transaction.split(",")[2].strip() == "Virement":
-            transactions_virement.append(transaction)
-    return transactions_virement
+        montant = float(transaction.split(",")[1].strip())
+        if montant >= 0:
+            # la transaction est un revenu
+            revenus.append(transaction)
+        else:
+            # la transaction est une dépense
+            expenses.append(transaction)
+    return (expenses, revenus)
