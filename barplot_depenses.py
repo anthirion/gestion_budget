@@ -18,18 +18,18 @@ def spending_barplot(transactions):
     sommes_depenses_mensuelles = []
     if is_a_transaction(transactions[0]):
         _, month, year = transactions[0].split(",")[0].split("/")
-        somme = -float(transactions[0].split(",")[1])
+        somme = float(transactions[0].split(",")[1])
         for transaction in transactions[1:]:
             try:
                 _, current_month, current_year = transaction.split(",")[
                     0].split("/")
                 if (month == current_month and year == current_year):
-                    somme += -float(transaction.split(",")[1])
+                    somme += float(transaction.split(",")[1])
                 else:
                     mois.append("/".join([month, year]))
                     sommes_depenses_mensuelles.append(round(somme, 2))
                     month, year = current_month, current_year
-                    somme = -float(transaction.split(",")[1])
+                    somme = float(transaction.split(",")[1])
             except ValueError as e:
                 # dans le cas où le sequence unpacking ne marche pas
                 print(type(e), e)

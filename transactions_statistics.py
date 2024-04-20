@@ -7,7 +7,7 @@ import statistics
 
 
 def extract_expenses_amounts(transactions):
-    return [-float(transaction.split(",")[1]) for transaction in transactions]
+    return [float(transaction.split(",")[1]) for transaction in transactions]
 
 
 def compute_sum(transactions):

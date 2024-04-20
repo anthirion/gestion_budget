@@ -173,5 +173,11 @@ def extract_expenses_revenus(transactions):
             revenus.append(transaction)
         else:
             # la transaction est une dépense
-            expenses.append(transaction)
+            # changer le signe du montant pour le rendre positif
+            date, montant, type_transaction, description = transaction.split(
+                ",")
+            new_montant = -float(montant)
+            new_transaction = ",".join(
+                [date, str(new_montant), type_transaction, description])
+            expenses.append(new_transaction)
     return (expenses, revenus)

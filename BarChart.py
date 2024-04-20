@@ -1,8 +1,7 @@
 from PySide6.QtCharts import (
     QBarCategoryAxis, QBarSeries, QBarSet, QChart,
-    QChartView, QValueAxis
+    QValueAxis
 )
-from PySide6 import QtGui
 from PySide6.QtCore import Qt
 
 import barplot_depenses
@@ -24,7 +23,7 @@ class BarChart(QChart):
             self.depenses)
         mois, sommes_revenus_mensuels = barplot_depenses.spending_barplot(
             self.revenus)
-        # définir les 2 catégories sur le diagramme en batons
+        # définir les 2 catégories sur le diagramme en batons: dépenses et revenus
         expenses = QBarSet("Dépenses")
         revenus = QBarSet("Revenus")
         expenses.append(sommes_depenses_mensuelles)
@@ -51,6 +50,6 @@ class BarChart(QChart):
 
         # définir l'axe des ordonnées sur lequel on affiche les montants
         axis_y = QValueAxis()
-        axis_y.setRange(0, 10_000)
+        axis_y.setRange(0, 5_000)
         self.bar_chart.addAxis(axis_y, Qt.AlignLeft)
         series.attachAxis(axis_y)

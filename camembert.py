@@ -18,8 +18,8 @@ def calculer_depenses_par_categories(transactions, condenser=False):
     depenses = defaultdict(int)
     for transaction in transactions:
         try:
-            _, montant, type_transaction, description = transaction.split(",")
-            depenses[description] += -float(montant)
+            _, montant, _, description = transaction.split(",")
+            depenses[description] += float(montant)
         except ValueError as e:
             # dans le cas où le sequence unpacking ne marche pas
             print(type(e), e)
