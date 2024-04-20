@@ -2,18 +2,18 @@ from PySide6.QtWidgets import (
     QLabel, QWidget, QComboBox, QPushButton,
     QVBoxLayout, QHBoxLayout
 )
-from PySide6.QtCharts import (
-    QChart, QBarCategoryAxis, QBarSeries, QBarSet,
-    QChartView, QChart
-)
+from PySide6.QtCharts import QChartView
 from PySide6.QtCore import Qt, Slot
 from PySide6.QtGui import QPainter
 
 from pathlib import Path
 import transactions_statistics
-from select_transactions import select_transactions_of_one_month
-import barplot_depenses
+from select_transactions import (
+    select_transactions_of_several_months,
+    extract_expenses_revenus
+)
 import CommonWidgets
+import BarChart
 
 
 class SeveralMonthsWidget(QWidget):
@@ -21,6 +21,8 @@ class SeveralMonthsWidget(QWidget):
         super().__init__()
         self.clean_csv_filename = clean_csv_filename
         self.transactions_selectionnees = []
+        self.depenses = []
+        self.revenus = []
 
         # Mise en page
         page_layout = QVBoxLayout(self)
@@ -64,12 +66,13 @@ class SeveralMonthsWidget(QWidget):
         launch_compute_button.clicked.connect(self.lancer_calculs)
 
         """"
-        Afficher la somme des dépenses sur la période sélectionnée
+        Afficher la somme des dépenses et des revenus sur la période sélectionnée
         """
-        title = QLabel("Somme des dépenses sur la période sélectionnée:")
-        title.setAlignment(Qt.AlignCenter)
-        self.display_sum = QLabel("0")
-        self.display_sum.setAlignment(Qt.AlignCenter)
+        expenses_title = QLabel(
+            "Somme des dépenses sur la période sélectionnée:")
+        expenses_title.setAlignment(Qt.AlignCenter)
+        self.display_sum_expenses = QLabel("0")
+        self.display_sum_expenses.setAlignment(Qt.AlignCenter)
 
         """
         Afficher le diagramme en bâtons des dépenses par mois
@@ -81,29 +84,14 @@ class SeveralMonthsWidget(QWidget):
         page_layout.addWidget(launch_compute_button)
         page_layout.addWidget(self.barchart_view)
 
+    """
+    Méthodes
+    """
+
     def plot_barchart(self):
-        """
-        Cette méthode calcule puis affiche un diagramme en bâtons des dépenses 
-        mensuelles
-        """
-        mois, sommes_depenses_mensuelles = barplot_depenses.spending_barplot(
-            self.transactions_selectionnees)
-        barchart = QChart()
-        series = QBarSeries()
-        # affichage des mois sur l'axe des abscisses
-        axis_x = QBarCategoryAxis()
-        axis_x.append(mois)
-        barchart.addAxis(axis_x, Qt.AlignBottom)
-        series.attachAxis(axis_x)
-        # affichage des dépenses mensuelles
-        somme_depenses = QBarSet("Somme des dépenses mensuelles")
-        somme_depenses.append(sommes_depenses_mensuelles)
-        series.append(somme_depenses)
-        barchart.addSeries(series)
-        barchart.setTitle("Dépenses mensuelles")
-        # barchart.setAnimationOptions(QChart.SeriesAnimations)
-        barchart.legend().setVisible(True)
-        self.barchart_view.setChart(barchart)
+        bar_chart = BarChart.BarChart(depenses=self.depenses,
+                                      revenus=self.revenus).bar_chart
+        self.barchart_view.setChart(bar_chart)
 
     """
     Button slot
@@ -123,13 +111,21 @@ class SeveralMonthsWidget(QWidget):
         transactions = transactions[1:-1]
         nb_month = int(self.month_selection.currentText())
         nb_year = int(self.year_selection.currentText())
-        self.transactions_selectionnees = select_transactions_of_one_month(transactions,
-                                                                           n_month=nb_month,
-                                                                           n_year=nb_year)
+        self.transactions_selectionnees = select_transactions_of_several_months(transactions,
+                                                                                n_month=nb_month,
+                                                                                n_year=nb_year)
+        if not self.transactions_selectionnees:
+            # pas de transaction sélectionnée
+            # afficher un message à l'utilisateur
+            print("ATTENTION: pas de transaction sélectionnée !")
+
+        # on ne sélectionne que les dépenses pour tracer les graphes
+        self.depenses, self.revenus = extract_expenses_revenus(
+            self.transactions_selectionnees)
         # calculer la somme des dépenses et l'afficher
         sum_expenses = transactions_statistics.compute_sum(
             self.transactions_selectionnees)
-        self.display_sum.setNum(sum_expenses)
+        self.display_sum_expenses.setNum(sum_expenses)
 
         # afficher le diagramme en batons des dépenses mensuelles
         self.plot_barchart()

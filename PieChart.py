@@ -6,16 +6,15 @@ import GlobalVariables
 
 
 class ExpensesPieChart(QtCharts.QChart):
+    """
+    Cette classe calcule le camembert des dépenses
+    """
 
-    def __init__(self, transactions):
+    def __init__(self, transactions, condenser_value):
         super().__init__()
         self.transactions = transactions
 
-    def compute_pie_chart(self, condenser_value):
-        """
-        Cette méthode calcule le camembert des dépenses
-        """
-        chart = QtCharts.QChart()
+        self.pie_chart = QtCharts.QChart()
         series = QtCharts.QPieSeries()
 
         expenses = camembert.calculer_depenses_par_categories(
@@ -49,8 +48,6 @@ class ExpensesPieChart(QtCharts.QChart):
         series.setLabelsVisible(True)
 
         # mettre à jour le graphe
-        chart.addSeries(series)
+        self.pie_chart.addSeries(series)
         # masquer la légende
-        chart.legend().hide()
-
-        return chart
+        self.pie_chart.legend().hide()
