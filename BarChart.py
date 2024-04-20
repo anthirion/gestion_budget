@@ -50,6 +50,9 @@ class BarChart(QChart):
 
         # définir l'axe des ordonnées sur lequel on affiche les montants
         axis_y = QValueAxis()
-        axis_y.setRange(0, 5_000)
+        # récupérer la valeur maximale sur l'axe y pour déterminer automatiquement
+        # quelle hauteur donner à l'axe avec setRange
+        max_value_axis_y = axis_y.max()
+        axis_y.setRange(0, max_value_axis_y)
         self.bar_chart.addAxis(axis_y, Qt.AlignLeft)
         series.attachAxis(axis_y)
