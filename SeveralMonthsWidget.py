@@ -12,16 +12,20 @@ from select_transactions import (
 )
 import CommonWidgets
 import BarChart
+import GlobalVariables
+import MainWindow
 
 
 class SeveralMonthsWidget(QWidget):
-    def __init__(self, clean_csv_filename):
+    def __init__(self):
         super().__init__()
-        self.clean_csv_filename = clean_csv_filename
         self.transactions_selectionnees = []
         self.depenses = []
         self.revenus = []
         self.epargne = []
+
+        # recherche de la source de vérité
+        GlobalVariables.source_of_truth = MainWindow.get_source_of_truth()
 
         # Mise en page
         self.page_layout = QVBoxLayout(self)
@@ -105,33 +109,39 @@ class SeveralMonthsWidget(QWidget):
     def lancer_calculs(self):
         """
         Cette méthode lance les calculs lors de l'appui sur le bouton
+        à condition d'avoir la source de vérité
+        En absence de source de vérité, afficher un message et ne rien faire
         """
-        # sélectionner les transactions souhaitées par l'utilisateur
-        source_of_truth_path = Path(self.clean_csv_filename)
-        transactions = source_of_truth_path.read_text(encoding="utf-8-sig")
-        # on split le fichier par transaction
-        transactions = transactions.split(("\n"))
-        # on retire la première ligne qui correspond aux colonnes
-        # et la dernière transaction qui est vide
-        transactions = transactions[1:-1]
-        nb_month = int(self.month_selection.currentText())
-        nb_year = int(self.year_selection.currentText())
-        self.transactions_selectionnees = select_transactions_of_several_months(transactions,
-                                                                                n_month=nb_month,
-                                                                                n_year=nb_year)
-        if not self.transactions_selectionnees:
-            # pas de transaction sélectionnée
-            # afficher un message à l'utilisateur
-            print("ATTENTION: pas de transaction sélectionnée !")
+        if GlobalVariables.source_of_truth:
+            source_of_truth_path = Path(GlobalVariables.source_of_truth)
+            # sélectionner les transactions souhaitées par l'utilisateur
+            transactions = source_of_truth_path.read_text(encoding="utf-8-sig")
+            # on split le fichier par transaction
+            transactions = transactions.split(("\n"))
+            # on retire la première ligne qui correspond aux colonnes
+            # et la dernière transaction qui est vide
+            transactions = transactions[1:-1]
+            nb_month = int(self.month_selection.currentText())
+            nb_year = int(self.year_selection.currentText())
+            self.transactions_selectionnees = select_transactions_of_several_months(transactions,
+                                                                                    n_month=nb_month,
+                                                                                    n_year=nb_year)
+            if not self.transactions_selectionnees:
+                # pas de transaction sélectionnée
+                # afficher un message à l'utilisateur
+                print("ATTENTION: pas de transaction sélectionnée !")
 
-        # on ne sélectionne que les dépenses pour tracer les graphes
-        self.depenses, self.revenus, self.epargne = extract_expenses_revenus_savings(
-            self.transactions_selectionnees)
+            # on ne sélectionne que les dépenses pour tracer les graphes
+            self.depenses, self.revenus, self.epargne = extract_expenses_revenus_savings(
+                self.transactions_selectionnees)
 
-        # calculer la somme des dépenses et l'afficher
-        sum_expenses = transactions_statistics.compute_sum(
-            self.transactions_selectionnees)
-        self.display_sum_expenses.setNum(sum_expenses)
+            # calculer la somme des dépenses et l'afficher
+            sum_expenses = transactions_statistics.compute_sum(
+                self.transactions_selectionnees)
+            self.display_sum_expenses.setNum(sum_expenses)
 
-        # afficher le diagramme en batons des dépenses mensuelles
-        self.plot_barchart()
+            # afficher le diagramme en batons des dépenses mensuelles
+            self.plot_barchart()
+        else:
+            # la source de vérité n'a pas été définie
+            print(GlobalVariables.source_of_truth_notfound_msg)

@@ -16,6 +16,8 @@ from select_transactions import (
 )
 import PieChart
 import CommonWidgets
+import GlobalVariables
+import MainWindow
 
 # Variables globales
 card_chart_title = "Dépenses par carte"
@@ -23,10 +25,12 @@ bank_transfer_chart_title = "Dépenses par virement"
 
 
 class OneMonthWidget(QWidget):
-    def __init__(self, clean_csv_filename):
+    def __init__(self):
         super().__init__()
-        self.clean_csv_filename = clean_csv_filename
         self.transactions_selectionnees = []
+
+        # recherche de la source de vérité
+        GlobalVariables.source_of_truth = MainWindow.get_source_of_truth()
 
         # Mise en page
         self.page_layout = QVBoxLayout(self)
@@ -162,51 +166,57 @@ class OneMonthWidget(QWidget):
     def lancer_calculs(self):
         """
         Cette méthode lance les calculs lors de l'appui sur le bouton
+        à condition d'avoir la source de vérité
+        En absence de source de vérité, afficher un message et ne rien faire
         """
-        # sélectionner les transactions souhaitées par l'utilisateur
-        source_of_truth_path = Path(self.clean_csv_filename)
-        transactions = source_of_truth_path.read_text(encoding="utf-8-sig")
-        # on split le fichier par transaction
-        transactions = transactions.split("\n")
-        # on retire la première ligne qui correspond aux noms des colonnes
-        # et la dernière transaction qui est vide
-        transactions = transactions[1:-1]
-        n_month = int(self.month_selection.currentText())
-        n_year = int(self.year_selection.currentText())
-        self.transactions_selectionnees = select_transactions_of_one_month(transactions,
-                                                                           n_month=n_month,
-                                                                           n_year=n_year)
-        if not self.transactions_selectionnees:
-            # pas de transaction sélectionnée
-            # afficher un message à l'utilisateur
-            print("ATTENTION: pas de transaction sélectionnée !")
+        if GlobalVariables.source_of_truth:
+            source_of_truth_path = Path(GlobalVariables.source_of_truth)
+            # sélectionner les transactions souhaitées par l'utilisateur
+            transactions = source_of_truth_path.read_text(encoding="utf-8-sig")
+            # on split le fichier par transaction
+            transactions = transactions.split("\n")
+            # on retire la première ligne qui correspond aux noms des colonnes
+            # et la dernière transaction qui est vide
+            transactions = transactions[1:-1]
+            n_month = int(self.month_selection.currentText())
+            n_year = int(self.year_selection.currentText())
+            self.transactions_selectionnees = select_transactions_of_one_month(transactions,
+                                                                               n_month=n_month,
+                                                                               n_year=n_year)
+            if not self.transactions_selectionnees:
+                # pas de transaction sélectionnée
+                # afficher un message à l'utilisateur
+                print("ATTENTION: pas de transaction sélectionnée !")
 
-        # on ne sélectionne que les dépenses pour tracer les graphes
-        self.depenses, _, _ = extract_expenses_revenus_savings(
-            self.transactions_selectionnees)
-        # on extrait les transactions par carte
-        self.depenses_cartes = select_transactions_by_card(self.depenses)
-        # on extrait les transactions par virement
-        self.depenses_virement = select_transactions_by_bank_transfer(
-            self.depenses)
+            # on ne sélectionne que les dépenses pour tracer les graphes
+            self.depenses, _, _ = extract_expenses_revenus_savings(
+                self.transactions_selectionnees)
+            # on extrait les transactions par carte
+            self.depenses_cartes = select_transactions_by_card(self.depenses)
+            # on extrait les transactions par virement
+            self.depenses_virement = select_transactions_by_bank_transfer(
+                self.depenses)
 
-        # calculer la somme des dépenses par carte et l'afficher
-        sum_card_expenses = transactions_statistics.compute_sum(
-            self.depenses_cartes)
-        self.sum_card_expenses.setNum(sum_card_expenses)
-        sum_bank_transfer_expenses = transactions_statistics.compute_sum(
-            self.depenses_virement)
-        self.sum_bank_transfer_expenses.setNum(sum_bank_transfer_expenses)
+            # calculer la somme des dépenses par carte et l'afficher
+            sum_card_expenses = transactions_statistics.compute_sum(
+                self.depenses_cartes)
+            self.sum_card_expenses.setNum(sum_card_expenses)
+            sum_bank_transfer_expenses = transactions_statistics.compute_sum(
+                self.depenses_virement)
+            self.sum_bank_transfer_expenses.setNum(sum_bank_transfer_expenses)
 
-        # mettre à jour le camembert des dépenses par carte
-        title = card_chart_title
-        self.update_pie_chart(
-            self.pie_card_chart_view, title, condenser_value=False)
+            # mettre à jour le camembert des dépenses par carte
+            title = card_chart_title
+            self.update_pie_chart(
+                self.pie_card_chart_view, title, condenser_value=False)
 
-        # mettre à jour le camembert des dépenses par virement
-        title = bank_transfer_chart_title
-        self.update_pie_chart(
-            self.pie_bank_transfer_chart_view, title, condenser_value=False)
+            # mettre à jour le camembert des dépenses par virement
+            title = bank_transfer_chart_title
+            self.update_pie_chart(
+                self.pie_bank_transfer_chart_view, title, condenser_value=False)
+        else:
+            # la source de vérité n'a pas été définie
+            print(GlobalVariables.source_of_truth_notfound_msg)
 
     """
     Checkbox slots
