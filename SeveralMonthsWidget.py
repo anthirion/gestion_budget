@@ -83,14 +83,19 @@ class SeveralMonthsWidget(QWidget):
 
         self.page_layout.addLayout(parameters_layout)
         self.page_layout.addWidget(launch_compute_button)
+        self.page_layout.addWidget(self.bar_chart)
 
     """
     Méthodes
     """
 
     def plot_barchart(self):
+        # retirer l'ancien widget du layout
+        self.page_layout.removeWidget(self.bar_chart)
+        # mettre à jour le widget avec le bon diagramme
         self.bar_chart = BarChart.BarChart(depenses=self.depenses,
                                            revenus=self.revenus).bar_canvas
+        # afficher le nouveau widget
         self.page_layout.addWidget(self.bar_chart)
 
     """
