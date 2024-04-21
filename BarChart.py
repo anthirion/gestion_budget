@@ -2,12 +2,21 @@ from PySide6.QtCharts import (
     QBarCategoryAxis, QBarSeries, QBarSet, QChart,
     QValueAxis
 )
+from PySide6.QtWidgets import QWidget
 from PySide6.QtCore import Qt
+
+import numpy as np
+
+from matplotlib.backends.backend_qtagg import FigureCanvas
+from matplotlib.backends.backend_qtagg import \
+    NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.qt_compat import QtWidgets
+from matplotlib.figure import Figure
 
 import barplot_depenses
 
 
-class BarChart(QChart):
+class BarChart(QWidget):
     """
     Cette classe calcule puis affiche un diagramme en bâtons des dépenses 
     et des revenus mensuels
@@ -15,44 +24,21 @@ class BarChart(QChart):
 
     def __init__(self, depenses, revenus):
         super().__init__()
-        self.bar_chart = QChart()
         self.depenses = depenses
         self.revenus = revenus
+        self.bar_canvas = QWidget()
 
+        """
+        Extraction des mois et sommes pour afficher le diagramme
+        """
         mois, sommes_depenses_mensuelles = barplot_depenses.spending_barplot(
             self.depenses)
         mois, sommes_revenus_mensuels = barplot_depenses.spending_barplot(
             self.revenus)
-        # définir les 2 catégories sur le diagramme en batons: dépenses et revenus
-        expenses = QBarSet("Dépenses")
-        revenus = QBarSet("Revenus")
-        expenses.append(sommes_depenses_mensuelles)
-        revenus.append(sommes_revenus_mensuels)
 
-        # définir les valeurs
-        series = QBarSeries()
-        series.append(expenses)
-        series.append(revenus)
-
-        # ajout des series au graphe et quelques configurations
-        self.bar_chart.addSeries(series)
-        self.bar_chart.setTitle(
-            "Dépenses et revenus mensuels sur la période sélectionnée")
-        self.bar_chart.setAnimationOptions(QChart.SeriesAnimations)
-        self.bar_chart.legend().setVisible(True)
-        self.bar_chart.legend().setAlignment(Qt.AlignBottom)
-
-        # définir l'axe des abscisses sur lequel on affiche les mois
-        axis_x = QBarCategoryAxis()
-        axis_x.append(mois)
-        self.bar_chart.addAxis(axis_x, Qt.AlignBottom)
-        series.attachAxis(axis_x)
-
-        # définir l'axe des ordonnées sur lequel on affiche les montants
-        axis_y = QValueAxis()
-        # récupérer la valeur maximale sur l'axe y pour déterminer automatiquement
-        # quelle hauteur donner à l'axe avec setRange
-        max_value_axis_y = axis_y.max()
-        axis_y.setRange(0, max_value_axis_y)
-        self.bar_chart.addAxis(axis_y, Qt.AlignLeft)
-        series.attachAxis(axis_y)
+        """
+        Tracé du diagramme en bâtons
+        """
+        self.bar_canvas = FigureCanvas(Figure(figsize=(5, 3)))
+        bar_ax = self.bar_canvas.figure.subplots()
+        bar_ax.bar(mois, sommes_depenses_mensuelles)

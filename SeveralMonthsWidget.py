@@ -25,9 +25,9 @@ class SeveralMonthsWidget(QWidget):
         self.revenus = []
 
         # Mise en page
-        page_layout = QVBoxLayout(self)
+        self.page_layout = QVBoxLayout(self)
         # ajouter un espace entre les éléments du layout
-        page_layout.setSpacing(20)
+        self.page_layout.setSpacing(20)
 
         """
         Le premier widget permet à l'utilisateur de sélectionner
@@ -41,6 +41,8 @@ class SeveralMonthsWidget(QWidget):
         self.month_selection = QComboBox()
         from_one_to_eleven_strings = [str(i) for i in range(1, 12)]
         self.month_selection.insertItems(0, from_one_to_eleven_strings)
+        # définir la période par défaut à 5 mois
+        self.month_selection.setCurrentText("5")
         parameters_layout.addWidget(self.month_selection)
         parameters_layout.addWidget(QLabel("mois"))
         # periode en années
@@ -77,21 +79,19 @@ class SeveralMonthsWidget(QWidget):
         """
         Afficher le diagramme en bâtons des dépenses par mois
         """
-        self.barchart_view = QChartView()
-        self.barchart_view.setRenderHint(QPainter.Antialiasing)
+        self.bar_chart = QWidget()
 
-        page_layout.addLayout(parameters_layout)
-        page_layout.addWidget(launch_compute_button)
-        page_layout.addWidget(self.barchart_view)
+        self.page_layout.addLayout(parameters_layout)
+        self.page_layout.addWidget(launch_compute_button)
 
     """
     Méthodes
     """
 
     def plot_barchart(self):
-        bar_chart = BarChart.BarChart(depenses=self.depenses,
-                                      revenus=self.revenus).bar_chart
-        self.barchart_view.setChart(bar_chart)
+        self.bar_chart = BarChart.BarChart(depenses=self.depenses,
+                                           revenus=self.revenus).bar_canvas
+        self.page_layout.addWidget(self.bar_chart)
 
     """
     Button slot
