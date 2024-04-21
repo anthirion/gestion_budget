@@ -12,7 +12,7 @@ from select_transactions import (
     select_transactions_of_one_month,
     select_transactions_by_card,
     select_transactions_by_bank_transfer,
-    extract_expenses_revenus
+    extract_expenses_revenus_savings
 )
 import PieChart
 import CommonWidgets
@@ -182,7 +182,7 @@ class OneMonthWidget(QWidget):
             print("ATTENTION: pas de transaction sélectionnée !")
 
         # on ne sélectionne que les dépenses pour tracer les graphes
-        self.depenses, _ = extract_expenses_revenus(
+        self.depenses, _, _ = extract_expenses_revenus_savings(
             self.transactions_selectionnees)
         # on extrait les transactions par carte
         self.depenses_cartes = select_transactions_by_card(self.depenses)

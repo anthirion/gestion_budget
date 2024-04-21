@@ -2,6 +2,8 @@
 L'objectif de ce module est de sélectionner les dernières transactions (du mois, de l'année, etc) que veut l'utilisateur
 """
 
+descriptions_epargne = ["Livret A", "SEPA M ANTOINE THIRION"]
+
 
 def is_a_transaction(transaction):
     """
@@ -159,25 +161,31 @@ def select_transactions_by_bank_transfer(transactions):
             if transaction.split(",")[2].strip() == "Virement"]
 
 
-def extract_expenses_revenus(transactions):
+def extract_expenses_revenus_savings(transactions):
     """
-    Extrait les dépenses et revenus à partir de la liste de
+    Extrait les dépenses revenus et épargne à partir de la liste de
     transactions fournie
     """
     expenses = []
     revenus = []
+    savings = []
     for transaction in transactions:
         montant = float(transaction.split(",")[1].strip())
+        description = transaction.split(",")[-1].strip()
         if montant >= 0:
             # la transaction est un revenu
             revenus.append(transaction)
         else:
-            # la transaction est une dépense
             # changer le signe du montant pour le rendre positif
             date, montant, type_transaction, description = transaction.split(
                 ",")
             new_montant = -float(montant)
             new_transaction = ",".join(
                 [date, str(new_montant), type_transaction, description])
-            expenses.append(new_transaction)
-    return (expenses, revenus)
+            if description in descriptions_epargne:
+                # la transaction est une épargne
+                savings.append(new_transaction)
+            else:
+                # la transaction est une dépense
+                expenses.append(new_transaction)
+    return (expenses, revenus, savings)

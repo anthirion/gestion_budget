@@ -2,15 +2,13 @@ from PySide6.QtWidgets import (
     QLabel, QWidget, QComboBox, QPushButton,
     QVBoxLayout, QHBoxLayout
 )
-from PySide6.QtCharts import QChartView
 from PySide6.QtCore import Qt, Slot
-from PySide6.QtGui import QPainter
 
 from pathlib import Path
 import transactions_statistics
 from select_transactions import (
     select_transactions_of_several_months,
-    extract_expenses_revenus
+    extract_expenses_revenus_savings
 )
 import CommonWidgets
 import BarChart
@@ -23,6 +21,7 @@ class SeveralMonthsWidget(QWidget):
         self.transactions_selectionnees = []
         self.depenses = []
         self.revenus = []
+        self.epargne = []
 
         # Mise en page
         self.page_layout = QVBoxLayout(self)
@@ -94,7 +93,8 @@ class SeveralMonthsWidget(QWidget):
         self.page_layout.removeWidget(self.bar_chart)
         # mettre à jour le widget avec le bon diagramme
         self.bar_chart = BarChart.BarChart(depenses=self.depenses,
-                                           revenus=self.revenus).bar_canvas
+                                           revenus=self.revenus,
+                                           epargne=self.epargne).bar_canvas
         # afficher le nouveau widget
         self.page_layout.addWidget(self.bar_chart)
 
@@ -125,8 +125,9 @@ class SeveralMonthsWidget(QWidget):
             print("ATTENTION: pas de transaction sélectionnée !")
 
         # on ne sélectionne que les dépenses pour tracer les graphes
-        self.depenses, self.revenus = extract_expenses_revenus(
+        self.depenses, self.revenus, self.epargne = extract_expenses_revenus_savings(
             self.transactions_selectionnees)
+
         # calculer la somme des dépenses et l'afficher
         sum_expenses = transactions_statistics.compute_sum(
             self.transactions_selectionnees)
