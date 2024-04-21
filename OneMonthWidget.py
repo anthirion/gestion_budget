@@ -148,8 +148,10 @@ class OneMonthWidget(QWidget):
         """
         Cette méthode calcule puis affiche le camembert des dépenses
         """
+        transactions = self.depenses_cartes if pie_chart_view == self.pie_card_chart_view \
+            else self.depenses_virement
         self.updated_chart = PieChart.ExpensesPieChart(
-            self.depenses_cartes, condenser_value=condenser_value).pie_chart
+            transactions, condenser_value=condenser_value).pie_chart
         self.updated_chart.setTitle(title)
         pie_chart_view.setChart(self.updated_chart)
 

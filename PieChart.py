@@ -7,7 +7,9 @@ import GlobalVariables
 
 class ExpensesPieChart(QtCharts.QChart):
     """
-    Cette classe calcule le camembert des dépenses
+    @parameter transactions: transactions à afficher
+    @parameter condenser_value: indique s'il faut afficher la catégorie Autre ou non
+    Cette classe calcule le camembert des dépenses passées en paramètre dans le constructeur
     """
 
     def __init__(self, transactions, condenser_value):
