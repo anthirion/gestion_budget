@@ -39,14 +39,14 @@ class MainWindow(QMainWindow):
         """
         # sélectionner le dossier contenant les fichiers csv de dépenses brutes
         select_directory = QAction(
-            "Ouvrir un dossier des dépenses brutes", self)
+            "Ouvrir un dossier de dépenses brutes", self)
         open_menu.addAction(select_directory)
         select_directory.setShortcut("Ctrl+Shift+O")
         select_directory.triggered.connect(self.open_directory)
 
         # sélectionner le fichier "source de vérité" contenant les dépenses traitées
         select_source_of_truth = QAction(
-            "Sélectionner un fichier des dépenses", self)
+            "Sélectionner un fichier de dépenses", self)
         open_menu.addAction(select_source_of_truth)
         select_source_of_truth.setShortcut("Ctrl+O")
         select_source_of_truth.triggered.connect(self.open_source_of_truth)
@@ -60,7 +60,7 @@ class MainWindow(QMainWindow):
         tabs = QTabWidget()
         tabs.addTab(widget_one_month, "Dépenses sur un mois")
         tabs.addTab(widget_several_months,
-                    "Dépenses sur plusieurs mois")
+                    "Statistiques sur plusieurs mois")
         # placer les onglets sur la gauche
         tabs.setTabPosition(QTabWidget.West)
         self.setCentralWidget(tabs)

@@ -5,7 +5,6 @@ from matplotlib.backends.qt_compat import QtWidgets
 from matplotlib.figure import Figure
 
 import barplot_depenses
-import transactions_statistics
 
 
 class BarChart(QtWidgets.QWidget):
