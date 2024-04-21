@@ -5,6 +5,7 @@ from matplotlib.backends.qt_compat import QtWidgets
 from matplotlib.figure import Figure
 
 import barplot_depenses
+import transactions_statistics
 
 
 class BarChart(QtWidgets.QWidget):
@@ -64,6 +65,17 @@ class BarChart(QtWidgets.QWidget):
             "Sommes des dépenses et revenus par mois et l'épargne sur la période sélectionnée")
         bar_ax.set_xticks(step + width, months)
         bar_ax.legend(loc='upper left', ncols=3)
+
+        # afficher la moyenne des dépenses sur le diagramme en batons
+        depenses_mensuelles = self.depenses_mensuelles.values()
+        expenses_mean_per_month = \
+            sum(depenses_mensuelles for depenses_mensuelles in depenses_mensuelles) / \
+            len(depenses_mensuelles)
+        bar_ax.axhline(y=expenses_mean_per_month, color="red")
+        # on ajoute un texte à la ligne pour indiquer le montant de la moyenne
+        bar_ax.text(x=-1.2, y=expenses_mean_per_month,
+                    s=f"Moyenne des dépenses mensuelles : \n {expenses_mean_per_month}€",
+                    color="red")
 
     def standardize_expenses(self):
         """
