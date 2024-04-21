@@ -36,9 +36,31 @@ class BarChart(QWidget):
         mois, sommes_revenus_mensuels = barplot_depenses.spending_barplot(
             self.revenus)
 
+        categories = {
+            "Dépenses": sommes_depenses_mensuelles,
+            "Revenus": sommes_revenus_mensuels
+        }
+
         """
         Tracé du diagramme en bâtons
         """
         self.bar_canvas = FigureCanvas(Figure(figsize=(5, 3)))
         bar_ax = self.bar_canvas.figure.subplots()
-        bar_ax.bar(mois, sommes_depenses_mensuelles)
+
+        step = np.arange(len(mois))  # the label locations
+        width = 0.25  # the width of the bars
+        multiplier = 0
+
+        for category, transaction in categories.items():
+            offset = width * multiplier
+            rects = bar_ax.bar(step + offset, transaction,
+                               width, label=category)
+            bar_ax.bar_label(rects, padding=3)
+            multiplier += 1
+
+        # Add some text for labels, title and custom x-axis tick labels, etc.
+        bar_ax.set_ylabel('Montant (en euros)')
+        bar_ax.set_title(
+            'Sommes des dépenses et revenus par mois sur la période sélectionnée')
+        bar_ax.set_xticks(step + width, mois)
+        bar_ax.legend(loc='upper left', ncols=3)
