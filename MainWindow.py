@@ -1,8 +1,9 @@
 from PySide6.QtWidgets import (
-    QMainWindow, QTabWidget, QFileDialog
+    QMainWindow, QTabWidget, QFileDialog, QMessageBox
 )
 from PySide6.QtGui import QAction
 import GlobalVariables
+from create_unique_csv import create_source_of_truth
 
 
 save_file_path = GlobalVariables.save_file
@@ -43,7 +44,7 @@ class MainWindow(QMainWindow):
         """
         # sélectionner le dossier contenant les fichiers csv de dépenses brutes
         select_directory = QAction(
-            "Ouvrir un dossier de dépenses brutes", self)
+            "Créer une source de vérité à partir d'un dossier de dépenses brutes", self)
         open_menu.addAction(select_directory)
         select_directory.setShortcut("Ctrl+Shift+O")
         select_directory.triggered.connect(self.open_directory)
@@ -76,10 +77,36 @@ class MainWindow(QMainWindow):
     def open_directory(self):
         """
         Gère l'importation d'un dossier contenant les dépenses brutes
+        Une fois le dossier sélectionné, calcule une source de vérité à partir
+        des fichiers contenus dans le dossier
         """
-        dialog = QFileDialog(self)
-        dialog.setFileMode(QFileDialog.Directory)
-        dialog.exec()
+        dialog_src = QFileDialog(self)
+        dialog_src.setFileMode(QFileDialog.Directory)
+        if dialog_src.exec():
+            directory_src = dialog_src.selectedFiles()[0]
+            # demander à l'utilisateur de sélectionner le dossier destination
+            # de la source de vérité
+            # afficher un message de demande
+            msgBox = QMessageBox(parent=dialog_src)
+            msgBox.setText(
+                "Veuillez sélectionner le dossier où enregistrer la source de vérité")
+            msgBox.exec()
+            dialog_dest = QFileDialog(dialog_src)
+            dialog_dest.setFileMode(QFileDialog.Directory)
+            if dialog_dest.exec():
+                directory_dest = dialog_dest.selectedFiles()[0]
+                source_of_truth_filename = directory_dest + "/source_of_truth.csv"
+                # créer une source de vérité
+                create_source_of_truth(directory_src, source_of_truth_filename)
+                # afficher un message de validation
+                validationmsgBox = QMessageBox(parent=dialog_dest)
+                validationmsgBox.setText(
+                    "La source de vérité a bien été créée")
+                validationmsgBox.exec()
+                # enregistrer la nouvelle source de vérité créée
+                save_source_of_truth(source_of_truth_filename)
+                # on met à jour la variable globale source_of_truth avec la valeur correcte
+                GlobalVariables.source_of_truth = source_of_truth_filename
 
     def open_source_of_truth(self):
         """

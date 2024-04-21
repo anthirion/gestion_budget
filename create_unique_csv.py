@@ -5,17 +5,18 @@ en un seul fichier csv qui rassemble et nettoie toutes les transactions
 
 import clean_csv
 import glob
+from pathlib import Path
 
 
-def extract_unique_lines(raw_csv_directory):
+def extract_unique_lines(raw_csv_directory_path):
     """
-    A partir du dossier contenant tous les csv bruts
+    A partir du dossier contenant tous les csv bruts, cette fonction
     retourne les lignes uniques à garder dans le csv final
     """
     # on définit l'ensemble qui contiendra les lignes uniques
     unique_lines = set()
     # on parcourt tous les csv contenus dans le répertoire fourni
-    for csvfile in glob.glob(raw_csv_directory + "*.csv"):
+    for csvfile in raw_csv_directory_path.glob('**/*.csv'):
         # on nettoie les transactions du fichier courant
         clean_lines = clean_csv.clean_entry_file(csvfile)
         # on ne garde que les lignes uniques
@@ -36,18 +37,18 @@ def sort_by_transaction_date(line):
         print(type(ve), ve)
 
 
-def create_source_of_truth(source_of_truth_path, clean_csv_filename):
-    if source_of_truth_path.exists():
-        raw_csv_directory = "/home/thiran/projets_persos/gestion_budget/csv_files/raw_csv_files/"
+def create_source_of_truth(raw_csv_directory, source_of_truth_filename):
+    raw_csv_directory_path = Path(raw_csv_directory)
+    if raw_csv_directory_path.exists():
         # on retire les transactions qui apparaissent en double
         unique_lines = extract_unique_lines(
-            raw_csv_directory)
+            raw_csv_directory_path)
         # on trie ensuite les transactions par date croissante
         unique_lines = list(unique_lines)
         unique_lines.sort(key=sort_by_transaction_date,
                           reverse=False)
         # on écrit les transactions obtenues dans la source de vérité
-        with open(clean_csv_filename, "w", encoding="utf-8-sig") as file:
+        with open(source_of_truth_filename, "w", encoding="utf-8-sig") as file:
             # la première ligne spécifie les noms des colonnes
             column_names = "Date,Montant,Type,Description\n"
             file.write(column_names)
