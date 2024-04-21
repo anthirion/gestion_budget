@@ -63,4 +63,4 @@ class BarChart(QWidget):
         bar_ax.set_title(
             'Sommes des dépenses et revenus par mois sur la période sélectionnée')
         bar_ax.set_xticks(step + width, mois)
-        bar_ax.legend(loc='upper left', ncols=3)
+        bar_ax.legend(loc='upper left', ncols=2)
