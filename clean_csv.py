@@ -34,6 +34,7 @@ transactions_to_replace = {
     "DRI*NVIDIA": "NVIDIA",
     "FRANPRIX 1029": "FRANPRIX",
     "DECAT 1994": "DECATHLON",
+    "SEPA VERSPIEREN": "ABONNEMENT BOULANGER",
 }
 # Expression régulière pour identifier les dates jj/mm/aa
 pattern = r'\b\d{1,2}/\d{1,2}/\d{2}\b'
