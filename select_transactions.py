@@ -2,7 +2,10 @@
 L'objectif de ce module est de sélectionner les dernières transactions (du mois, de l'année, etc) que veut l'utilisateur
 """
 
-descriptions_epargne = ["Livret A", "SEPA M ANTOINE THIRION"]
+descriptions_epargne = ["Livret A",
+                        "SEPA M ANTOINE THIRION",
+                        "SEPA Hello bank",
+                        "SEPA Fortuneo banque"]
 
 
 def is_a_transaction(transaction):
