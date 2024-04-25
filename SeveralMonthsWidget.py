@@ -24,9 +24,6 @@ class SeveralMonthsWidget(QWidget):
         self.revenus = []
         self.epargne = []
 
-        # recherche de la source de vérité
-        GlobalVariables.source_of_truth = MainWindow.get_source_of_truth()
-
         # Mise en page
         self.page_layout = QVBoxLayout(self)
         # ajouter un espace entre les éléments du layout
@@ -112,6 +109,8 @@ class SeveralMonthsWidget(QWidget):
         à condition d'avoir la source de vérité
         En absence de source de vérité, afficher un message et ne rien faire
         """
+        # recherche de la source de vérité
+        GlobalVariables.source_of_truth = MainWindow.get_source_of_truth(self)
         if GlobalVariables.source_of_truth:
             source_of_truth_path = Path(GlobalVariables.source_of_truth)
             # sélectionner les transactions souhaitées par l'utilisateur

@@ -129,7 +129,7 @@ class MainWindow(QMainWindow):
             GlobalVariables.source_of_truth = source_of_truth_path
 
 
-def get_source_of_truth():
+def get_source_of_truth(widget):
     """
     Cette fonction va récupérer la source de vérité dans le fichier enregistré
     dans le fichier de sauvegarde
@@ -147,8 +147,9 @@ def get_source_of_truth():
 
     if found is False:
         # la source de vérité n'a pas été trouvée, remonter une erreur à l'utilisateur
-        # qui doit alors la sélectionner
-        print(GlobalVariables.source_of_truth_notfound_msg)
+        # qui doit alors sélectionner la source de vérité
+        QMessageBox.warning(widget, "Avertissement",
+                            GlobalVariables.source_of_truth_notfound_msg)
         return ""
 
 
