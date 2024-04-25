@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import (
     QLabel, QWidget, QComboBox, QPushButton,
-    QVBoxLayout, QHBoxLayout
+    QVBoxLayout, QHBoxLayout, QMessageBox
 )
 from PySide6.QtCore import Qt, Slot
 
@@ -128,7 +128,8 @@ class SeveralMonthsWidget(QWidget):
             if not self.transactions_selectionnees:
                 # pas de transaction sélectionnée
                 # afficher un message à l'utilisateur
-                print("ATTENTION: pas de transaction sélectionnée !")
+                QMessageBox.warning(self, "Avertissement",
+                                    GlobalVariables.no_transaction_found_msg)
 
             # on ne sélectionne que les dépenses pour tracer les graphes
             self.depenses, self.revenus, self.epargne = extract_expenses_revenus_savings(
@@ -141,6 +142,3 @@ class SeveralMonthsWidget(QWidget):
 
             # afficher le diagramme en batons des dépenses mensuelles
             self.plot_barchart()
-        else:
-            # la source de vérité n'a pas été définie
-            print(GlobalVariables.source_of_truth_notfound_msg)

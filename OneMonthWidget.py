@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import (
     QLabel, QWidget, QComboBox, QPushButton,
-    QVBoxLayout, QHBoxLayout, QCheckBox
+    QVBoxLayout, QHBoxLayout, QCheckBox,
+    QMessageBox
 )
 from PySide6.QtGui import QPainter
 from PySide6.QtCore import Qt, Slot
@@ -185,7 +186,8 @@ class OneMonthWidget(QWidget):
             if not self.transactions_selectionnees:
                 # pas de transaction sélectionnée
                 # afficher un message à l'utilisateur
-                print("ATTENTION: pas de transaction sélectionnée !")
+                QMessageBox.warning(self, "Avertissement",
+                                    GlobalVariables.no_transaction_found_msg)
 
             # on ne sélectionne que les dépenses pour tracer les graphes
             self.depenses, _, _ = extract_expenses_revenus_savings(
@@ -213,9 +215,6 @@ class OneMonthWidget(QWidget):
             title = bank_transfer_chart_title
             self.update_pie_chart(
                 self.pie_bank_transfer_chart_view, title, condenser_value=False)
-        else:
-            # la source de vérité n'a pas été définie
-            print(GlobalVariables.source_of_truth_notfound_msg)
 
     """
     Checkbox slots

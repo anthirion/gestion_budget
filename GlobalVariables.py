@@ -4,3 +4,4 @@ source_of_truth = str()
 
 save_file = "/home/thiran/projets_persos/gestion_budget/src/save.txt"
 source_of_truth_notfound_msg = "La source de vérité n'a pas été trouvée, veuillez l'indiquer pour pouvoir lancer les calculs"
+no_transaction_found_msg = "Aucune transaction sélectionnée ! Vérifiez que des transactions existent pour la période sélectionnée."
