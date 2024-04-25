@@ -53,7 +53,7 @@ class MainWindow(QMainWindow):
 
             # sélectionner le fichier "source de vérité" contenant les dépenses traitées
             select_source_of_truth = QAction(
-                "Sélectionner un fichier de dépenses", self)
+                "Sélectionner une source de vérité", self)
             open_menu.addAction(select_source_of_truth)
             select_source_of_truth.setShortcut("Ctrl+O")
             select_source_of_truth.triggered.connect(self.open_source_of_truth)
