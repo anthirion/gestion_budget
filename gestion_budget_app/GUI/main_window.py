@@ -4,6 +4,9 @@ from GUI.source_of_truth import (
     save_source_of_truth
 )
 
+from GUI.one_month_widget import OneMonthWidget
+from GUI.several_months_widget import SeveralMonthsWidget
+
 from PySide6.QtWidgets import (
     QMainWindow, QTabWidget, QFileDialog, QMessageBox
 )
@@ -13,11 +16,14 @@ from Backend.create_unique_csv import create_source_of_truth
 
 class MainWindow(QMainWindow):
 
-    def __init__(self, widget_one_month, widget_several_months):
+    def __init__(self):
         try:
             super().__init__()
             self.setWindowTitle(
                 "Mon super logiciel de visualisation des dépenses")
+
+            self.widget_one_month = OneMonthWidget()
+            self.widget_several_months = SeveralMonthsWidget()
 
             """
             Création d'une barre de menus avec un deux menus: Fichier et ouvrir
@@ -67,8 +73,8 @@ class MainWindow(QMainWindow):
                 - épargne
             """
             tabs = QTabWidget()
-            tabs.addTab(widget_one_month, "Dépenses sur un mois")
-            tabs.addTab(widget_several_months,
+            tabs.addTab(self.widget_one_month, "Dépenses sur un mois")
+            tabs.addTab(self.widget_several_months,
                         "Statistiques sur plusieurs mois")
             # placer les onglets sur la gauche
             tabs.setTabPosition(QTabWidget.West)
