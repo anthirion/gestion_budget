@@ -18,7 +18,6 @@ Le procédé de nettoyage se déroule comme suit:
     - "DECAT 1994" -> "DECATHLON"
 - Remplacer les points-virgules par des virgules pour respecter le format csv et les virgules par des points
 """
-
 import re
 
 # global variables

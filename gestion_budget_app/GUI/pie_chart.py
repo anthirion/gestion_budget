@@ -1,8 +1,9 @@
+import global_variables
+
 from PySide6 import QtCharts
 from PySide6 import QtGui
 
-import camembert
-import GlobalVariables
+import Backend.camembert
 
 
 class ExpensesPieChart(QtCharts.QChart):
@@ -19,7 +20,7 @@ class ExpensesPieChart(QtCharts.QChart):
         self.pie_chart = QtCharts.QChart()
         series = QtCharts.QPieSeries()
 
-        expenses = camembert.calculer_depenses_par_categories(
+        expenses = Backend.camembert.calculer_depenses_par_categories(
             self.transactions, condenser=condenser_value)
 
         # afficher les valeurs sur le camembert
@@ -33,7 +34,7 @@ class ExpensesPieChart(QtCharts.QChart):
 
         # modifier l'affichage des labels en fonction de leur pourcentage
         for pie_slice in slices:
-            if pie_slice.percentage() > GlobalVariables.pourcentage_affichage_label_pie_chart:
+            if pie_slice.percentage() > global_variables.pourcentage_affichage_label_pie_chart:
                 # si le montant est suffisamment grand pour être affiché correctement dans le camembert
                 # on l'affiche à l'intérieur et en blanc pour être lisible
                 pie_slice.setLabelPosition(

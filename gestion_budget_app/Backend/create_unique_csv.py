@@ -2,10 +2,9 @@
 Ce module a pour objectif de rassembler tous les scripts téléchargés sur lcl.fr
 en un seul fichier csv qui rassemble et nettoie toutes les transactions
 """
-
-import clean_csv
-import glob
 from pathlib import Path
+
+import Backend.clean_csv
 
 
 def extract_unique_lines(raw_csv_directory_path):

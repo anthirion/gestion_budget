@@ -1,3 +1,5 @@
+import global_variables
+
 from PySide6.QtWidgets import (
     QLabel, QWidget, QComboBox, QPushButton,
     QVBoxLayout, QHBoxLayout, QCheckBox,
@@ -8,17 +10,16 @@ from PySide6.QtCore import Qt, Slot
 from PySide6 import QtCharts
 
 from pathlib import Path
-import transactions_statistics
-from select_transactions import (
+from Backend.transactions_statistics import compute_sum
+from Backend.select_transactions import (
     select_transactions_of_one_month,
     select_transactions_by_card,
     select_transactions_by_bank_transfer,
     extract_expenses_revenus_savings
 )
-import PieChart
-import CommonWidgets
-import GlobalVariables
-import MainWindow
+import GUI.pie_chart as pie_chart
+import GUI.common_widgets as common_widgets
+import GUI.main_window as main_window
 
 # Variables globales
 card_chart_title = "Dépenses par carte"
@@ -60,7 +61,7 @@ class OneMonthWidget(QWidget):
         parameters_layout.addWidget(self.year_selection)
 
         # sélectionner la banque
-        choice_bank_widget = CommonWidgets.ChoiceBankWidget()
+        choice_bank_widget = common_widgets.ChoiceBankWidget()
         label = choice_bank_widget.get_label()
         bank_choice = choice_bank_widget.get_bank_choice_combobox()
         parameters_layout.addWidget(label)
@@ -152,7 +153,7 @@ class OneMonthWidget(QWidget):
         """
         transactions = self.depenses_cartes if pie_chart_view == self.pie_card_chart_view \
             else self.depenses_virement
-        self.updated_chart = PieChart.ExpensesPieChart(
+        self.updated_chart = pie_chart.ExpensesPieChart(
             transactions, condenser_value=condenser_value).pie_chart
         self.updated_chart.setTitle(title)
         pie_chart_view.setChart(self.updated_chart)
@@ -168,9 +169,10 @@ class OneMonthWidget(QWidget):
         En absence de source de vérité, afficher un message et ne rien faire
         """
         # recherche de la source de vérité
-        GlobalVariables.source_of_truth = MainWindow.get_source_of_truth(self)
-        if GlobalVariables.source_of_truth:
-            source_of_truth_path = Path(GlobalVariables.source_of_truth)
+        global_variables.source_of_truth = main_window.get_source_of_truth(
+            self)
+        if global_variables.source_of_truth:
+            source_of_truth_path = Path(global_variables.source_of_truth)
             # sélectionner les transactions souhaitées par l'utilisateur
             transactions = source_of_truth_path.read_text(encoding="utf-8-sig")
             # on split le fichier par transaction
@@ -187,7 +189,7 @@ class OneMonthWidget(QWidget):
                 # pas de transaction sélectionnée
                 # afficher un message à l'utilisateur
                 QMessageBox.warning(self, "Avertissement",
-                                    GlobalVariables.no_transaction_found_msg)
+                                    global_variables.no_transaction_found_msg)
 
             # on ne sélectionne que les dépenses pour tracer les graphes
             self.depenses, _, _ = extract_expenses_revenus_savings(
@@ -199,11 +201,9 @@ class OneMonthWidget(QWidget):
                 self.depenses)
 
             # calculer la somme des dépenses par carte et l'afficher
-            sum_card_expenses = transactions_statistics.compute_sum(
-                self.depenses_cartes)
+            sum_card_expenses = compute_sum(self.depenses_cartes)
             self.sum_card_expenses.setNum(sum_card_expenses)
-            sum_bank_transfer_expenses = transactions_statistics.compute_sum(
-                self.depenses_virement)
+            sum_bank_transfer_expenses = compute_sum(self.depenses_virement)
             self.sum_bank_transfer_expenses.setNum(sum_bank_transfer_expenses)
 
             # mettre à jour le camembert des dépenses par carte

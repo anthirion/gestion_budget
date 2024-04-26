@@ -5,15 +5,15 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, Slot
 
 from pathlib import Path
-import transactions_statistics
-from select_transactions import (
+from Backend.transactions_statistics import compute_sum
+from Backend.select_transactions import (
     select_transactions_of_several_months,
     extract_expenses_revenus_savings
 )
-import CommonWidgets
-import BarChart
-import GlobalVariables
-import MainWindow
+import GUI.common_widgets as common_widgets
+import GUI.bar_chart as bar_chart
+import global_variables
+import GUI.main_window as main_window
 
 
 class SeveralMonthsWidget(QWidget):
@@ -54,7 +54,7 @@ class SeveralMonthsWidget(QWidget):
         parameters_layout.addWidget(QLabel("années"))
 
         # sélectionner la banque
-        choice_bank_widget = CommonWidgets.ChoiceBankWidget()
+        choice_bank_widget = common_widgets.ChoiceBankWidget()
         label = choice_bank_widget.get_label()
         bank_choice = choice_bank_widget.get_bank_choice_combobox()
         parameters_layout.addWidget(label)
@@ -93,9 +93,9 @@ class SeveralMonthsWidget(QWidget):
         # retirer l'ancien widget du layout
         self.page_layout.removeWidget(self.bar_chart)
         # mettre à jour le widget avec le bon diagramme
-        self.bar_chart = BarChart.BarChart(depenses=self.depenses,
-                                           revenus=self.revenus,
-                                           epargne=self.epargne).bar_canvas
+        self.bar_chart = bar_chart.BarChart(depenses=self.depenses,
+                                            revenus=self.revenus,
+                                            epargne=self.epargne).bar_canvas
         # afficher le nouveau widget
         self.page_layout.addWidget(self.bar_chart)
 
@@ -110,9 +110,10 @@ class SeveralMonthsWidget(QWidget):
         En absence de source de vérité, afficher un message et ne rien faire
         """
         # recherche de la source de vérité
-        GlobalVariables.source_of_truth = MainWindow.get_source_of_truth(self)
-        if GlobalVariables.source_of_truth:
-            source_of_truth_path = Path(GlobalVariables.source_of_truth)
+        global_variables.source_of_truth = main_window.get_source_of_truth(
+            self)
+        if global_variables.source_of_truth:
+            source_of_truth_path = Path(global_variables.source_of_truth)
             # sélectionner les transactions souhaitées par l'utilisateur
             transactions = source_of_truth_path.read_text(encoding="utf-8-sig")
             # on split le fichier par transaction
@@ -129,15 +130,14 @@ class SeveralMonthsWidget(QWidget):
                 # pas de transaction sélectionnée
                 # afficher un message à l'utilisateur
                 QMessageBox.warning(self, "Avertissement",
-                                    GlobalVariables.no_transaction_found_msg)
+                                    global_variables.no_transaction_found_msg)
 
             # on ne sélectionne que les dépenses pour tracer les graphes
             self.depenses, self.revenus, self.epargne = extract_expenses_revenus_savings(
                 self.transactions_selectionnees)
 
             # calculer la somme des dépenses et l'afficher
-            sum_expenses = transactions_statistics.compute_sum(
-                self.transactions_selectionnees)
+            sum_expenses = compute_sum(self.transactions_selectionnees)
             self.display_sum_expenses.setNum(sum_expenses)
 
             # afficher le diagramme en batons des dépenses mensuelles

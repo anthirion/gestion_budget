@@ -4,7 +4,7 @@ from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backends.qt_compat import QtWidgets
 from matplotlib.figure import Figure
 
-import barplot_depenses
+from Backend.barplot_depenses import get_expenses_per_month
 
 
 class BarChart(QtWidgets.QWidget):
@@ -24,12 +24,9 @@ class BarChart(QtWidgets.QWidget):
         """
         Extraction des mois et sommes pour afficher le diagramme
         """
-        self.depenses_mensuelles = barplot_depenses.get_expenses_per_month(
-            self.depenses)
-        self.revenus_mensuels = barplot_depenses.get_expenses_per_month(
-            self.revenus)
-        self.epargne_mensuelle = barplot_depenses.get_expenses_per_month(
-            self.epargne)
+        self.depenses_mensuelles = get_expenses_per_month(self.depenses)
+        self.revenus_mensuels = get_expenses_per_month(self.revenus)
+        self.epargne_mensuelle = get_expenses_per_month(self.epargne)
 
         categories = {
             "Dépenses": self.depenses_mensuelles,

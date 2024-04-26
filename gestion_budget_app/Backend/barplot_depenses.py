@@ -2,9 +2,9 @@
 Ce module extrait la somme des dépenses par mois pour ensuite pouvoir
 l'afficher sous forme de diagramme en batons
 """
-
-from select_transactions import is_a_transaction
 from collections import defaultdict
+
+from .select_transactions import is_a_transaction
 
 
 def get_expenses_per_month(transactions):

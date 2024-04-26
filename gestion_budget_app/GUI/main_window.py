@@ -1,12 +1,13 @@
+import global_variables
+
 from PySide6.QtWidgets import (
     QMainWindow, QTabWidget, QFileDialog, QMessageBox
 )
 from PySide6.QtGui import QAction
-import GlobalVariables
-from create_unique_csv import create_source_of_truth
+from Backend.create_unique_csv import create_source_of_truth
 
 
-save_file_path = GlobalVariables.save_file
+save_file_path = global_variables.save_file
 
 
 class MainWindow(QMainWindow):
@@ -113,7 +114,7 @@ class MainWindow(QMainWindow):
                 # enregistrer la nouvelle source de vérité créée
                 save_source_of_truth(source_of_truth_filename)
                 # on met à jour la variable globale source_of_truth avec la valeur correcte
-                GlobalVariables.source_of_truth = source_of_truth_filename
+                global_variables.source_of_truth = source_of_truth_filename
 
     def open_source_of_truth(self):
         """
@@ -126,7 +127,7 @@ class MainWindow(QMainWindow):
             source_of_truth_path = dialog.selectedFiles()[0]
             save_source_of_truth(source_of_truth_path)
             # on met à jour la variable globale source_of_truth avec la valeur correcte
-            GlobalVariables.source_of_truth = source_of_truth_path
+            global_variables.source_of_truth = source_of_truth_path
 
 
 def get_source_of_truth(widget):
@@ -149,7 +150,7 @@ def get_source_of_truth(widget):
         # la source de vérité n'a pas été trouvée, remonter une erreur à l'utilisateur
         # qui doit alors sélectionner la source de vérité
         QMessageBox.warning(widget, "Avertissement",
-                            GlobalVariables.source_of_truth_notfound_msg)
+                            global_variables.source_of_truth_notfound_msg)
         return ""
 
 

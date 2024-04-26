@@ -2,7 +2,6 @@
 Ce module calcule des statistiques sur les dépenses données en entrées
 Les statistiques calculées sont à ce jour: la somme, la moyenne et la médiane
 """
-
 import statistics
 
 
