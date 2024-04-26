@@ -4,7 +4,7 @@ en un seul fichier csv qui rassemble et nettoie toutes les transactions
 """
 from pathlib import Path
 
-import Backend.clean_csv
+from Backend.clean_csv import clean_entry_file
 
 
 def extract_unique_lines(raw_csv_directory_path):
@@ -17,7 +17,7 @@ def extract_unique_lines(raw_csv_directory_path):
     # on parcourt tous les csv contenus dans le répertoire fourni
     for csvfile in raw_csv_directory_path.glob('**/*.csv'):
         # on nettoie les transactions du fichier courant
-        clean_lines = clean_csv.clean_entry_file(csvfile)
+        clean_lines = clean_entry_file(csvfile)
         # on ne garde que les lignes uniques
         unique_lines.update(clean_lines)
         clean_lines.clear()
