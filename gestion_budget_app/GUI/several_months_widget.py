@@ -10,10 +10,12 @@ from Backend.select_transactions import (
     select_transactions_of_several_months,
     extract_expenses_revenus_savings
 )
-import GUI.common_widgets as common_widgets
+from GUI.choice_bank_widget import ChoiceBankWidget
 import GUI.bar_chart as bar_chart
 import global_variables
-import GUI.main_window as main_window
+from GUI.source_of_truth import (
+    get_source_of_truth
+)
 
 
 class SeveralMonthsWidget(QWidget):
@@ -54,7 +56,7 @@ class SeveralMonthsWidget(QWidget):
         parameters_layout.addWidget(QLabel("années"))
 
         # sélectionner la banque
-        choice_bank_widget = common_widgets.ChoiceBankWidget()
+        choice_bank_widget = ChoiceBankWidget()
         label = choice_bank_widget.get_label()
         bank_choice = choice_bank_widget.get_bank_choice_combobox()
         parameters_layout.addWidget(label)
@@ -110,8 +112,7 @@ class SeveralMonthsWidget(QWidget):
         En absence de source de vérité, afficher un message et ne rien faire
         """
         # recherche de la source de vérité
-        global_variables.source_of_truth = main_window.get_source_of_truth(
-            self)
+        global_variables.source_of_truth = get_source_of_truth(self)
         if global_variables.source_of_truth:
             source_of_truth_path = Path(global_variables.source_of_truth)
             # sélectionner les transactions souhaitées par l'utilisateur
