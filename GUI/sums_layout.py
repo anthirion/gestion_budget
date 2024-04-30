@@ -7,7 +7,7 @@ from PySide6.QtCore import Qt
 class SumLayout(QLayout):
     """
     Cette classe définit un layout affichant la somme de dépenses sur le mois sélectionné
-    Le type de la somme (par carte ou virement) est défini par le titre passé au constructeur 
+    Le type de la somme (par carte ou virement) est défini par le titre passé au constructeur
     """
 
     def __init__(self, layout_title):

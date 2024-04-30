@@ -52,8 +52,8 @@ class OneMonthWidget(QWidget):
                                       year_selection_default_text="2023",
                                       )
         parameters_layout = parameters.parameters_layout
-        self.month_selection_choice = parameters.month_selection
-        self.year_selection_choice = parameters.year_selection
+        self.month_choice = parameters.month_selection_box
+        self.year_choice = parameters.year_selection_box
         self.page_layout.addLayout(parameters_layout)
 
         # ajouter le bouton pour lancer les calculs
@@ -139,8 +139,8 @@ class OneMonthWidget(QWidget):
             # on retire la première ligne qui correspond aux noms des colonnes
             # et la dernière transaction qui est vide
             transactions = transactions[1:-1]
-            selected_month = int(self.month_selection_choice.currentText())
-            selected_year = int(self.year_selection_choice.currentText())
+            selected_month = int(self.month_choice.currentText())
+            selected_year = int(self.year_choice.currentText())
             self.transactions_selectionnees = select_transactions_of_one_month(transactions,
                                                                                n_month=selected_month,
                                                                                n_year=selected_year)
