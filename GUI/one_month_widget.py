@@ -1,15 +1,16 @@
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QCheckBox,
-    QPushButton, QMessageBox
+    QWidget, QVBoxLayout, QHBoxLayout,
+    QCheckBox, QPushButton, QMessageBox
 )
 from PySide6.QtGui import QPainter
-from PySide6.QtCore import Slot
 from PySide6 import QtCharts
+from PySide6.QtCore import Slot
 from pathlib import Path
 import global_variables
-import GUI.pie_chart as pie_chart
+from GUI.pie_chart import ExpensesPieChart
 from GUI.parameters_layout import ParametersLayout
 from GUI.sums_layout import SumsLayout
+from GUI.chart_layouts import PieChartLayout
 from GUI.launch_compute_button import LaunchComputeButton
 
 import global_variables
@@ -60,15 +61,18 @@ class OneMonthWidget(QWidget):
         launch_compute_button.clicked.connect(self.lancer_calculs)
         self.page_layout.addWidget(launch_compute_button)
 
-        # ajouter le layout affichant les sommes des dépenses
+        """
+        Ajouter un layout affichant les sommes des dépenses mensuelles
+        par carte et par virement
+        """
         sums = SumsLayout()
+        self.sum_card_expenses_label = sums.card_expenses_label
+        self.sum_bank_transfer_expenses_label = sums.bank_transfer_expenses_label
         sums_layout = sums.sums_layout
-        self.sum_card_expenses_label = sums.sum_card_expenses_label
-        self.sum_bank_transfer_expenses_label = sums.sum_bank_transfer_expenses_label
         self.page_layout.addLayout(sums_layout)
 
         """
-        Ajouter un camembert des dépenses par cartes avec les catégories de dépenses et
+        Afficher un camembert des dépenses par cartes avec les catégories de dépenses et
         leur montant associé
         et un camembert des dépenses par virement
         """
@@ -112,7 +116,7 @@ class OneMonthWidget(QWidget):
         """
         transactions = self.depenses_cartes if pie_chart_view == self.pie_card_chart_view \
             else self.depenses_virement
-        self.updated_chart = pie_chart.ExpensesPieChart(
+        self.updated_chart = ExpensesPieChart(
             transactions, condenser_value=condenser_value).pie_chart
         self.updated_chart.setTitle(title)
         pie_chart_view.setChart(self.updated_chart)
