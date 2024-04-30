@@ -10,7 +10,7 @@ from Backend.select_transactions import (
     select_transactions_of_several_months,
     extract_expenses_revenus_savings
 )
-from GUI.choice_bank_widget import ChoiceBankWidget
+from GUI.parameters_layout import ChoiceBankWidget
 import GUI.bar_chart as bar_chart
 import global_variables
 from GUI.source_of_truth import (
