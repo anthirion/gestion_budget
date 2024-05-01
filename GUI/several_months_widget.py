@@ -10,7 +10,7 @@ from Backend.select_transactions import (
     select_transactions_of_several_months,
     extract_expenses_revenus_savings
 )
-from GUI.choice_bank_widget import ChoiceBankWidget
+from GUI.parameters_layout import ChoiceBankWidget
 import GUI.bar_chart as bar_chart
 import global_variables
 from GUI.source_of_truth import (
@@ -57,8 +57,8 @@ class SeveralMonthsWidget(QWidget):
 
         # sélectionner la banque
         choice_bank_widget = ChoiceBankWidget()
-        label = choice_bank_widget.get_label()
-        bank_choice = choice_bank_widget.get_bank_choice_combobox()
+        label = choice_bank_widget.label
+        bank_choice = choice_bank_widget.bank_choice_combobox
         parameters_layout.addWidget(label)
         parameters_layout.addWidget(bank_choice)
 

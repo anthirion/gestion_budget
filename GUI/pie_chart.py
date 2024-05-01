@@ -8,12 +8,14 @@ import Backend.camembert
 
 class ExpensesPieChart(QtCharts.QChart):
     """
-    @parameter transactions: transactions à afficher
-    @parameter condenser_value: indique s'il faut afficher la catégorie Autre ou non
-    Cette classe calcule le camembert des dépenses passées en paramètre dans le constructeur
+    Cette classe calcule le camember qjoutt des dépenses passées en paramètre dans le constructeur
     """
 
     def __init__(self, transactions, condenser_value):
+        """
+        @parameter transactions: transactions à afficher
+        @parameter condenser_value: indique s'il faut afficher la catégorie Autre ou non
+        """
         super().__init__()
         self.transactions = transactions
 

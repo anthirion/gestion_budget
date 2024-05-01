@@ -63,15 +63,15 @@ class BarChart(QtWidgets.QWidget):
         bar_ax.legend(loc='upper left', ncols=3)
 
         # afficher la moyenne des dépenses sur le diagramme en batons
-        depenses_mensuelles = self.depenses_mensuelles.values()
-        expenses_mean_per_month = \
-            sum(depenses_mensuelles for depenses_mensuelles in depenses_mensuelles) / \
-            len(depenses_mensuelles)
-        bar_ax.axhline(y=expenses_mean_per_month, color="red")
-        # on ajoute un texte à la ligne pour indiquer le montant de la moyenne
-        bar_ax.text(x=-1.2, y=expenses_mean_per_month,
-                    s=f"Moyenne des dépenses mensuelles : \n {expenses_mean_per_month}€",
-                    color="red")
+        # depenses_mensuelles = self.depenses_mensuelles.values()
+        # expenses_mean_per_month = \
+        #     sum(depenses_mensuelles for depenses_mensuelles in depenses_mensuelles) / \
+        #     len(depenses_mensuelles)
+        # bar_ax.axhline(y=expenses_mean_per_month, color="red")
+        # # on ajoute un texte à la ligne pour indiquer le montant de la moyenne
+        # bar_ax.text(x=-1.2, y=expenses_mean_per_month,
+        #             s=f"Moyenne des dépenses mensuelles : \n {expenses_mean_per_month}€",
+        #             color="red")
 
     def standardize_expenses(self):
         """
