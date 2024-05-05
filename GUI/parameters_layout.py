@@ -11,6 +11,7 @@ bank_transfer_chart_title = "Dépenses par virement"
 class ParameterSelection(QLayout):
     """
     Cette classe définit un layout permettant de sélectionner un paramètre (mois, année, autre)
+    Cette classe est une classe ABSTRAITE
     """
 
     def __init__(self, title, selection_list, default_text):

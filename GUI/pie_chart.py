@@ -8,7 +8,7 @@ import Backend.camembert
 
 class ExpensesPieChart(QtCharts.QChart):
     """
-    Cette classe calcule le camember qjoutt des dépenses passées en paramètre dans le constructeur
+    Cette classe calcule le camembert des dépenses passées en paramètre dans le constructeur
     """
 
     def __init__(self, transactions, condenser_value):
@@ -35,19 +35,19 @@ class ExpensesPieChart(QtCharts.QChart):
             series.append(pie_slice)
 
         # modifier l'affichage des labels en fonction de leur pourcentage
-        for pie_slice in slices:
-            if pie_slice.percentage() > global_variables.pourcentage_affichage_label_pie_chart:
-                # si le montant est suffisamment grand pour être affiché correctement dans le camembert
-                # on l'affiche à l'intérieur et en blanc pour être lisible
-                pie_slice.setLabelPosition(
-                    QtCharts.QPieSlice.LabelInsideHorizontal)
-                pie_slice.setLabelColor(QtGui.QColor("white"))
-            else:
-                # si le montant est trop petit pour être affiché correctement dans le camembert
-                # on préfère l'afficher à l'extérieur et en noir
-                pie_slice.setLabelPosition(
-                    QtCharts.QPieSlice.LabelOutside)
-                pie_slice.setLabelColor(QtGui.QColor("black"))
+        # for pie_slice in slices:
+        #     if pie_slice.percentage() > global_variables.pourcentage_affichage_label_pie_chart:
+        #         # si le montant est suffisamment grand pour être affiché correctement dans le camembert
+        #         # on l'affiche à l'intérieur et en blanc pour être lisible
+        #         pie_slice.setLabelPosition(
+        #             QtCharts.QPieSlice.LabelInsideHorizontal)
+        #         pie_slice.setLabelColor(QtGui.QColor("white"))
+        #     else:
+        #         # si le montant est trop petit pour être affiché correctement dans le camembert
+        #         # on préfère l'afficher à l'extérieur et en noir
+        #         pie_slice.setLabelPosition(
+        #             QtCharts.QPieSlice.LabelOutside)
+        #         pie_slice.setLabelColor(QtGui.QColor("black"))
 
         # afficher les labels sur le camembert
         series.setLabelsVisible(True)
