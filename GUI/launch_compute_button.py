@@ -23,10 +23,8 @@ class LaunchComputeButton(QPushButton):
     à partir des paramètres définis plus haut
     """
 
-    def __init__(self, month_selection, year_selection,
-                 sum_card_expenses, sum_bank_transfer_expenses,
-                 method_to_launch, parent=None, **kwds):
-        super().__init__(parent)
+    def __init__(self):
+        super().__init__()
         self.parent_window = parent
         self.month_selection = month_selection
         self.year_selection = year_selection
@@ -83,7 +81,6 @@ class LaunchComputeButton(QPushButton):
             self.sum_bank_transfer_expenses.setNum(sum_bank_transfer_expenses)
 
             # mettre à jour le camembert des dépenses par carte
-            title = global_variables.card_chart_title
             self.update_pie_chart(
                 self.pie_card_chart_view, title, condenser_value=False)
 

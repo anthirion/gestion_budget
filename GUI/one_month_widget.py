@@ -7,13 +7,12 @@ from PySide6 import QtCharts
 from PySide6.QtCore import Slot
 from pathlib import Path
 import global_variables
-from GUI.pie_chart import ExpensesPieChart
+
 from GUI.parameters_layout import ParametersLayout
 from GUI.sums_layout import SumsLayout
-from GUI.chart_layouts import PieChartLayout
+from GUI.chart_layouts import PieChartsLayout
 from GUI.launch_compute_button import LaunchComputeButton
 
-import global_variables
 from Backend.transactions_statistics import compute_sum
 from Backend.select_transactions import (
     select_transactions_of_one_month,
@@ -30,6 +29,9 @@ class OneMonthWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.transactions_selectionnees = []
+        self.depenses = []
+        self.depenses_carte = []
+        self.depenses_virement = []
 
         # Mise en page
         self.page_layout = QVBoxLayout(self)
@@ -46,17 +48,23 @@ class OneMonthWidget(QWidget):
         # sélection de l'année
         from_2023_to_2026 = [str(i) for i in range(2020, 2031)]
         self.year_selection_list = from_2023_to_2026
+        # définition du layout des paramètres
         parameters = ParametersLayout(month_selection_list=self.month_selection_list,
                                       month_selection_default_text="11",
                                       year_selection_list=self.year_selection_list,
                                       year_selection_default_text="2023",
                                       )
+        # récupérer les différents attributs nécessaires du layout paramètres
         parameters_layout = parameters.parameters_layout
         self.month_choice = parameters.month_selection_box
         self.year_choice = parameters.year_selection_box
+        # ajouter le layout des paramètres au layout principal de la fenetre
         self.page_layout.addLayout(parameters_layout)
 
-        # ajouter le bouton pour lancer les calculs
+        """
+        Ajouter un bouton pour lancer les calculs une fois les paramètres saisis
+        par l'utilisateur
+        """
         launch_compute_button = QPushButton("Lancer les calculs")
         launch_compute_button.clicked.connect(self.lancer_calculs)
         self.page_layout.addWidget(launch_compute_button)
@@ -76,50 +84,15 @@ class OneMonthWidget(QWidget):
         leur montant associé
         et un camembert des dépenses par virement
         """
-        self.chart_layout = QHBoxLayout()
-        card_chart_layout = QVBoxLayout()
-        # camembert des dépenses par carte
-        self.pie_card_chart_view = QtCharts.QChartView()
-        self.pie_card_chart_view.setRenderHint(QPainter.Antialiasing)
-        self.card_chart = QtCharts.QChart()
-        # checkbox pour le camembert des dépenses par carte
-        self.card_checkbox = QCheckBox("Afficher la catégorie Autres", self)
-        self.card_checkbox.toggled.connect(self.card_checkbox_enclenchee)
-        card_chart_layout.addWidget(self.card_checkbox)
-        card_chart_layout.addWidget(self.pie_card_chart_view)
+        self.pie_charts = PieChartsLayout(self)
+        self.pie_charts_layout = self.pie_charts.charts_layout
 
-        bank_transfer_chart_layout = QVBoxLayout()
-        # camembert des dépenses par virement
-        self.pie_bank_transfer_chart_view = QtCharts.QChartView()
-        self.pie_bank_transfer_chart_view.setRenderHint(QPainter.Antialiasing)
-        self.bank_transfer_chart = QtCharts.QChart()
-        # checkbox pour le camembert des dépenses par virement
-        self.bank_transfer_checkbox = QCheckBox(
-            "Afficher la catégorie Autres", self)
-        self.bank_transfer_checkbox.toggled.connect(
-            self.bank_transfer_checkbox_enclenchee)
-        bank_transfer_chart_layout.addWidget(self.bank_transfer_checkbox)
-        bank_transfer_chart_layout.addWidget(self.pie_bank_transfer_chart_view)
-
-        # add widgets
-        self.chart_layout.addLayout(card_chart_layout)
-        self.chart_layout.addLayout(bank_transfer_chart_layout)
-        self.page_layout.addLayout(self.chart_layout)
+        # ajouter le layout des camemberts au layout principal de la fenetre
+        self.page_layout.addLayout(self.pie_charts_layout)
 
     """
-    Méthodes
+    Slots
     """
-
-    def update_pie_chart(self, pie_chart_view, title, condenser_value):
-        """
-        Cette méthode calcule puis affiche le camembert des dépenses
-        """
-        transactions = self.depenses_cartes if pie_chart_view == self.pie_card_chart_view \
-            else self.depenses_virement
-        self.updated_chart = ExpensesPieChart(
-            transactions, condenser_value=condenser_value).pie_chart
-        self.updated_chart.setTitle(title)
-        pie_chart_view.setChart(self.updated_chart)
 
     @Slot()
     def lancer_calculs(self):
@@ -154,41 +127,17 @@ class OneMonthWidget(QWidget):
             self.depenses, _, _ = extract_expenses_revenus_savings(
                 self.transactions_selectionnees)
             # on extrait les transactions par carte
-            self.depenses_cartes = select_transactions_by_card(self.depenses)
+            self.depenses_carte = select_transactions_by_card(self.depenses)
             # on extrait les transactions par virement
             self.depenses_virement = select_transactions_by_bank_transfer(
                 self.depenses)
 
             # calculer la somme des dépenses par carte et l'afficher
-            sum_card_expenses = compute_sum(self.depenses_cartes)
+            sum_card_expenses = compute_sum(self.depenses_carte)
             self.sum_card_expenses_label.setNum(sum_card_expenses)
             sum_bank_transfer_expenses = compute_sum(self.depenses_virement)
             self.sum_bank_transfer_expenses_label.setNum(
                 sum_bank_transfer_expenses)
 
-            # mettre à jour le camembert des dépenses par carte
-            title = global_variables.card_chart_title
-            self.update_pie_chart(
-                self.pie_card_chart_view, title, condenser_value=False)
-
-            # mettre à jour le camembert des dépenses par virement
-            title = global_variables.bank_transfer_chart_title
-            self.update_pie_chart(
-                self.pie_bank_transfer_chart_view, title, condenser_value=False)
-
-    """
-    Checkbox slots
-    """
-    @Slot()
-    def card_checkbox_enclenchee(self, checked):
-        condenser_local = True if checked else False
-        title = global_variables.card_chart_title
-        self.update_pie_chart(self.pie_card_chart_view,
-                              title, condenser_value=condenser_local)
-
-    @Slot()
-    def bank_transfer_checkbox_enclenchee(self, checked):
-        condenser_local = True if checked else False
-        title = global_variables.bank_transfer_chart_title
-        self.update_pie_chart(self.pie_bank_transfer_chart_view,
-                              title, condenser_value=condenser_local)
+            # mettre à jour les camemberts de dépenses par carte et par virement
+            self.pie_charts.update_pie_charts(common_condenser_value=False)
