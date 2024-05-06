@@ -40,19 +40,18 @@ class ChoiceBankWidget(QWidget):
 
 class ParametersLayout(QLayout):
     """
-    Ce widget permet à l'utilisateur de sélectionner
-    les paramètres de calcul : 
-        - le mois sur lequel faire l'analyse et
-        - la ou les banque(s) sélectionnée(s)
+    Cette classe définit un layout permettant à l'utilisateur de saisir
+    les paramètres du calcul
     """
 
-    def __init__(self, month_selection_list, month_selection_default_text,
-                 year_selection_list, year_selection_default_text):
+    def __init__(self, month_selection_parameters, year_selection_parameters):
         super().__init__()
 
         self.parameters_layout = QHBoxLayout()
         # définir le widget de sélection de la période en mois
-        month_selection_title = "Mois sélectionné :"
+        month_selection_title = month_selection_parameters.title
+        month_selection_list = month_selection_parameters.list
+        month_selection_default_text = month_selection_parameters.default_text
         month_selection = ParameterSelection(month_selection_title,
                                              month_selection_list,
                                              month_selection_default_text)
@@ -61,7 +60,10 @@ class ParametersLayout(QLayout):
         self.parameters_layout.addLayout(month_selection_layout)
 
         # définir le widget de sélection de la période en année
-        year_selection = ParameterSelection("/",
+        year_selection_title = year_selection_parameters.title
+        year_selection_list = year_selection_parameters.list
+        year_selection_default_text = year_selection_parameters.default_text
+        year_selection = ParameterSelection(year_selection_title,
                                             year_selection_list,
                                             year_selection_default_text)
         self.year_selection_box = year_selection.parameter_selection
