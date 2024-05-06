@@ -31,12 +31,7 @@ class LaunchComputeButton(QPushButton):
         self.depenses_carte, self.depenses_virement = [], []
 
         self.launch_compute_button = QPushButton("Lancer les calculs")
-        # self.launch_compute_button.clicked.connect(self.lancer_calculs)
-        self.launch_compute_button.clicked.connect(self.test)
-
-    @Slot()
-    def test(self):
-        print("hello")
+        self.launch_compute_button.clicked.connect(self.lancer_calculs)
 
     """
     Slot du bouton de lancement des calculs

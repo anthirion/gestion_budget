@@ -54,8 +54,8 @@ class OneMonthWidget(QWidget):
         # sélection du mois
         from_one_to_twelve_strings = [str(i) for i in range(1, 13)]
         self.month_selection_title = "Mois sélectionné :"
-        self.month_selection_default_text = "11"
         self.month_selection_list = from_one_to_twelve_strings
+        self.month_selection_default_text = "11"
 
         month_selection_parameters = parameters_tuple(self.month_selection_title,
                                                       self.month_selection_list,
@@ -64,8 +64,8 @@ class OneMonthWidget(QWidget):
         # sélection de l'année
         from_2023_to_2026 = [str(i) for i in range(2020, 2031)]
         self.year_selection_title = "/"
-        self.year_selection_default_text = "2023"
         self.year_selection_list = from_2023_to_2026
+        self.year_selection_default_text = "2023"
         year_selection_parameters = parameters_tuple(self.year_selection_title,
                                                      self.year_selection_list,
                                                      self.year_selection_default_text,

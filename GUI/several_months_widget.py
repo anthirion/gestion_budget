@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import (
-    QLabel, QWidget, QComboBox, QPushButton,
-    QVBoxLayout, QHBoxLayout, QMessageBox
+    QLabel, QWidget, QPushButton,
+    QVBoxLayout, QMessageBox
 )
 from PySide6.QtCore import Qt, Slot
 
@@ -10,12 +10,21 @@ from Backend.select_transactions import (
     select_transactions_of_several_months,
     extract_expenses_revenus_savings
 )
-from GUI.parameters_layout import ChoiceBankWidget
 import GUI.bar_chart as bar_chart
 import global_variables
 from GUI.source_of_truth import (
     get_source_of_truth
 )
+
+from GUI.parameters_layout import ParametersLayout
+from collections import namedtuple
+
+# namedtuple permettant d'enregistrer plusieurs paramètres
+parameters_tuple = namedtuple("parameters_tuple",
+                              ["title",
+                               "list",
+                               "default_text"]
+                              )
 
 
 class SeveralMonthsWidget(QWidget):
@@ -37,37 +46,47 @@ class SeveralMonthsWidget(QWidget):
             - la période sur laquelle faire l'analyse et
             - la ou les banque(s) sélectionnée(s)
         """
-        parameters_layout = QHBoxLayout()
-        parameters_layout.addWidget(QLabel("Période :"))
         # sélectionner la période en mois
-        self.month_selection = QComboBox()
         from_one_to_eleven_strings = [str(i) for i in range(1, 12)]
-        self.month_selection.insertItems(0, from_one_to_eleven_strings)
-        # définir la période par défaut à 5 mois
-        self.month_selection.setCurrentText("5")
-        parameters_layout.addWidget(self.month_selection)
-        parameters_layout.addWidget(QLabel("mois"))
-        # periode en années
-        parameters_layout.addWidget(QLabel("et"))
-        self.year_selection = QComboBox()
-        zero_to_ten_strings = [str(i) for i in range(11)]
-        self.year_selection.insertItems(0, zero_to_ten_strings)
-        parameters_layout.addWidget(self.year_selection)
-        parameters_layout.addWidget(QLabel("années"))
+        self.month_period_title = "Période :"
+        self.month_period_list = from_one_to_eleven_strings
+        self.month_period_default_text = "5"
 
-        # sélectionner la banque
-        choice_bank_widget = ChoiceBankWidget()
-        label = choice_bank_widget.label
-        bank_choice = choice_bank_widget.bank_choice_combobox
-        parameters_layout.addWidget(label)
-        parameters_layout.addWidget(bank_choice)
+        month_period_parameters = parameters_tuple(self.month_period_title,
+                                                   self.month_period_list,
+                                                   self.month_period_default_text,
+                                                   )
+
+        # sélectionner la periode en années
+        zero_to_ten_strings = [str(i) for i in range(11)]
+        self.year_period_title = "et"
+        self.year_period_list = zero_to_ten_strings
+        self.year_period_default_text = "0"
+
+        year_period_parameters = parameters_tuple(self.year_period_title,
+                                                  self.year_period_list,
+                                                  self.year_period_default_text,
+                                                  )
+
+        # définition du layout des paramètres
+        parameters = ParametersLayout(month_period_parameters,
+                                      year_period_parameters,
+                                      additional_texts=("mois", "annee(s)")
+                                      )
+        # récupérer les différents attributs nécessaires du layout paramètres
+        parameters_layout = parameters.parameters_layout
+        self.month_choice = parameters.month_selection_box
+        self.year_choice = parameters.year_selection_box
+        # ajouter le layout des paramètres au layout principal de la fenetre
+        self.page_layout.addLayout(parameters_layout)
 
         """
-        Ajouter un bouton qui permet à l'utilisateur de lancer le calcul
-        à partir des paramètres définis plus haut
+        Ajouter un bouton pour lancer les calculs une fois les paramètres saisis
+        par l'utilisateur
         """
         launch_compute_button = QPushButton("Lancer les calculs")
         launch_compute_button.clicked.connect(self.lancer_calculs)
+        self.page_layout.addWidget(launch_compute_button)
 
         """"
         Afficher la somme des dépenses et des revenus sur la période sélectionnée
@@ -83,7 +102,6 @@ class SeveralMonthsWidget(QWidget):
         """
         self.bar_chart = QWidget()
 
-        self.page_layout.addLayout(parameters_layout)
         self.page_layout.addWidget(launch_compute_button)
         self.page_layout.addWidget(self.bar_chart)
 
@@ -122,8 +140,8 @@ class SeveralMonthsWidget(QWidget):
             # on retire la première ligne qui correspond aux colonnes
             # et la dernière transaction qui est vide
             transactions = transactions[1:-1]
-            nb_month = int(self.month_selection.currentText())
-            nb_year = int(self.year_selection.currentText())
+            nb_month = int(self.month_choice.currentText())
+            nb_year = int(self.year_choice.currentText())
             self.transactions_selectionnees = select_transactions_of_several_months(transactions,
                                                                                     n_month=nb_month,
                                                                                     n_year=nb_year)
