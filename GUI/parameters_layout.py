@@ -14,7 +14,7 @@ class ParameterSelection(QLayout):
     Cette classe est une classe ABSTRAITE
     """
 
-    def __init__(self, title, selection_list, default_text):
+    def __init__(self, title, selection_list, default_text, additional_text):
         super().__init__()
 
         self.parameter_selection_layout = QHBoxLayout()
@@ -24,10 +24,12 @@ class ParameterSelection(QLayout):
         self.parameter_selection = QComboBox()
         self.parameter_selection.insertItems(0, selection_list)
         self.parameter_selection.setCurrentText(default_text)
+        additional_text_label = QLabel(additional_text)
 
         # ajout des widgets précédents au layout
         self.parameter_selection_layout.addWidget(title_widget)
         self.parameter_selection_layout.addWidget(self.parameter_selection)
+        self.parameter_selection_layout.addWidget(additional_text_label)
 
 
 class ChoiceBankWidget(QWidget):
@@ -44,28 +46,32 @@ class ParametersLayout(QLayout):
     les paramètres du calcul
     """
 
-    def __init__(self, month_selection_parameters, year_selection_parameters):
+    def __init__(self, first_selection_parameters, second_selection_parameters, additional_texts=("", "")):
         super().__init__()
 
         self.parameters_layout = QHBoxLayout()
         # définir le widget de sélection de la période en mois
-        month_selection_title = month_selection_parameters.title
-        month_selection_list = month_selection_parameters.list
-        month_selection_default_text = month_selection_parameters.default_text
+        month_selection_title = first_selection_parameters.title
+        month_selection_list = first_selection_parameters.list
+        month_selection_default_text = first_selection_parameters.default_text
         month_selection = ParameterSelection(month_selection_title,
                                              month_selection_list,
-                                             month_selection_default_text)
+                                             month_selection_default_text,
+                                             additional_texts[0],
+                                             )
         self.month_selection_box = month_selection.parameter_selection
         month_selection_layout = month_selection.parameter_selection_layout
         self.parameters_layout.addLayout(month_selection_layout)
 
         # définir le widget de sélection de la période en année
-        year_selection_title = year_selection_parameters.title
-        year_selection_list = year_selection_parameters.list
-        year_selection_default_text = year_selection_parameters.default_text
+        year_selection_title = second_selection_parameters.title
+        year_selection_list = second_selection_parameters.list
+        year_selection_default_text = second_selection_parameters.default_text
         year_selection = ParameterSelection(year_selection_title,
                                             year_selection_list,
-                                            year_selection_default_text)
+                                            year_selection_default_text,
+                                            additional_texts[1],
+                                            )
         self.year_selection_box = year_selection.parameter_selection
         year_selection_layout = year_selection.parameter_selection_layout
         self.parameters_layout.addLayout(year_selection_layout)
