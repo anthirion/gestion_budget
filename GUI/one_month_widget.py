@@ -11,7 +11,7 @@ import global_variables
 from GUI.parameters_layout import ParametersLayout
 from GUI.sums_layout import SumsLayout
 from GUI.chart_layouts import PieChartsLayout
-from GUI.launch_compute_button import LaunchComputeButton
+from collections import namedtuple
 
 from Backend.transactions_statistics import compute_sum
 from Backend.select_transactions import (
@@ -23,6 +23,13 @@ from Backend.select_transactions import (
 from GUI.source_of_truth import (
     get_source_of_truth
 )
+
+# namedtuple permettant d'enregistrer plusieurs paramètres
+parameters_tuple = namedtuple("parameters_tuple",
+                              ["title",
+                               "list",
+                               "default_text"]
+                              )
 
 
 class OneMonthWidget(QWidget):
@@ -39,20 +46,33 @@ class OneMonthWidget(QWidget):
         self.page_layout.setSpacing(20)
 
         """
-        Ajouter un layout permettant à l'utilisateur de saisir les paramètres
-        du calcul
+        Ce widget permet à l'utilisateur de sélectionner
+        les paramètres de calcul : 
+            - le mois sur lequel faire l'analyse et
+            - la ou les banque(s) sélectionnée(s)
         """
         # sélection du mois
         from_one_to_twelve_strings = [str(i) for i in range(1, 13)]
+        self.month_selection_title = "Mois sélectionné :"
+        self.month_selection_default_text = "11"
         self.month_selection_list = from_one_to_twelve_strings
+
+        month_selection_parameters = parameters_tuple(self.month_selection_title,
+                                                      self.month_selection_list,
+                                                      self.month_selection_default_text,
+                                                      )
         # sélection de l'année
         from_2023_to_2026 = [str(i) for i in range(2020, 2031)]
+        self.year_selection_title = "/"
+        self.year_selection_default_text = "2023"
         self.year_selection_list = from_2023_to_2026
+        year_selection_parameters = parameters_tuple(self.year_selection_title,
+                                                     self.year_selection_list,
+                                                     self.year_selection_default_text,
+                                                     )
         # définition du layout des paramètres
-        parameters = ParametersLayout(month_selection_list=self.month_selection_list,
-                                      month_selection_default_text="11",
-                                      year_selection_list=self.year_selection_list,
-                                      year_selection_default_text="2023",
+        parameters = ParametersLayout(month_selection_parameters,
+                                      year_selection_parameters,
                                       )
         # récupérer les différents attributs nécessaires du layout paramètres
         parameters_layout = parameters.parameters_layout
@@ -91,7 +111,7 @@ class OneMonthWidget(QWidget):
         self.page_layout.addLayout(self.pie_charts_layout)
 
     """
-    Slots
+    Slot du bouton de lancement des calculs
     """
 
     @Slot()

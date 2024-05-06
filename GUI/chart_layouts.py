@@ -67,7 +67,7 @@ class ChartLayout(QLayout):
     Checkbox slot
     """
 
-    @ Slot()
+    @Slot()
     def checkbox_enclenchee(self, checked):
         condenser_local = True if checked else False
         self.update_pie_chart(condenser_value=condenser_local)
