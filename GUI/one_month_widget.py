@@ -1,35 +1,37 @@
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout,
-    QCheckBox, QPushButton, QMessageBox
+    QWidget, QVBoxLayout, QPushButton,
 )
-from PySide6.QtGui import QPainter
-from PySide6 import QtCharts
 from PySide6.QtCore import Slot
-from pathlib import Path
-import global_variables
-from GUI.pie_chart import ExpensesPieChart
+
 from GUI.parameters_layout import ParametersLayout
 from GUI.sums_layout import SumsLayout
-from GUI.chart_layouts import PieChartLayout
-from GUI.launch_compute_button import LaunchComputeButton
+from GUI.chart_layouts import PieChartsLayout
+from collections import namedtuple
 
-import global_variables
 from Backend.transactions_statistics import compute_sum
 from Backend.select_transactions import (
-    select_transactions_of_one_month,
     select_transactions_by_card,
     select_transactions_by_bank_transfer,
     extract_expenses_revenus_savings
 )
-from GUI.source_of_truth import (
-    get_source_of_truth
-)
+from GUI.launch_compute import select_transactions
+from Backend.select_transactions import select_transactions_of_one_month
+
+# namedtuple permettant d'enregistrer plusieurs paramètres
+parameters_tuple = namedtuple("parameters_tuple",
+                              ["title",
+                               "list",
+                               "default_text"]
+                              )
 
 
 class OneMonthWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.transactions_selectionnees = []
+        self.depenses = []
+        self.depenses_carte = []
+        self.depenses_virement = []
 
         # Mise en page
         self.page_layout = QVBoxLayout(self)
@@ -37,26 +39,45 @@ class OneMonthWidget(QWidget):
         self.page_layout.setSpacing(20)
 
         """
-        Ajouter un layout permettant à l'utilisateur de saisir les paramètres
-        du calcul
+        Ce widget permet à l'utilisateur de sélectionner
+        les paramètres de calcul : 
+            - le mois sur lequel faire l'analyse et
+            - la ou les banque(s) sélectionnée(s)
         """
         # sélection du mois
         from_one_to_twelve_strings = [str(i) for i in range(1, 13)]
+        self.month_selection_title = "Mois sélectionné :"
         self.month_selection_list = from_one_to_twelve_strings
+        self.month_selection_default_text = "11"
+
+        month_selection_parameters = parameters_tuple(self.month_selection_title,
+                                                      self.month_selection_list,
+                                                      self.month_selection_default_text,
+                                                      )
         # sélection de l'année
         from_2023_to_2026 = [str(i) for i in range(2020, 2031)]
+        self.year_selection_title = "/"
         self.year_selection_list = from_2023_to_2026
-        parameters = ParametersLayout(month_selection_list=self.month_selection_list,
-                                      month_selection_default_text="11",
-                                      year_selection_list=self.year_selection_list,
-                                      year_selection_default_text="2023",
+        self.year_selection_default_text = "2023"
+        year_selection_parameters = parameters_tuple(self.year_selection_title,
+                                                     self.year_selection_list,
+                                                     self.year_selection_default_text,
+                                                     )
+        # définition du layout des paramètres
+        parameters = ParametersLayout(month_selection_parameters,
+                                      year_selection_parameters,
                                       )
+        # récupérer les différents attributs nécessaires du layout paramètres
         parameters_layout = parameters.parameters_layout
         self.month_choice = parameters.month_selection_box
         self.year_choice = parameters.year_selection_box
+        # ajouter le layout des paramètres au layout principal de la fenetre
         self.page_layout.addLayout(parameters_layout)
 
-        # ajouter le bouton pour lancer les calculs
+        """
+        Ajouter un bouton pour lancer les calculs une fois les paramètres saisis
+        par l'utilisateur
+        """
         launch_compute_button = QPushButton("Lancer les calculs")
         launch_compute_button.clicked.connect(self.lancer_calculs)
         self.page_layout.addWidget(launch_compute_button)
@@ -76,50 +97,15 @@ class OneMonthWidget(QWidget):
         leur montant associé
         et un camembert des dépenses par virement
         """
-        self.chart_layout = QHBoxLayout()
-        card_chart_layout = QVBoxLayout()
-        # camembert des dépenses par carte
-        self.pie_card_chart_view = QtCharts.QChartView()
-        self.pie_card_chart_view.setRenderHint(QPainter.Antialiasing)
-        self.card_chart = QtCharts.QChart()
-        # checkbox pour le camembert des dépenses par carte
-        self.card_checkbox = QCheckBox("Afficher la catégorie Autres", self)
-        self.card_checkbox.toggled.connect(self.card_checkbox_enclenchee)
-        card_chart_layout.addWidget(self.card_checkbox)
-        card_chart_layout.addWidget(self.pie_card_chart_view)
+        self.pie_charts = PieChartsLayout(self)
+        self.pie_charts_layout = self.pie_charts.charts_layout
 
-        bank_transfer_chart_layout = QVBoxLayout()
-        # camembert des dépenses par virement
-        self.pie_bank_transfer_chart_view = QtCharts.QChartView()
-        self.pie_bank_transfer_chart_view.setRenderHint(QPainter.Antialiasing)
-        self.bank_transfer_chart = QtCharts.QChart()
-        # checkbox pour le camembert des dépenses par virement
-        self.bank_transfer_checkbox = QCheckBox(
-            "Afficher la catégorie Autres", self)
-        self.bank_transfer_checkbox.toggled.connect(
-            self.bank_transfer_checkbox_enclenchee)
-        bank_transfer_chart_layout.addWidget(self.bank_transfer_checkbox)
-        bank_transfer_chart_layout.addWidget(self.pie_bank_transfer_chart_view)
-
-        # add widgets
-        self.chart_layout.addLayout(card_chart_layout)
-        self.chart_layout.addLayout(bank_transfer_chart_layout)
-        self.page_layout.addLayout(self.chart_layout)
+        # ajouter le layout des camemberts au layout principal de la fenetre
+        self.page_layout.addLayout(self.pie_charts_layout)
 
     """
-    Méthodes
+    Slot du bouton de lancement des calculs
     """
-
-    def update_pie_chart(self, pie_chart_view, title, condenser_value):
-        """
-        Cette méthode calcule puis affiche le camembert des dépenses
-        """
-        transactions = self.depenses_cartes if pie_chart_view == self.pie_card_chart_view \
-            else self.depenses_virement
-        self.updated_chart = ExpensesPieChart(
-            transactions, condenser_value=condenser_value).pie_chart
-        self.updated_chart.setTitle(title)
-        pie_chart_view.setChart(self.updated_chart)
 
     @Slot()
     def lancer_calculs(self):
@@ -128,67 +114,30 @@ class OneMonthWidget(QWidget):
         à condition d'avoir la source de vérité
         En absence de source de vérité, afficher un message et ne rien faire
         """
-        # recherche de la source de vérité
-        global_variables.source_of_truth = get_source_of_truth(self)
-        if global_variables.source_of_truth:
-            source_of_truth_path = Path(global_variables.source_of_truth)
-            # sélectionner les transactions souhaitées par l'utilisateur
-            transactions = source_of_truth_path.read_text(encoding="utf-8-sig")
-            # on split le fichier par transaction
-            transactions = transactions.split("\n")
-            # on retire la première ligne qui correspond aux noms des colonnes
-            # et la dernière transaction qui est vide
-            transactions = transactions[1:-1]
-            selected_month = int(self.month_choice.currentText())
-            selected_year = int(self.year_choice.currentText())
-            self.transactions_selectionnees = select_transactions_of_one_month(transactions,
-                                                                               n_month=selected_month,
-                                                                               n_year=selected_year)
-            if not self.transactions_selectionnees:
-                # pas de transaction sélectionnée
-                # afficher un message à l'utilisateur
-                QMessageBox.warning(self, "Avertissement",
-                                    global_variables.no_transaction_found_msg)
+        # sélection des transactions
+        parameters = namedtuple("parameters",
+                                ["month_choice",
+                                 "year_choice"])
+        compute_parameters = parameters(self.month_choice, self.year_choice)
+        source_of_truth_found, self.transactions_selectionnees = select_transactions(
+            compute_parameters, self, select_transactions_of_one_month)
 
+        if source_of_truth_found:
             # on ne sélectionne que les dépenses pour tracer les graphes
             self.depenses, _, _ = extract_expenses_revenus_savings(
                 self.transactions_selectionnees)
             # on extrait les transactions par carte
-            self.depenses_cartes = select_transactions_by_card(self.depenses)
+            self.depenses_carte = select_transactions_by_card(self.depenses)
             # on extrait les transactions par virement
             self.depenses_virement = select_transactions_by_bank_transfer(
                 self.depenses)
 
             # calculer la somme des dépenses par carte et l'afficher
-            sum_card_expenses = compute_sum(self.depenses_cartes)
+            sum_card_expenses = compute_sum(self.depenses_carte)
             self.sum_card_expenses_label.setNum(sum_card_expenses)
             sum_bank_transfer_expenses = compute_sum(self.depenses_virement)
             self.sum_bank_transfer_expenses_label.setNum(
                 sum_bank_transfer_expenses)
 
-            # mettre à jour le camembert des dépenses par carte
-            title = global_variables.card_chart_title
-            self.update_pie_chart(
-                self.pie_card_chart_view, title, condenser_value=False)
-
-            # mettre à jour le camembert des dépenses par virement
-            title = global_variables.bank_transfer_chart_title
-            self.update_pie_chart(
-                self.pie_bank_transfer_chart_view, title, condenser_value=False)
-
-    """
-    Checkbox slots
-    """
-    @Slot()
-    def card_checkbox_enclenchee(self, checked):
-        condenser_local = True if checked else False
-        title = global_variables.card_chart_title
-        self.update_pie_chart(self.pie_card_chart_view,
-                              title, condenser_value=condenser_local)
-
-    @Slot()
-    def bank_transfer_checkbox_enclenchee(self, checked):
-        condenser_local = True if checked else False
-        title = global_variables.bank_transfer_chart_title
-        self.update_pie_chart(self.pie_bank_transfer_chart_view,
-                              title, condenser_value=condenser_local)
+            # mettre à jour les camemberts de dépenses par carte et par virement
+            self.pie_charts.update_pie_charts(common_condenser_value=False)
