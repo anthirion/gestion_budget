@@ -1,12 +1,7 @@
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout,
-    QCheckBox, QPushButton, QMessageBox
+    QWidget, QVBoxLayout, QPushButton,
 )
-from PySide6.QtGui import QPainter
-from PySide6 import QtCharts
 from PySide6.QtCore import Slot
-from pathlib import Path
-import global_variables
 
 from GUI.parameters_layout import ParametersLayout
 from GUI.sums_layout import SumsLayout
@@ -15,14 +10,12 @@ from collections import namedtuple
 
 from Backend.transactions_statistics import compute_sum
 from Backend.select_transactions import (
-    select_transactions_of_one_month,
     select_transactions_by_card,
     select_transactions_by_bank_transfer,
     extract_expenses_revenus_savings
 )
-from GUI.source_of_truth import (
-    get_source_of_truth
-)
+from GUI.launch_compute import select_transactions
+from Backend.select_transactions import select_transactions_of_one_month
 
 # namedtuple permettant d'enregistrer plusieurs paramètres
 parameters_tuple = namedtuple("parameters_tuple",
@@ -121,28 +114,15 @@ class OneMonthWidget(QWidget):
         à condition d'avoir la source de vérité
         En absence de source de vérité, afficher un message et ne rien faire
         """
-        # recherche de la source de vérité
-        global_variables.source_of_truth = get_source_of_truth(self)
-        if global_variables.source_of_truth:
-            source_of_truth_path = Path(global_variables.source_of_truth)
-            # sélectionner les transactions souhaitées par l'utilisateur
-            transactions = source_of_truth_path.read_text(encoding="utf-8-sig")
-            # on split le fichier par transaction
-            transactions = transactions.split("\n")
-            # on retire la première ligne qui correspond aux noms des colonnes
-            # et la dernière transaction qui est vide
-            transactions = transactions[1:-1]
-            selected_month = int(self.month_choice.currentText())
-            selected_year = int(self.year_choice.currentText())
-            self.transactions_selectionnees = select_transactions_of_one_month(transactions,
-                                                                               n_month=selected_month,
-                                                                               n_year=selected_year)
-            if not self.transactions_selectionnees:
-                # pas de transaction sélectionnée
-                # afficher un message à l'utilisateur
-                QMessageBox.warning(self, "Avertissement",
-                                    global_variables.no_transaction_found_msg)
+        # sélection des transactions
+        parameters = namedtuple("parameters",
+                                ["month_choice",
+                                 "year_choice"])
+        compute_parameters = parameters(self.month_choice, self.year_choice)
+        source_of_truth_found, self.transactions_selectionnees = select_transactions(
+            compute_parameters, self, select_transactions_of_one_month)
 
+        if source_of_truth_found:
             # on ne sélectionne que les dépenses pour tracer les graphes
             self.depenses, _, _ = extract_expenses_revenus_savings(
                 self.transactions_selectionnees)
