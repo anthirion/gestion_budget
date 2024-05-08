@@ -1,7 +1,4 @@
-import global_variables
-
 from PySide6 import QtCharts
-from PySide6 import QtGui
 
 import Backend.camembert
 

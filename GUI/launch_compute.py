@@ -1,5 +1,5 @@
-from PySide6.QtWidgets import QMessageBox
 from pathlib import Path
+from PySide6.QtWidgets import QMessageBox
 
 import global_variables
 from GUI.source_of_truth import (
