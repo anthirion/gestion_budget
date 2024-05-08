@@ -93,12 +93,14 @@ class OneMonthWidget(QWidget):
         self.page_layout.addLayout(sums_layout)
 
         """
-        Afficher un camembert des dépenses par cartes avec les catégories de dépenses et
+        Afficher un camembert des dépenses par carte avec les catégories de dépenses et
         leur montant associé
         et un camembert des dépenses par virement
         """
         self.pie_charts = PieChartsLayout(self)
         self.pie_charts_layout = self.pie_charts.charts_layout
+        self.card_expenses_checkbox = self.pie_charts.card_expenses_checkbox
+        self.bank_transfer_expenses_checkbox = self.pie_charts.bank_transfer_expenses_checkbox
 
         # ajouter le layout des camemberts au layout principal de la fenetre
         self.page_layout.addLayout(self.pie_charts_layout)
@@ -115,12 +117,13 @@ class OneMonthWidget(QWidget):
         En absence de source de vérité, afficher un message et ne rien faire
         """
         # sélection des transactions
-        parameters = namedtuple("parameters",
-                                ["month_choice",
-                                 "year_choice"])
-        compute_parameters = parameters(self.month_choice, self.year_choice)
+        period_selection = namedtuple("period_selection",
+                                      ["month_choice",
+                                       "year_choice"])
+        period_parameters = period_selection(self.month_choice,
+                                             self.year_choice)
         source_of_truth_found, self.transactions_selectionnees = select_transactions(
-            compute_parameters, self, select_transactions_of_one_month)
+            period_parameters, self, select_transactions_of_one_month)
 
         if source_of_truth_found:
             # on ne sélectionne que les dépenses pour tracer les graphes
@@ -134,10 +137,14 @@ class OneMonthWidget(QWidget):
 
             # calculer la somme des dépenses par carte et l'afficher
             sum_card_expenses = compute_sum(self.depenses_carte)
-            self.sum_card_expenses_label.setNum(sum_card_expenses)
             sum_bank_transfer_expenses = compute_sum(self.depenses_virement)
+            self.sum_card_expenses_label.setNum(sum_card_expenses)
             self.sum_bank_transfer_expenses_label.setNum(
                 sum_bank_transfer_expenses)
+
+            # décocher les checkbox associées à chaque graphe
+            for checkbox in (self.card_expenses_checkbox, self.bank_transfer_expenses_checkbox):
+                checkbox.setChecked(False)
 
             # mettre à jour les camemberts de dépenses par carte et par virement
             self.pie_charts.update_pie_charts(common_condenser_value=False)

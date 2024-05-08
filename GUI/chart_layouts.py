@@ -30,11 +30,11 @@ class ChartLayout(QLayout):
         self.chart_view_ = QtCharts.QChartView()
         self.chart_view_.setRenderHint(QPainter.Antialiasing)
         # définir le widget correspondant à la checkbox
-        checkbox = QCheckBox("Afficher la catégorie Autres")
-        checkbox.toggled.connect(self.checkbox_enclenchee)
+        self.checkbox = QCheckBox("Afficher la catégorie Autres")
+        self.checkbox.toggled.connect(self.checkbox_enclenchee)
 
         # ajouter les widgets précédents au layout
-        self.chart_layout.addWidget(checkbox)
+        self.chart_layout.addWidget(self.checkbox)
         self.chart_layout.addWidget(self.chart_view_)
 
     """
@@ -91,12 +91,14 @@ class PieChartsLayout(QLayout):
                                                 card_chart=True,
                                                 )
         self.card_expenses_chart_layout_ = self.card_expenses_chart_.chart_layout
+        self.card_expenses_checkbox = self.card_expenses_chart_.checkbox
         # camembert des dépenses par virement
         self.bank_transfer_expenses_chart_ = ChartLayout(global_variables.bank_transfer_chart_title,
                                                          one_month_widget,
                                                          card_chart=False,
                                                          )
         self.bank_transfer_expenses_chart_layout_ = self.bank_transfer_expenses_chart_.chart_layout
+        self.bank_transfer_expenses_checkbox = self.bank_transfer_expenses_chart_.checkbox
 
         # ajouter les 2 layouts au layout principal
         self.charts_layout.addLayout(self.card_expenses_chart_layout_)
