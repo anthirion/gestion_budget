@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QPushButton,
 )
@@ -6,7 +8,7 @@ from PySide6.QtCore import Slot
 from GUI.parameters_layout import ParametersLayout
 from GUI.sums_layout import SumsLayout
 from GUI.chart_layouts import PieChartsLayout
-from collections import namedtuple
+from GUI.launch_compute import select_transactions
 
 from Backend.transactions_statistics import compute_sum
 from Backend.select_transactions import (
@@ -14,7 +16,6 @@ from Backend.select_transactions import (
     select_transactions_by_bank_transfer,
     extract_expenses_revenus_savings
 )
-from GUI.launch_compute import select_transactions
 from Backend.select_transactions import select_transactions_of_one_month
 
 # namedtuple permettant d'enregistrer plusieurs paramètres
@@ -26,6 +27,11 @@ parameters_tuple = namedtuple("parameters_tuple",
 
 
 class OneMonthWidget(QWidget):
+    """
+    Cette classe construit le widget affichant les dépenses mensuelles
+    par carte et virement en fonction des catégories de dépenses
+    """
+
     def __init__(self):
         super().__init__()
         self.transactions_selectionnees = []
@@ -40,7 +46,7 @@ class OneMonthWidget(QWidget):
 
         """
         Ce widget permet à l'utilisateur de sélectionner
-        les paramètres de calcul : 
+        les paramètres de calcul:
             - le mois sur lequel faire l'analyse et
             - la ou les banque(s) sélectionnée(s)
         """
@@ -75,8 +81,8 @@ class OneMonthWidget(QWidget):
         self.page_layout.addLayout(parameters_layout)
 
         """
-        Ajouter un bouton pour lancer les calculs une fois les paramètres saisis
-        par l'utilisateur
+        Ajouter un bouton pour lancer les calculs une fois les paramètres
+        saisis par l'utilisateur
         """
         launch_compute_button = QPushButton("Lancer les calculs")
         launch_compute_button.clicked.connect(self.lancer_calculs)
@@ -93,9 +99,9 @@ class OneMonthWidget(QWidget):
         self.page_layout.addLayout(sums_layout)
 
         """
-        Afficher un camembert des dépenses par carte avec les catégories de dépenses et
-        leur montant associé
-        et un camembert des dépenses par virement
+        Afficher un camembert des dépenses par carte avec les catégories de
+        dépenses et leur montant associé et un camembert des dépenses
+        par virement
         """
         self.pie_charts = PieChartsLayout(self)
         self.pie_charts_layout = self.pie_charts.charts_layout
@@ -113,7 +119,7 @@ class OneMonthWidget(QWidget):
     def lancer_calculs(self):
         """
         Cette méthode lance les calculs lors de l'appui sur le bouton
-        à condition d'avoir la source de vérité
+        à condition d'avoir la source de vérité.
         En absence de source de vérité, afficher un message et ne rien faire
         """
         # sélection des transactions
@@ -122,8 +128,9 @@ class OneMonthWidget(QWidget):
                                        "year_choice"])
         period_parameters = period_selection(self.month_choice,
                                              self.year_choice)
-        source_of_truth_found, self.transactions_selectionnees = select_transactions(
-            period_parameters, self, select_transactions_of_one_month)
+        source_of_truth_found, self.transactions_selectionnees = \
+            select_transactions(period_parameters, self,
+                                select_transactions_of_one_month)
 
         if source_of_truth_found:
             # on ne sélectionne que les dépenses pour tracer les graphes
@@ -143,8 +150,9 @@ class OneMonthWidget(QWidget):
                 sum_bank_transfer_expenses)
 
             # décocher les checkbox associées à chaque graphe
-            for checkbox in (self.card_expenses_checkbox, self.bank_transfer_expenses_checkbox):
+            for checkbox in (self.card_expenses_checkbox,
+                             self.bank_transfer_expenses_checkbox):
                 checkbox.setChecked(False)
 
-            # mettre à jour les camemberts de dépenses par carte et par virement
+            # mettre à jour les camemberts de dépenses par carte et virement
             self.pie_charts.update_pie_charts(common_condenser_value=False)

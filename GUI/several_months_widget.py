@@ -1,19 +1,20 @@
+from collections import namedtuple
+
 from PySide6.QtWidgets import (
     QLabel, QWidget, QPushButton,
-    QVBoxLayout, QMessageBox
+    QVBoxLayout
 )
 from PySide6.QtCore import Qt, Slot
 
-from pathlib import Path
-from Backend.transactions_statistics import compute_sum
 
 import GUI.bar_chart as bar_chart
 
+from Backend.transactions_statistics import compute_sum
 from Backend.select_transactions import extract_expenses_revenus_savings
 from Backend.select_transactions import select_transactions_of_several_months
+
 from GUI.launch_compute import select_transactions
 from GUI.parameters_layout import ParametersLayout
-from collections import namedtuple
 
 # namedtuple permettant d'enregistrer plusieurs paramètres
 parameters_tuple = namedtuple("parameters_tuple",
@@ -24,6 +25,11 @@ parameters_tuple = namedtuple("parameters_tuple",
 
 
 class SeveralMonthsWidget(QWidget):
+    """
+    Cette classe construit le widget affichant les sommes des dépenses, revenus et
+    de l'épargne sur plusieurs mois
+    """
+
     def __init__(self):
         super().__init__()
         self.transactions_selectionnees = []
@@ -38,7 +44,7 @@ class SeveralMonthsWidget(QWidget):
 
         """
         Le premier widget permet à l'utilisateur de sélectionner
-        les paramètres de calcul : 
+        les paramètres de calcul:
             - la période sur laquelle faire l'analyse et
             - la ou les banque(s) sélectionnée(s)
         """

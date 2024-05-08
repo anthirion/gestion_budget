@@ -8,6 +8,9 @@ from PySide6.QtWidgets import (
 
 
 class MainWindow(QMainWindow):
+    """
+    Cette classe définit la fenêtre principale de l'app
+    """
 
     def __init__(self):
         try:

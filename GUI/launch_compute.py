@@ -1,5 +1,5 @@
-from PySide6.QtWidgets import QMessageBox
 from pathlib import Path
+from PySide6.QtWidgets import QMessageBox
 
 import global_variables
 from GUI.source_of_truth import (
@@ -12,7 +12,8 @@ def select_transactions(parameters, widget, select_function):
     Cette fonction sélectionne les transactions de la source de vérité
     en fonction des paramètres saisis par l'utilisateur
     Elle retourne 1 si la source de vérité a été trouvée, 0 sinon
-    @parameter parameters: les paramètres servant à sélectionner les transactions
+    @parameter parameters: les paramètres servant à sélectionner
+                            les transactions
     @parameter widget: widget où afficher les messages d'avertissement
     @parameter select_function: fonction à utiliser pour sélectionner
                                 les transactions
