@@ -1,8 +1,18 @@
 from PySide6.QtWidgets import QMessageBox
 import global_variables
+from pathlib import Path
 
-save_file_path = global_variables.save_file
+save_file = global_variables.save_file
 
+def check_save_file_exists(filename):
+    """
+    Vérifie que le fichier spécifié pour enregistrer la source
+    de vérité existe
+    Sinon, le créer avec un contenu vide
+    """
+    path = Path(filename)
+    if not path.exists():
+        open(filename, mode="x", encoding="utf-8-sig")
 
 def get_source_of_truth(widget):
     """
@@ -11,7 +21,8 @@ def get_source_of_truth(widget):
     """
     # lire le contenu du fichier de sauvegarde et récupérer la valeur de la variable
     # source_of_truth qui indique le chemin de la source de vérité
-    with open(save_file_path, "r") as sauv_file:
+    check_save_file_exists(save_file)
+    with open(save_file, "r") as sauv_file:
         lines = sauv_file.readlines()
     found = False
     for line in lines:
@@ -29,10 +40,13 @@ def get_source_of_truth(widget):
 
 
 def save_source_of_truth(source_of_truth_path):
-    # retirer la variable source_of_truth_file incorrecte du fichier sauv_file si elle existe
-    with open(save_file_path, "r") as sauv_file:
+    """
+    Retirer la variable source_of_truth_file incorrecte du fichier sauv_file si elle existe
+    """
+    check_save_file_exists(save_file)
+    with open(save_file, "r") as sauv_file:
         lines = sauv_file.readlines()
-    with open(save_file_path, "w") as sauv_file:
+    with open(save_file, "w") as sauv_file:
         for line in lines:
             if "source_of_truth_file" not in line:
                 sauv_file.write(line)
