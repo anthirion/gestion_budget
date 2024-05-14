@@ -3,3 +3,4 @@ __pycache__
 save.txt
 .pyside_env
 .pytest_cache
+.tests/source_of_truth.csv
