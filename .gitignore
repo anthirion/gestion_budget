@@ -3,4 +3,5 @@ __pycache__
 save.txt
 .pyside_env
 .pytest_cache
+gestion_budget_app.egg-info/
 .tests/source_of_truth.csv
