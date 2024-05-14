@@ -70,6 +70,18 @@ def test_expenses_sums():
     check_expenses_sum(all_march_transactions,
                        card_sum=401.5,
                        bank_transfer_sum=5.99)
+    # vérifier que la somme des dépenses des 3 derniers mois est correcte
+    three_last_months_transactions = \
+        select_transactions_of_several_months(all_transactions, n_month=3)
+    check_expenses_sum(three_last_months_transactions,
+                       card_sum=1204,
+                       bank_transfer_sum=round(5.99*3, 2))
+    # vérifier que la somme des dépenses des 5 derniers mois est correcte
+    three_last_months_transactions = \
+        select_transactions_of_several_months(all_transactions, n_month=5)
+    check_expenses_sum(three_last_months_transactions,
+                       card_sum=2001.4,
+                       bank_transfer_sum=round(5.99*5, 2))
 
 
 if __name__ == "__main__":
