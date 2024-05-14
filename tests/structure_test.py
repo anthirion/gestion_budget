@@ -82,7 +82,7 @@ def check_description_field(description):
 
 
 def test_structure():
-    raw_file = ".tests/source_of_truth.csv"
+    raw_file = "tests/source_of_truth.csv"
     with open(raw_file, "r", encoding="utf-8-sig") as file:
         content = file.readlines()
     first_line, transactions = content[0], content[1:]
