@@ -16,9 +16,13 @@ def is_a_transaction(transaction):
         - elle a exactement 4 champs
         - son premier champ est une date qui comprend exactement 3 valeurs (jour, mois, annee)
     """
-    fields = transaction.split(",")
-    date = fields[0].split("/")
-    return (len(fields) == 4 and len(date) == 3)
+    if isinstance(transaction, str):
+        fields = transaction.split(",")
+        date = fields[0].split("/")
+        return (len(fields) == 4 and len(date) == 3)
+    else:
+        error_msg = f"La transaction {transaction} n'est pas une string"
+        raise AttributeError(error_msg)
 
 
 def toString(month, year):
@@ -56,8 +60,8 @@ def get_last_month_year(transactions):
         _, month, year = transactions[0].split(",")[0].split("/")
         for transaction in transactions[1:]:
             try:
-                _, current_month, current_year = transaction.split(",")[
-                    0].split("/")
+                _, current_month, current_year = \
+                    transaction.split(",")[0].split("/")
                 if (current_month != month):
                     month = current_month
                 if (current_year != year):
@@ -71,15 +75,16 @@ def get_last_month_year(transactions):
                 print("Si c'est la dernière ligne, c'est ok ;) \n")
         return (int(month), int(year))
     else:
-        raise ValueError(
-            f"La première ligne n'est pas une transaction: {transactions[0]}")
+        error_msg = f"La première ligne n'est pas une transaction:\
+                    {transactions[0]}"
+        raise ValueError(error_msg)
 
 
 def select_transactions_of_several_months(transactions, n_month=1, n_year=0):
     """
-    @parameter month: sélectionner la liste des transactions réaliséees les n derniers mois
-    @parameter year: sélectionner la liste des transactions réaliséees les n dernières années
-    Par défaut, sélectionner la liste des transactions du mois passé (mois courant)
+    @parameter month: sélectionner les transactions des n derniers mois
+    @parameter year: sélectionner les transactions des n dernières années
+    Par défaut, sélectionner les transactions du mois passé (mois courant)
     """
     selected_transactions = []
     last_month, last_year = get_last_month_year(transactions)
@@ -95,18 +100,21 @@ def select_transactions_of_several_months(transactions, n_month=1, n_year=0):
         first_month = first_month % 12
     for transaction in transactions:
         try:
-            _, current_month, current_year = transaction.split(",")[
-                0].split("/")
+            _, current_month, current_year = \
+                transaction.split(",")[0].split("/")
             if first_year < last_year:
                 # pour selectionner la transaction, on distingue trois cas:
                 # si l'annee courante est égale à la premiere annee, on ignore
                 # les transactions correspondantes aux mois >= first_month
                 # si l'annee courante est égale à la dernière annee, on ignore
                 # les transactions correspondantes aux mois <= last_month
-                # sinon, on ignore les transactions correspondantes à tous les mois
-                if (int(current_year) == first_year and int(current_month) >= first_month):
+                # sinon, on ignore les transactions correspondantes à tous les
+                # mois
+                if (int(current_year) == first_year and
+                        int(current_month) >= first_month):
                     selected_transactions.append(transaction)
-                elif (int(current_year) == last_year and int(current_month) <= last_month):
+                elif (int(current_year) == last_year and
+                      int(current_month) <= last_month):
                     selected_transactions.append(transaction)
                 elif (first_year < int(current_year) < last_year):
                     selected_transactions.append(transaction)
@@ -135,8 +143,8 @@ def select_transactions_of_one_month(transactions, n_month=1, n_year=2024):
     selected_transactions = []
     for transaction in transactions:
         try:
-            _, current_month, current_year = transaction.split(",")[
-                0].split("/")
+            _, current_month, current_year = \
+                transaction.split(",")[0].split("/")
             current_month, current_year = int(current_month), int(current_year)
             if (current_month == n_month and current_year == n_year):
                 selected_transactions.append(transaction)
@@ -167,29 +175,30 @@ def select_transactions_by_bank_transfer(transactions):
 
 def extract_expenses_revenus_savings(transactions):
     """
-    Extrait les dépenses revenus et épargne à partir de la liste de
-    transactions fournie
+    Extrait les dépenses, les revenus et l'épargne à partir de la liste
+    des transactions fournie
     """
     expenses = []
     revenus = []
     savings = []
     for transaction in transactions:
-        montant = float(transaction.split(",")[1].strip())
-        description = transaction.split(",")[-1].strip()
-        if montant >= 0:
-            # la transaction est un revenu
-            revenus.append(transaction)
-        else:
-            # changer le signe du montant pour le rendre positif
-            date, montant, type_transaction, description = transaction.split(
-                ",")
-            new_montant = -float(montant)
-            new_transaction = ",".join(
-                [date, str(new_montant), type_transaction, description])
-            if description in descriptions_epargne:
-                # la transaction est une épargne
-                savings.append(new_transaction)
+        if is_a_transaction(transaction):
+            montant = float(transaction.split(",")[1].strip())
+            description = transaction.split(",")[-1].strip()
+            if montant >= 0:
+                # la transaction est un revenu
+                revenus.append(transaction)
             else:
-                # la transaction est une dépense
-                expenses.append(new_transaction)
+                # changer le signe du montant pour le rendre positif
+                date, montant, type_transaction, description = \
+                    transaction.split(",")
+                new_montant = -float(montant)
+                new_transaction = ",".join(
+                    [date, str(new_montant), type_transaction, description])
+                if description in descriptions_epargne:
+                    # la transaction est une épargne
+                    savings.append(new_transaction)
+                else:
+                    # la transaction est une dépense
+                    expenses.append(new_transaction)
     return (expenses, revenus, savings)

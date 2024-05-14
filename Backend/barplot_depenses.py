@@ -10,8 +10,9 @@ from .select_transactions import is_a_transaction
 def get_expenses_per_month(transactions):
     """
     A partir de la liste de transactions correspondant à la période voulue,
-    cette fonction retourne un dictionnaire qui associe à chaque mois la somme des dépenses 
-    pour ensuite pouvoir l'afficher sous forme de diagramme en batons
+    cette fonction retourne un dictionnaire qui associe à chaque mois la somme
+    des dépenses pour ensuite pouvoir l'afficher sous forme de diagramme en
+    batons
     """
     # calculer la somme des dépenses par mois
     # et récupérer le numéro de mois et l'année

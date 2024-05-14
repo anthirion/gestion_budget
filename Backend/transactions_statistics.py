@@ -11,14 +11,14 @@ def extract_expenses_amounts(transactions):
 
 def compute_sum(transactions):
     expenses_amounts = extract_expenses_amounts(transactions)
-    return sum(expenses_amounts)
+    return round(sum(expenses_amounts), 2)
 
 
 def compute_mean(transactions):
     expenses_amounts = extract_expenses_amounts(transactions)
-    return statistics.mean(expenses_amounts)
+    return round(statistics.mean(expenses_amounts), 2)
 
 
 def compute_median(transactions):
     expenses_amounts = extract_expenses_amounts(transactions)
-    return statistics.median(expenses_amounts)
+    return round(statistics.median(expenses_amounts), 2)
