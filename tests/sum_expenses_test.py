@@ -39,14 +39,14 @@ def check_expenses_sum(transactions, card_sum, bank_transfer_sum):
 
 
 def test_expenses_sums():
-    raw_file = ".tests/source_of_truth.csv"
+    raw_file = "tests/source_of_truth.csv"
     with open(raw_file, "r", encoding="utf-8-sig") as file:
         content = file.readlines()
     _, all_transactions = content[0], content[1:]
-    # vérifier que la somme de toutes les dépenses inscrites dans la source
-    # de vérité est correcte
-    # assert compute_sum(all_transactions) ==
-    # vérifier que la somme des dépenses du mois de janvier est correcte
+    """
+    Vérifier que les sommes des dépenses mensuelles sont correctes
+    """
+    # vérifier que la somme des dépenses du mois de janvier 2024 est correcte
     all_january_transactions = \
         select_transactions_of_one_month(all_transactions,
                                          n_month=1,
@@ -54,7 +54,7 @@ def test_expenses_sums():
     check_expenses_sum(all_january_transactions,
                        card_sum=405.6,
                        bank_transfer_sum=5.99)
-    # vérifier que la somme des dépenses du mois de février est correcte
+    # vérifier que la somme des dépenses du mois de février 2024 est correcte
     all_febrary_transactions = \
         select_transactions_of_one_month(all_transactions,
                                          n_month=2,
@@ -62,7 +62,7 @@ def test_expenses_sums():
     check_expenses_sum(all_febrary_transactions,
                        card_sum=391.8,
                        bank_transfer_sum=5.99)
-    # vérifier que la somme des dépenses du mois de mars est correcte
+    # vérifier que la somme des dépenses du mois de mars 2024 est correcte
     all_march_transactions = \
         select_transactions_of_one_month(all_transactions,
                                          n_month=3,
@@ -70,6 +70,17 @@ def test_expenses_sums():
     check_expenses_sum(all_march_transactions,
                        card_sum=401.5,
                        bank_transfer_sum=5.99)
+    # vérifier que la somme des dépenses du mois de janvier 2025 est correcte
+    all_january_transactions = \
+        select_transactions_of_one_month(all_transactions,
+                                         n_month=1,
+                                         n_year=2025)
+    check_expenses_sum(all_january_transactions,
+                       card_sum=358.4,
+                       bank_transfer_sum=5.99)
+    """
+    Vérifier que les sommes des dépenses sur plusieurs mois sont correctes
+    """
     # vérifier que la somme des dépenses des 3 derniers mois est correcte
     three_last_months_transactions = \
         select_transactions_of_several_months(all_transactions, n_month=3)
@@ -82,7 +93,3 @@ def test_expenses_sums():
     check_expenses_sum(three_last_months_transactions,
                        card_sum=2001.4,
                        bank_transfer_sum=round(5.99*5, 2))
-
-
-if __name__ == "__main__":
-    test_expenses_sums()
