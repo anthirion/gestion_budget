@@ -1,8 +1,8 @@
 """
 Ce fichier de tests vérifie la bonne structure de la source de vérité càd:
     - chaque ligne est composée de quatre champs
-    - les champs sont (sauf pour la première ligne): date, montant, type de la transaction,
-                                                    description
+    - les champs sont (sauf pour la première ligne): date, montant, type de la
+                                                    transaction, description
     - la première ligne décrit les champs: Date, Montant, Type, Description
 """
 
@@ -49,7 +49,8 @@ def test_date_field(date):
 def test_amount_field(amount):
     """
     @parameter {string} amount: champ à tester
-    Cette fonction teste que le paramètre en entrée est un montant de type float
+    Cette fonction teste que le paramètre en entrée est un montant de type
+    float
     """
     try:
         amount = amount.strip()
@@ -61,18 +62,20 @@ def test_amount_field(amount):
 def test_transaction_type_field(transaction_type):
     """
     @parameter {string} transaction_type: champ à tester
-    Cette fonction teste que le paramètre en entrée est un type de transaction (str)
-    avec deux valeurs possibles: Carte ou Virement
+    Cette fonction teste que le paramètre en entrée est un type de transaction
+    (str) avec deux valeurs possibles: Carte ou Virement
     """
     assert isinstance(transaction_type, str)
     transaction_type = transaction_type.strip()
-    assert (transaction_type == "Carte" or transaction_type == "Virement") is True
+    assert (transaction_type == "Carte" or
+            transaction_type == "Virement") is True
 
 
 def test_description_field(description):
     """
     @parameter {string} description: champ à tester
-    Cette fonction teste que le paramètre en entrée est une description de type str
+    Cette fonction teste que le paramètre en entrée est une description de
+    type str
     """
     description = description.strip()
     assert isinstance(description, str)
