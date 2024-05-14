@@ -7,7 +7,7 @@ Ce fichier de tests vérifie la bonne structure de la source de vérité càd:
 """
 
 
-def test_first_line(first_line):
+def check_first_line(first_line):
     """
     Cette fonction vérifie que la première ligne correspond bien aux
     descriptions des champs du fichier csv
@@ -16,7 +16,7 @@ def test_first_line(first_line):
     assert first_line == "Date,Montant,Type,Description"
 
 
-def test_line_length(line):
+def check_line_length(line):
     """
     @parameter {string} line: ligne à tester
     Cette fonction teste que la ligne contient bien 4 champs
@@ -24,7 +24,7 @@ def test_line_length(line):
     assert len(line.split(",")) == 4
 
 
-def test_date_field(date):
+def check_date_field(date):
     """
     @parameter {string} date: champ à tester
     Cette fonction teste que le paramètre en entrée est une date de type
@@ -46,7 +46,7 @@ def test_date_field(date):
     assert int_annee >= 2000
 
 
-def test_amount_field(amount):
+def check_amount_field(amount):
     """
     @parameter {string} amount: champ à tester
     Cette fonction teste que le paramètre en entrée est un montant de type
@@ -59,23 +59,39 @@ def test_amount_field(amount):
         return f"The amount {amount} is not a float"
 
 
-def test_transaction_type_field(transaction_type):
+def check_transaction_type_field(transaction_type):
     """
     @parameter {string} transaction_type: champ à tester
     Cette fonction teste que le paramètre en entrée est un type de transaction
     (str) avec deux valeurs possibles: Carte ou Virement
     """
-    assert isinstance(transaction_type, str)
+    assert isinstance(transaction_type, str) is True
     transaction_type = transaction_type.strip()
     assert (transaction_type == "Carte" or
             transaction_type == "Virement") is True
 
 
-def test_description_field(description):
+def check_description_field(description):
     """
     @parameter {string} description: champ à tester
     Cette fonction teste que le paramètre en entrée est une description de
     type str
     """
     description = description.strip()
-    assert isinstance(description, str)
+    assert isinstance(description, str) is True
+
+
+def test_structure():
+    raw_file = ".tests/source_of_truth.csv"
+    with open(raw_file, "r", encoding="utf-8-sig") as file:
+        content = file.readlines()
+    first_line, transactions = content[0], content[1:]
+    # vérifier la bonne structure du fichier
+    check_first_line(first_line)
+    for transaction in transactions:
+        check_line_length(transaction)
+        date, amount, transaction_type, description = transaction.split(",")
+        check_date_field(date)
+        check_amount_field(amount)
+        check_transaction_type_field(transaction_type)
+        check_description_field(description)
