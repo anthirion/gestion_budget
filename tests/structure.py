@@ -81,11 +81,7 @@ def check_description_field(description):
     assert isinstance(description, str) is True
 
 
-def test_structure():
-    raw_file = "tests/source_of_truth.csv"
-    with open(raw_file, "r", encoding="utf-8-sig") as file:
-        content = file.readlines()
-    first_line, transactions = content[0], content[1:]
+def check_structure(first_line, transactions):
     # vérifier la bonne structure du fichier
     check_first_line(first_line)
     for transaction in transactions:

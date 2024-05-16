@@ -10,7 +10,7 @@ from Backend.clean_csv import clean_entry_file
 def extract_unique_lines(raw_csv_directory_path):
     """
     A partir du dossier contenant tous les csv bruts, cette fonction
-    retourne les lignes uniques à garder dans le csv final
+    retourne les lignes uniques à garder dans la source de vérité
     """
     # on définit l'ensemble qui contiendra les lignes uniques
     unique_lines = set()
@@ -37,6 +37,14 @@ def sort_by_transaction_date(line):
 
 
 def create_source_of_truth(raw_csv_directory, source_of_truth_filename):
+    """
+    @parameter {str} raw_csv_directory: répertoire contenant les fichiers
+        de transactions bruts à utiliser pour créer la source de vérité
+    @parameter {str} source_of_truth_filename: le nom à donner à la source
+        de vérité créée
+    Cette fonction construit une source de vérité de transactions bancaires
+    à partir de fichiers csv bruts stockés dans un dossier
+    """
     raw_csv_directory_path = Path(raw_csv_directory)
     if raw_csv_directory_path.exists():
         # on retire les transactions qui apparaissent en double

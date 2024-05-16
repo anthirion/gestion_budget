@@ -1,5 +1,6 @@
 """
-L'objectif de ce module est de nettoyer le csv fourni et de retourner les lignes "propres" avec la fonction clean_entry_file.
+L'objectif de ce module est de nettoyer le csv fourni et de retourner les
+lignes "propres" avec la fonction clean_entry_file.
 Le procédé de nettoyage se déroule comme suit:
 - Retire les colonnes vides, "divers" et "0" qui n'apportent rien.
 - Enlever les caractères inutiles suivants:
@@ -7,7 +8,7 @@ Le procédé de nettoyage se déroule comme suit:
     - "VIREMENT "
     - "VIR "
     - "PRLV "
-    - "CB " 
+    - "CB "
     déjà indiqués dans un autre champ
 - Renommer les catégories suivantes pour les rendre plus explicites:
     - "AMAZON PAYMENTS" -> "AMAZON"
@@ -16,7 +17,8 @@ Le procédé de nettoyage se déroule comme suit:
     - "DRI*NVIDIA" -> "NVIDIA"
     - "FRANPRIX 1029" -> "FRANPRIX"
     - "DECAT 1994" -> "DECATHLON"
-- Remplacer les points-virgules par des virgules pour respecter le format csv et les virgules par des points
+- Remplacer les points-virgules par des virgules pour respecter le format csv
+et les virgules par des points
 """
 import re
 
@@ -41,7 +43,7 @@ pattern = r'\b\d{1,2}/\d{1,2}/\d{2}\b'
 
 def delete_line(line):
     """
-    Returns True if line contains a parameter in transactions_to_delete element
+    Returns True if line contains a parameter in transactions_to_delete list
     or is not a transaction (the number of fields is less than 7)
     If true, the line should be deleted
     """
@@ -55,7 +57,8 @@ def delete_line(line):
 
 def ajouter_moyen_paiement(line):
     """
-    on ajoute le moyen de paiement Virement pour la transaction ASSURANCE MOYEN DE PAIEMENT
+    On ajoute le moyen de paiement Virement pour la transaction ASSURANCE
+    MOYEN DE PAIEMENT
     """
     new_line = line
     if "ASSURANCE MOYEN DE PAIEMENT" in line:
@@ -69,10 +72,12 @@ def ajouter_moyen_paiement(line):
 
 def line_cleaning(line):
     """
-    traite la ligne en entier en retirant les paramètres inutiles, les dates dans la description,
-    renomme certaines transactions pas claires et remplace les virgules par des points
+    traite la ligne en entier en retirant les paramètres inutiles, les dates
+    dans la description, renomme certaines transactions pas claires et remplace
+    les virgules par des points
     """
-    # on remplace les virgules par des points dans chaque champ pour avoir un csv propre
+    # on remplace les virgules par des points dans chaque champ pour avoir un
+    # csv propre
     line = line.replace(",", ".")
     # on retire les caractères inutiles
     for parameter in useless_parameters:
@@ -88,7 +93,8 @@ def line_cleaning(line):
 def fields_cleaning(fields):
     """
     retourne une ligne propre en nettoyant chaque champ séparé par un ;
-    et on ajoute le moyen de paiement Carte pour les transactions au montant positif (crédits)
+    et on ajoute le moyen de paiement Carte pour les transactions au montant
+    positif (crédits)
     """
     # on retire les deux derniers champs inutiles et les champs vides
     clean_fields = [field.strip() for field in fields[:-2] if field]
