@@ -5,3 +5,4 @@ save.txt
 .pytest_cache
 gestion_budget_app.egg-info/
 .tests/source_of_truth.csv
+.mypy_cache
