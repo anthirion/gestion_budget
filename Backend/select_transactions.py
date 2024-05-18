@@ -1,28 +1,27 @@
 
 """
-L'objectif de ce module est de sélectionner les dernières transactions (du mois, de l'année, etc) que veut l'utilisateur
+L'objectif de ce module est de sélectionner les dernières transactions
+(du mois, de l'année, etc) que veut l'utilisateur
 """
 
+from Backend.transaction_exception import (
+    is_a_transaction,
+    TransactionError,
+    check_all_transactions
+)
+
+###############################################################################
+# Variables globales relatives à ce fichier
+###############################################################################
 descriptions_epargne = ["Livret A",
                         "SEPA M ANTOINE THIRION",
                         "SEPA Hello bank",
-                        "SEPA Fortuneo banque"]
+                        "SEPA Fortuneo banque",
+                        ]
 
-
-def is_a_transaction(transaction):
-    """
-    Vérifie que la ligne donnée en entrée est bien une transaction.
-    Une transaction vérifie deux conditions:
-        - elle a exactement 4 champs
-        - son premier champ est une date qui comprend exactement 3 valeurs (jour, mois, annee)
-    """
-    if isinstance(transaction, str):
-        fields = transaction.split(",")
-        date = fields[0].split("/")
-        return (len(fields) == 4 and len(date) == 3)
-    else:
-        error_msg = f"La transaction {transaction} n'est pas une string"
-        raise AttributeError(error_msg)
+###############################################################################
+# Fonctions
+###############################################################################
 
 
 def toString(month, year):
@@ -47,8 +46,9 @@ def toString(month, year):
                              }
     try:
         month_string = month_number_toString[month]
-    except KeyError as e:
-        print("Le numéro de mois est incorrect", e)
+    except KeyError:
+        error_msg = f"Le numéro du mois suivant est incorrect: {month}"
+        raise KeyError(error_msg)
     return month_string + year + ".csv"
 
 
@@ -59,25 +59,18 @@ def get_last_month_year(transactions):
     if is_a_transaction(transactions[0]):
         _, month, year = transactions[0].split(",")[0].split("/")
         for transaction in transactions[1:]:
-            try:
+            if is_a_transaction(transaction):
                 _, current_month, current_year = \
                     transaction.split(",")[0].split("/")
                 if (current_month != month):
                     month = current_month
                 if (current_year != year):
                     year = current_year
-            except ValueError as e:
-                # dans le cas où le sequence unpacking ne marche pas
-                print(type(e), e)
-                # transaction[:-1] pour retirer le saut de ligne lors du print
-                print("La transaction suivante est incorrecte: ",
-                      transaction[:-1])
-                print("Si c'est la dernière ligne, c'est ok ;) \n")
+            else:
+                raise TransactionError(transaction)
         return (int(month), int(year))
     else:
-        error_msg = f"La première ligne n'est pas une transaction:\
-                    {transactions[0]}"
-        raise ValueError(error_msg)
+        raise TransactionError(transactions[0])
 
 
 def select_transactions_of_several_months(transactions, n_month=1, n_year=0):
@@ -99,7 +92,7 @@ def select_transactions_of_several_months(transactions, n_month=1, n_year=0):
         first_year = last_year + first_month//12
         first_month = first_month % 12
     for transaction in transactions:
-        try:
+        if is_a_transaction(transaction):
             _, current_month, current_year = \
                 transaction.split(",")[0].split("/")
             if first_year < last_year:
@@ -124,25 +117,24 @@ def select_transactions_of_several_months(transactions, n_month=1, n_year=0):
                     selected_transactions.append(transaction)
             else:
                 raise ValueError(
-                    "L'année de fin est supérieure à l'année de début\n")
-        except ValueError as e:
-            # dans le cas où le sequence unpacking ne marche pas
-            print(type(e), e)
-            # transaction[:-1] pour retirer le saut de ligne lors du print
-            print("La transaction suivante est incorrecte: ", transaction[:-1])
-            print("Si c'est la dernière ligne, c'est ok ;) \n")
+                    "L'année de fin est supérieure à l'année de début")
+        else:
+            raise TransactionError(transaction)
+    # avant de renvoyer les transactions, vérifier qu'elles sont toutes
+    # correctes
+    check_all_transactions(selected_transactions)
     return selected_transactions
 
 
 def select_transactions_of_one_month(transactions, n_month=1, n_year=2024):
     """
-    @parameter month: sélectionner la liste des transactions réaliséees le mois n 
-    @parameter year: sélectionner la liste des transactions réaliséees l'année n
+    @parameter {int} n_month: sélectionner les transactions du mois n
+    @parameter {int} n_year: sélectionner les transactions de l'année n
     Par défaut, sélectionner la liste des transactions de janvier 2024
     """
     selected_transactions = []
     for transaction in transactions:
-        try:
+        if is_a_transaction(transaction):
             _, current_month, current_year = \
                 transaction.split(",")[0].split("/")
             current_month, current_year = int(current_month), int(current_year)
@@ -152,12 +144,11 @@ def select_transactions_of_one_month(transactions, n_month=1, n_year=2024):
                 # arreter de parcourir la liste des transactions
                 # puisque les transactions sont rangées par ordre chronologique
                 break
-        except ValueError as e:
-            # dans le cas où le sequence unpacking ne marche pas
-            print(type(e), e)
-            # transaction[:-1] pour retirer le saut de ligne lors du print
-            print("La transaction suivante est incorrecte: ", transaction[:-1])
-            print("Si c'est la dernière ligne, c'est ok ;) \n")
+        else:
+            raise TransactionError(transaction)
+    # avant de renvoyer les transactions, vérifier qu'elles sont toutes
+    # correctes
+    check_all_transactions(selected_transactions)
     return selected_transactions
 
 
