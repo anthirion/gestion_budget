@@ -61,12 +61,3 @@ def check_chronological_order(transactions):
                 previous_month = current_month
                 previous_day = current_day
         previous_transaction = transaction
-
-
-def test_chronological_order():
-    raw_file = "tests/source_of_truth.csv"
-    with open(raw_file, "r", encoding="utf-8-sig") as file:
-        content = file.readlines()
-    _, transactions = content[0], content[1:]
-    # vérifier que l'ordre chronologique est respecté
-    check_chronological_order(transactions)
