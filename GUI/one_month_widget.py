@@ -56,19 +56,21 @@ class OneMonthWidget(QWidget):
         self.month_selection_list = from_one_to_twelve_strings
         self.month_selection_default_text = "11"
 
-        month_selection_parameters = parameters_tuple(self.month_selection_title,
-                                                      self.month_selection_list,
-                                                      self.month_selection_default_text,
-                                                      )
+        month_selection_parameters = \
+            parameters_tuple(self.month_selection_title,
+                             self.month_selection_list,
+                             self.month_selection_default_text,
+                             )
         # sélection de l'année
         from_2023_to_2026 = [str(i) for i in range(2020, 2031)]
         self.year_selection_title = "/"
         self.year_selection_list = from_2023_to_2026
         self.year_selection_default_text = "2023"
-        year_selection_parameters = parameters_tuple(self.year_selection_title,
-                                                     self.year_selection_list,
-                                                     self.year_selection_default_text,
-                                                     )
+        year_selection_parameters = \
+            parameters_tuple(self.year_selection_title,
+                             self.year_selection_list,
+                             self.year_selection_default_text,
+                             )
         # définition du layout des paramètres
         parameters = ParametersLayout(month_selection_parameters,
                                       year_selection_parameters,
@@ -94,7 +96,8 @@ class OneMonthWidget(QWidget):
         """
         sums = SumsLayout()
         self.sum_card_expenses_label = sums.card_expenses_label
-        self.sum_bank_transfer_expenses_label = sums.bank_transfer_expenses_label
+        self.sum_bank_transfer_expenses_label = \
+            sums.bank_transfer_expenses_label
         sums_layout = sums.sums_layout
         self.page_layout.addLayout(sums_layout)
 
@@ -106,7 +109,8 @@ class OneMonthWidget(QWidget):
         self.pie_charts = PieChartsLayout(self)
         self.pie_charts_layout = self.pie_charts.charts_layout
         self.card_expenses_checkbox = self.pie_charts.card_expenses_checkbox
-        self.bank_transfer_expenses_checkbox = self.pie_charts.bank_transfer_expenses_checkbox
+        self.bank_transfer_expenses_checkbox = \
+            self.pie_charts.bank_transfer_expenses_checkbox
 
         # ajouter le layout des camemberts au layout principal de la fenetre
         self.page_layout.addLayout(self.pie_charts_layout)
