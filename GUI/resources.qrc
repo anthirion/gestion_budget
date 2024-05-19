@@ -1,0 +1,11 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="icons">
+        <file alias="back.svg">/home/thiran/projets_persos/gestion_budget/gestion_budget_app/icons/back.svg</file>
+        <file alias="downloads.svg">/home/thiran/projets_persos/gestion_budget/gestion_budget_app/icons/downloads.svg</file>
+        <file alias="expenses.svg">/home/thiran/projets_persos/gestion_budget/gestion_budget_app/icons/expenses.svg</file>
+        <file alias="list.svg">/home/thiran/projets_persos/gestion_budget/gestion_budget_app/icons/list.svg</file>
+        <file alias="money.svg">/home/thiran/projets_persos/gestion_budget/gestion_budget_app/icons/money.svg</file>
+        <file alias="stocks.svg">/home/thiran/projets_persos/gestion_budget/gestion_budget_app/icons/stocks.svg</file>
+    </qresource>
+</RCC>
