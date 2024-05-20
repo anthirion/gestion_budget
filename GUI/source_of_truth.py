@@ -18,6 +18,8 @@ def check_save_file_exists(filename):
 
 def get_source_of_truth(widget):
     """
+    @parameter {QWidget} widget: widget où afficher le message d'erreur si la
+        source de vérité n'est pas trouvée
     Cette fonction va récupérer la source de vérité dans le fichier enregistré
     dans le fichier de sauvegarde
     """

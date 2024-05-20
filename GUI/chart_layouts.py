@@ -19,8 +19,9 @@ class ChartLayout(QLayout):
         super().__init__()
         self.title_ = title
         self.transactions_ = []
-        # le booleen card_chart indique si notre graphe représente les dépenses par carte ou
-        # par virement (True -> par carte; False -> par virement)
+        # le booleen card_chart indique si notre graphe représente les
+        # dépenses par carte ou par virement (True -> par carte;
+        # False -> par virement)
         self.card_chart_ = card_chart
         self.one_month_widget_ = one_month_widget
 
@@ -44,9 +45,10 @@ class ChartLayout(QLayout):
 
     def get_transactions(self):
         if self.card_chart_ is True:
-            self.transactions_ = self.one_month_widget_.depenses_carte
+            self.transactions_ = self.one_month_widget_.transactions_card
         else:
-            self.transactions_ = self.one_month_widget_.depenses_virement
+            self.transactions_ = \
+                self.one_month_widget_.transactions_bank_transfer
         return self.transactions_
 
     # force la mise à jour des transactions à partir de celles calculées
