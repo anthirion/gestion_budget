@@ -10,6 +10,7 @@ from GUI.sums_layout import SumsLayout
 from GUI.chart_layouts import PieChartsLayout
 from GUI.launch_compute import select_transactions
 import GUI.bar_chart as bar_chart
+from GUI.selection_widget import SelectionWidget
 
 from Backend.transactions_statistics import compute_sum
 from Backend.select_transactions import (
@@ -41,61 +42,29 @@ class ExpensesWidget(QWidget):
 
     def __init__(self, parent_widget):
         super().__init__(parent=parent_widget)
-        """
-        Définition d'un layout de la vue des dépenses avec
-        2 composants: les boutons de sélection de la vue
-        et la vue elle-même
-        """
+        # layout principal du widget courant
         expenses_layout = QVBoxLayout(self)
         expenses_layout.setSpacing(GV.horizontal_spacing)
-        # sélection de la vue appropriée
-        selection_layout = QHBoxLayout()
-        selection_layout.setSpacing(GV.vertical_spacing)
-        # boutons de sélection de la vue
-        one_month_selection = QPushButton("Vue sur un mois")
-        one_month_selection.clicked.connect(self.one_month_view_selected)
-        several_months_selection = QPushButton("Vue sur plusieurs mois")
-        several_months_selection.clicked.connect(
-            self.several_months_view_selected)
-        for btn in (one_month_selection, several_months_selection):
-            btn.setCheckable(True)
-            btn.setAutoExclusive(True)
-            btn.setMinimumWidth(200)
+        # widget affichant la vue sélectionnée (la vue d'un ou plusieurs mois)
+        self.view_widget = QStackedWidget(self)
 
-        selection_layout.addWidget(one_month_selection)
-        selection_layout.addWidget(several_months_selection)
-        # afficher la sélection en haut et au centre
-        selection_layout.setAlignment(Qt.AlignmentFlag.AlignHCenter |
-                                      Qt.AlignmentFlag.AlignTop)
+        """
+        Widget permettant de sélectionner la vue souhaitée: soit la vue sur un
+        mois, soit celle sur plusieurs mois
+        """
+        selection_widget = SelectionWidget(self)
+        expenses_layout.addWidget(selection_widget)
 
-        expenses_layout.addLayout(selection_layout)
         """
-        Widget affichant la vue principale (la vue d'un ou plusieurs mois)
+        Définition du widget affichant la vue sélectionnée (la vue d'un ou
+        plusieurs mois)
         """
-        self.vue_widget = QStackedWidget(self)
         one_month_view = OneMonthView(self)
         several_months_view = SeveralMonthsView(self)
-        self.vue_widget.addWidget(one_month_view)
-        self.vue_widget.addWidget(several_months_view)
+        self.view_widget.addWidget(one_month_view)
+        self.view_widget.addWidget(several_months_view)
 
-        expenses_layout.addWidget(self.vue_widget)
-
-    """
-    Button slots
-    """
-    @Slot()
-    def one_month_view_selected(self):
-        """
-        Afficher la vue sur un mois
-        """
-        self.vue_widget.setCurrentIndex(0)
-
-    @Slot()
-    def several_months_view_selected(self):
-        """
-        Afficher la vue sur plusieurs mois
-        """
-        self.vue_widget.setCurrentIndex(1)
+        expenses_layout.addWidget(self.view_widget)
 
 
 ###############################################################################

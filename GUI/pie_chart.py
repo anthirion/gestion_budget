@@ -26,7 +26,8 @@ class ExpensesPieChart(QtCharts.QChart):
         slices = []
         for categorie, montant in expenses.items():
             pie_slice = QtCharts.QPieSlice("", montant)
-            label = f"<p align='center'> {categorie} <br> {round(pie_slice.value(), 2)} €</p>"
+            label = f"<p align='center'> {categorie} <br> \
+                {round(pie_slice.value(), 2)} €</p>"
             pie_slice.setLabel(label)
             slices.append(pie_slice)
             series.append(pie_slice)
@@ -40,7 +41,8 @@ class ExpensesPieChart(QtCharts.QChart):
         #             QtCharts.QPieSlice.LabelInsideHorizontal)
         #         pie_slice.setLabelColor(QtGui.QColor("white"))
         #     else:
-        #         # si le montant est trop petit pour être affiché correctement dans le camembert
+        #         # si le montant est trop petit pour être affiché
+        #         # correctement dans le camembert
         #         # on préfère l'afficher à l'extérieur et en noir
         #         pie_slice.setLabelPosition(
         #             QtCharts.QPieSlice.LabelOutside)
