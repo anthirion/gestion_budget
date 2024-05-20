@@ -1,5 +1,4 @@
-from GUI.one_month_widget import OneMonthWidget
-from GUI.several_months_widget import SeveralMonthsWidget
+from GUI.expenses_view import ExpensesWidget
 from GUI.menu_bar import MenuBar
 
 from PySide6.QtWidgets import (
@@ -20,9 +19,6 @@ class MainWindow(QMainWindow):
             super().__init__()
             self.setWindowTitle("VisuDépenses")
 
-            # self.widget_one_month = OneMonthWidget()
-            # self.widget_several_months = SeveralMonthsWidget()
-
             # barre de menus
             MenuBar(parent=self)
 
@@ -41,20 +37,22 @@ class MainWindow(QMainWindow):
             self.main_widget = QStackedWidget(app_widget)
 
             # widget d'accueil
-            home_widget = QLabel("Bienvenue sur mon app")
-            # widget du sous-menu des dépenses
-            expenses_widget = QLabel("Bienvenue sur la vue des dépenses")
-            # widget du sous-menu des revenus
+            home_widget = \
+                QLabel("Bienvenue sur l'app de visualisation de budget \n \
+                        Sélectionner un menu à gauche pour commencer!")
+            # vue du sous-menu des dépenses
+            expenses_widget = ExpensesWidget(self.main_widget)
+            # vue du sous-menu des revenus
             revenus_widget = QLabel("Bienvenue sur la vue des revenus")
-            # widget du sous-menu patrimoine
+            # vue du sous-menu patrimoine
             assets_widget = QLabel("Bienvenue sur la vue du patrimoine")
-            # widget du sous-menu des transactions
+            # vue du sous-menu des transactions
             transactions_widget = \
                 QLabel("Bienvenue sur la vue des transactions")
 
             # centrer les widgets
-            for widget in [home_widget, expenses_widget, revenus_widget,
-                           assets_widget, transactions_widget]:
+            for widget in [home_widget, revenus_widget, assets_widget,
+                           transactions_widget]:
                 widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
             # ATTENTION: l'ordre est important !!!!
@@ -76,18 +74,6 @@ class MainWindow(QMainWindow):
             # disposition des widgets précédemment définis
             app_layout.addWidget(side_menu_widget)
             app_layout.addWidget(self.main_widget)
-
-            """
-            Création de plusieurs tabs:
-                - dépenses
-                - revenus
-                - épargne
-            """
-            # tabs = QTabWidget()
-            # tabs.addTab(self.widget_one_month, "Dépenses sur un mois")
-            # tabs.addTab(self.widget_several_months,
-            #             "Statistiques sur plusieurs mois")
-            # self.setCentralWidget(tabs)
 
             self.setCentralWidget(app_widget)
 

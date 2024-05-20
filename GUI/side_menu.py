@@ -1,8 +1,13 @@
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QPushButton, QLabel
+    QWidget, QVBoxLayout, QPushButton
 )
 from PySide6.QtGui import QIcon
-import GUI.resources
+from GUI.resources import (
+    expenses_icon,
+    list_icon,
+    money_icon,
+    stocks_icon,
+)
 from PySide6.QtCore import Qt, Slot
 
 ###############################################################################
@@ -46,19 +51,19 @@ class SideMenu(QWidget):
         """
         Définition des sous-menus
         """
-        expenses_sub_menu = QPushButton(icon=QIcon(":/icons/expenses.svg"),
+        expenses_sub_menu = QPushButton(icon=QIcon(expenses_icon),
                                         text="\t Dépenses")
         expenses_sub_menu.clicked.connect(self.expenses_selected)
 
-        revenus_sub_menu = QPushButton(icon=QIcon(":/icons/money.svg"),
+        revenus_sub_menu = QPushButton(icon=QIcon(money_icon),
                                        text="\t Revenus")
         revenus_sub_menu.clicked.connect(self.revenus_selected)
 
-        assets_sub_menu = QPushButton(icon=QIcon(":/icons/stocks.svg"),
+        assets_sub_menu = QPushButton(icon=QIcon(stocks_icon),
                                       text="\t Patrimoine")
         assets_sub_menu.clicked.connect(self.assets_selected)
 
-        transactions_sub_menu = QPushButton(icon=QIcon(":/icons/list.svg"),
+        transactions_sub_menu = QPushButton(icon=QIcon(list_icon),
                                             text="\t Transactions")
         transactions_sub_menu.clicked.connect(self.transactions_selected)
 
@@ -81,7 +86,7 @@ class SideMenu(QWidget):
         side_menu_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         # fixer une taille maximale en largeur pour ne pas que les sous-menus
         # paraissent trop étirés horizontalement
-        self.setMaximumWidth(300)
+        # self.setMaximumWidth(300)
 
     """
     Buttons Slots
