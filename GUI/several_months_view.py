@@ -1,7 +1,12 @@
+from matplotlib.backends.backend_qtagg import FigureCanvas
+from matplotlib.backends.qt_compat import QtWidgets
+from matplotlib.figure import Figure
+
 from pathlib import Path
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QPushButton, QLabel, QMessageBox
 )
+from PySide6 import QtCharts
 from PySide6.QtCore import Qt, Slot
 
 from GUI.parameters_layout import SeveralMonthsParametersWidget
@@ -72,6 +77,7 @@ class SeveralMonthsView(QWidget):
         Afficher le diagramme en bâtons des dépenses par mois
         """
         self.bar_chart = QWidget()
+        # bar_ax = self.bar_canvas.figure.subplots()
 
         self.page_layout.addWidget(launch_compute_button)
         self.page_layout.addWidget(self.bar_chart)
@@ -81,12 +87,10 @@ class SeveralMonthsView(QWidget):
     """
 
     def plot_barchart(self):
-        # retirer l'ancien widget du layout
+        # retirer l'ancien graphe pour en dessiner un nouveau
         self.page_layout.removeWidget(self.bar_chart)
         # mettre à jour le widget avec le bon diagramme
-        self.bar_chart = BarChart(depenses=self.expenses,
-                                  revenus=self.revenus,
-                                  epargne=self.savings).bar_canvas
+        self.bar_chart = BarChart(self).bar_canvas
         # afficher le nouveau widget
         self.page_layout.addWidget(self.bar_chart)
 
