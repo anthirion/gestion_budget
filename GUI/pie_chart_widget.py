@@ -1,3 +1,4 @@
+from Backend.pie_chart import split_transactions_by_categories
 from PySide6.QtWidgets import (
     QVBoxLayout, QHBoxLayout, QCheckBox,
     QLayout
@@ -6,7 +7,6 @@ from PySide6.QtGui import QPainter
 from PySide6 import QtCharts
 import global_variables as GV
 from PySide6.QtCore import Slot
-from GUI.pie_chart import ExpensesPieChart
 
 
 class PieChartsLayout(QLayout):
@@ -23,10 +23,10 @@ class PieChartsLayout(QLayout):
 
         # camembert des dépenses par carte
         self.card_expenses_chart_ = \
-            ChartLayout(GV.card_chart_title,
-                        one_month_widget,
-                        card_chart=True,
-                        )
+            PieChartWidget(GV.card_chart_title,
+                           one_month_widget,
+                           card_chart=True,
+                           )
         self.card_expenses_chart_layout_ = \
             self.card_expenses_chart_.chart_layout
 
@@ -34,10 +34,10 @@ class PieChartsLayout(QLayout):
 
         # camembert des dépenses par virement
         self.bank_transfer_expenses_chart_ = \
-            ChartLayout(GV.bank_transfer_chart_title,
-                        one_month_widget,
-                        card_chart=False,
-                        )
+            PieChartWidget(GV.bank_transfer_chart_title,
+                           one_month_widget,
+                           card_chart=False,
+                           )
         self.bank_transfer_expenses_chart_layout_ = \
             self.bank_transfer_expenses_chart_.chart_layout
         self.bank_transfer_expenses_checkbox = \
@@ -60,10 +60,13 @@ class PieChartsLayout(QLayout):
             common_condenser_value)
 
 
-class ChartLayout(QLayout):
+class PieChartWidget(QLayout):
     """
-    Cette classe définit le layout correspondant à un camembert de dépenses:
-    soit le camembert représentant les dépenses par carte soit par virement
+    Cette classe définit un widget contenant:
+        - un camembert de dépenses (dépenses par carte ou par virement)
+        - une checkbox pour afficher la catégorie "Autre" sur le camembert
+    La vue des dépenses contiendra 2 exemplaires de ce widget (1 pour les
+    dépenses par carte et 1 pour les dépenses par virement)
     """
 
     def __init__(self, title, one_month_widget, card_chart):
@@ -103,7 +106,7 @@ class ChartLayout(QLayout):
         return self.transactions_
 
     # force la mise à jour des transactions à partir de celles calculées
-    # par le lauch compute button
+    # par le launch compute button
     transactions = property(get_transactions)
 
     def update_pie_chart(self, condenser_value):
@@ -125,3 +128,61 @@ class ChartLayout(QLayout):
     def checkbox_enclenchee(self, checked):
         condenser_local = True if checked else False
         self.update_pie_chart(condenser_value=condenser_local)
+
+
+class ExpensesPieChart(QtCharts.QChart):
+    """
+    Cette classe calcule le camembert des dépenses passées en paramètre dans
+    le constructeur
+    """
+
+    def __init__(self, transactions, condenser_value):
+        """
+        @parameter transactions: transactions à afficher
+        @parameter condenser_value: indique s'il faut afficher la catégorie
+            Autre ou non
+        """
+        super().__init__()
+        self.transactions = transactions
+
+        self.pie_chart = QtCharts.QChart()
+        series = QtCharts.QPieSeries()
+
+        expenses = split_transactions_by_categories(self.transactions,
+                                                    condenser=condenser_value)
+
+        # afficher les valeurs sur le camembert
+        slices = []
+        for categorie, amount in expenses.items():
+            pie_slice = QtCharts.QPieSlice("", amount)
+            label = f"<p align='center'> {categorie} <br> \
+                {round(pie_slice.value(), 2)} €</p>"
+            pie_slice.setLabel(label)
+            slices.append(pie_slice)
+            series.append(pie_slice)
+
+        # modifier l'affichage des labels en fonction de leur pourcentage
+        # for pie_slice in slices:
+        #     if pie_slice.percentage() > \
+        #                               GV.pourcentage_affichage_label_pie_chart:
+        #         # si le montant est suffisamment grand pour être affiché
+        #         # correctement dans le camembert on l'affiche à l'intérieur
+        #         # et en blanc pour être lisible
+        #         pie_slice.setLabelPosition(
+        #             QtCharts.QPieSlice.LabelInsideHorizontal)
+        #         pie_slice.setLabelColor(QtGui.QColor("white"))
+        #     else:
+        #         # si le montant est trop petit pour être affiché
+        #         # correctement dans le camembert
+        #         # on préfère l'afficher à l'extérieur et en noir
+        #         pie_slice.setLabelPosition(
+        #             QtCharts.QPieSlice.LabelOutside)
+        #         pie_slice.setLabelColor(QtGui.QColor("black"))
+
+        # afficher les labels sur le camembert
+        series.setLabelsVisible(True)
+
+        # mettre à jour le graphe
+        self.pie_chart.addSeries(series)
+        # masquer la légende
+        self.pie_chart.legend().hide()

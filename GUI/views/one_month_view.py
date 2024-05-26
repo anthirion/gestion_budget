@@ -6,7 +6,7 @@ from PySide6.QtCore import Slot
 
 from GUI.tool_widgets.parameters_widget import OneMonthParametersWidget
 from GUI.tool_widgets.sums_widget import SumsWidget
-from GUI.chart_layouts import PieChartsLayout
+from GUI.pie_chart_widget import PieChartsLayout
 from GUI.source_of_truth import get_source_of_truth
 
 from Backend.transactions_statistics import compute_sum

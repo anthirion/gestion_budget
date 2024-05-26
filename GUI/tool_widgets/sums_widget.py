@@ -37,7 +37,8 @@ class SumsWidget(QWidget):
 # class SumsLayout(QLayout):
 #     def __init__(self):
 #         """"
-#         Cette classe définit deux layouts affichant des sommes de dépenses sur le mois sélectionné:
+#         Cette classe définit deux layouts affichant des sommes de dépenses
+#         sur le mois sélectionné:
 #             - la somme des dépenses par carte
 #             - la somme des dépenses par virement
 
@@ -54,7 +55,8 @@ class SumsWidget(QWidget):
 #         # ajout d'un widget affichant la somme des dépenses par virement
 
 #         # définition du titre et label pour les dépenses par virement
-#         bank_transfer_title = "Somme des dépenses par virement sur le mois sélectionné:"
+#         bank_transfer_title = "Somme des dépenses par virement sur le mois \
+#                                   sélectionné:"
 #         bank_transfer_sum = SumLayout(bank_transfer_title)
 #         self.bank_transfer_expenses_label = bank_transfer_sum.expenses_label
 #         bank_transfer_sum_layout = bank_transfer_sum.sum_layout
