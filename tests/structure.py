@@ -13,7 +13,7 @@ def check_first_line(first_line):
     descriptions des champs du fichier csv
     """
     first_line = first_line.strip()
-    assert first_line == "Date,Montant,Type,Description"
+    assert first_line == "Date,Amount,Type,Description"
 
 
 def check_line_length(line):

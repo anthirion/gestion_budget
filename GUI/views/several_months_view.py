@@ -1,17 +1,12 @@
-from matplotlib.backends.backend_qtagg import FigureCanvas
-from matplotlib.backends.qt_compat import QtWidgets
-from matplotlib.figure import Figure
-
 from pathlib import Path
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QPushButton, QLabel, QMessageBox
 )
-from PySide6 import QtCharts
 from PySide6.QtCore import Qt, Slot
 
-from GUI.parameters_layout import SeveralMonthsParametersWidget
+from GUI.tool_widgets.parameters_widget import SeveralMonthsParametersWidget
 from GUI.source_of_truth import get_source_of_truth
-from GUI.bar_chart import BarChart
+from GUI.tool_widgets.bar_chart_widget import BarChartWidget
 
 from Backend.transactions_statistics import compute_sum
 from Backend.select_transactions import (
@@ -77,7 +72,6 @@ class SeveralMonthsView(QWidget):
         Afficher le diagramme en bâtons des dépenses par mois
         """
         self.bar_chart = QWidget()
-        # bar_ax = self.bar_canvas.figure.subplots()
 
         self.page_layout.addWidget(launch_compute_button)
         self.page_layout.addWidget(self.bar_chart)
@@ -90,7 +84,7 @@ class SeveralMonthsView(QWidget):
         # retirer l'ancien graphe pour en dessiner un nouveau
         self.page_layout.removeWidget(self.bar_chart)
         # mettre à jour le widget avec le bon diagramme
-        self.bar_chart = BarChart(self).bar_canvas
+        self.bar_chart = BarChartWidget(self).bar_canvas
         # afficher le nouveau widget
         self.page_layout.addWidget(self.bar_chart)
 
@@ -137,19 +131,3 @@ class SeveralMonthsView(QWidget):
 
             # afficher le diagramme en batons des dépenses mensuelles
             self.plot_barchart()
-
-        # sélection des transactions
-        # parameters = namedtuple("parameters",
-        #                         ["month_choice",
-        #                          "year_choice"])
-        # compute_parameters = parameters(self.month_choice, self.year_choice)
-        # source_of_truth_found, self.transactions_selectionnees = \
-        #     select_transactions(compute_parameters,
-        #                         self,
-        #                         select_transactions_of_several_months)
-
-        # if source_of_truth_found:
-        #     # on ne sélectionne que les dépenses pour tracer les graphes
-        #     self.depenses, self.revenus, self.epargne = \
-        #         extract_expenses_revenus_savings(
-        #             self.transactions_selectionnees)

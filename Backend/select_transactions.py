@@ -174,18 +174,18 @@ def extract_expenses_revenus_savings(transactions):
     savings = []
     for transaction in transactions:
         if is_a_transaction(transaction):
-            montant = float(transaction.split(",")[1].strip())
+            amount = float(transaction.split(",")[1].strip())
             description = transaction.split(",")[-1].strip()
-            if montant >= 0:
+            if amount >= 0:
                 # la transaction est un revenu
                 revenus.append(transaction)
             else:
                 # changer le signe du montant pour le rendre positif
-                date, montant, type_transaction, description = \
+                date, amount, type_transaction, description = \
                     transaction.split(",")
-                new_montant = -float(montant)
+                new_amount = -float(amount)
                 new_transaction = ",".join(
-                    [date, str(new_montant), type_transaction, description])
+                    [date, str(new_amount), type_transaction, description])
                 if description in descriptions_epargne:
                     # la transaction est une épargne
                     savings.append(new_transaction)

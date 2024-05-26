@@ -1,9 +1,9 @@
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QStackedWidget
 )
-from GUI.selection_widget import ViewSelectionWidget
-from GUI.one_month_view import OneMonthView
-from GUI.several_months_view import SeveralMonthsView
+from GUI.tool_widgets.selection_widget import ViewSelectionWidget
+from GUI.views.one_month_view import OneMonthView
+from GUI.views.several_months_view import SeveralMonthsView
 
 import global_variables as GV
 

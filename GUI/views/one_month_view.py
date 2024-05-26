@@ -4,8 +4,8 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Slot
 
-from GUI.parameters_layout import OneMonthParametersWidget
-from GUI.sums_layout import SumsLayout
+from GUI.tool_widgets.parameters_widget import OneMonthParametersWidget
+from GUI.tool_widgets.sums_widget import SumsWidget
 from GUI.chart_layouts import PieChartsLayout
 from GUI.source_of_truth import get_source_of_truth
 
@@ -72,12 +72,10 @@ class OneMonthView(QWidget):
         Ajouter un layout affichant les sommes des dépenses mensuelles
         par carte et par virement
         """
-        sums = SumsLayout()
-        self.sum_card_expenses_label = sums.card_expenses_label
-        self.sum_bank_transfer_expenses_label = \
-            sums.bank_transfer_expenses_label
-        sums_layout = sums.sums_layout
-        self.page_layout.addLayout(sums_layout)
+        sums = SumsWidget(self)
+        self.sum_card_spending_label = sums.sum_card_spending
+        self.sum_bank_transfer_spending_label = sums.sum_bank_transfer_spending
+        self.page_layout.addWidget(sums)
 
         """
         Afficher un camembert des dépenses par carte avec les catégories de
@@ -155,8 +153,8 @@ class OneMonthView(QWidget):
             sum_card_expenses = compute_sum(self.transactions_card)
             sum_bank_transfer_expenses = \
                 compute_sum(self.transactions_bank_transfer)
-            self.sum_card_expenses_label.setNum(sum_card_expenses)
-            self.sum_bank_transfer_expenses_label.setNum(
+            self.sum_card_spending_label.setNum(sum_card_expenses)
+            self.sum_bank_transfer_spending_label.setNum(
                 sum_bank_transfer_expenses)
 
             # décocher les checkbox associées à chaque graphe

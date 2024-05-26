@@ -1,17 +1,19 @@
 from PySide6 import QtCharts
 
-import Backend.camembert
+from Backend.pie_chart import split_transactions_by_categories
 
 
 class ExpensesPieChart(QtCharts.QChart):
     """
-    Cette classe calcule le camembert des dépenses passées en paramètre dans le constructeur
+    Cette classe calcule le camembert des dépenses passées en paramètre dans
+    le constructeur
     """
 
     def __init__(self, transactions, condenser_value):
         """
         @parameter transactions: transactions à afficher
-        @parameter condenser_value: indique s'il faut afficher la catégorie Autre ou non
+        @parameter condenser_value: indique s'il faut afficher la catégorie
+            Autre ou non
         """
         super().__init__()
         self.transactions = transactions
@@ -19,13 +21,13 @@ class ExpensesPieChart(QtCharts.QChart):
         self.pie_chart = QtCharts.QChart()
         series = QtCharts.QPieSeries()
 
-        expenses = Backend.camembert.calculer_depenses_par_categories(
-            self.transactions, condenser=condenser_value)
+        expenses = split_transactions_by_categories(self.transactions,
+                                                    condenser=condenser_value)
 
         # afficher les valeurs sur le camembert
         slices = []
-        for categorie, montant in expenses.items():
-            pie_slice = QtCharts.QPieSlice("", montant)
+        for categorie, amount in expenses.items():
+            pie_slice = QtCharts.QPieSlice("", amount)
             label = f"<p align='center'> {categorie} <br> \
                 {round(pie_slice.value(), 2)} €</p>"
             pie_slice.setLabel(label)

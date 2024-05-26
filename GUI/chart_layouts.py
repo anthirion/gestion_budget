@@ -62,8 +62,8 @@ class PieChartsLayout(QLayout):
 
 class ChartLayout(QLayout):
     """
-    Cette classe définit le layout correspondant à un camembert de dépenses
-    Soit le camembert représentant les dépenses par carte soit par virement
+    Cette classe définit le layout correspondant à un camembert de dépenses:
+    soit le camembert représentant les dépenses par carte soit par virement
     """
 
     def __init__(self, title, one_month_widget, card_chart):
@@ -110,7 +110,7 @@ class ChartLayout(QLayout):
         """
         Cette méthode calcule puis affiche le camembert des dépenses
         """
-        # il est important de ne pas ajouter d'underscore à self.transactions
+        # il est important de ne PAS ajouter d'underscore à self.transactions
         # pour forcer l'utilisation du getter
         updated_chart = ExpensesPieChart(
             self.transactions, condenser_value=condenser_value).pie_chart

@@ -1,3 +1,9 @@
+"""
+Ce module implémente toutes les fonctions utiles à la gestion de la source de
+vérité par l'interface graphique GUI
+"""
+
+
 from PySide6.QtWidgets import QMessageBox
 import global_variables
 from pathlib import Path

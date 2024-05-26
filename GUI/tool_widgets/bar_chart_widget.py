@@ -4,13 +4,13 @@ from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backends.qt_compat import QtWidgets
 from matplotlib.figure import Figure
 
-from Backend.barplot_depenses import get_expenses_per_month
+from Backend.expenses_barplot import get_expenses_per_month
 
 
-class BarChart(QtWidgets.QWidget):
+class BarChartWidget(QtWidgets.QWidget):
     """
-    Cette classe calcule puis affiche un diagramme en bâtons des dépenses 
-    et des revenus mensuels
+    Cette classe calcule puis affiche un diagramme en bâtons des dépenses
+    des revenus et de l'épargne mensuels, affichés sur la vue de plusieurs mois
     """
 
     def __init__(self, parent_widget):
@@ -35,7 +35,7 @@ class BarChart(QtWidgets.QWidget):
         }
 
         # on fait en sorte que les dictionnaires aient la même longueur
-        self.standardize_expenses()
+        self.standardize_dictionnaries()
 
         """
         Tracé du diagramme en bâtons
@@ -66,7 +66,7 @@ class BarChart(QtWidgets.QWidget):
         bar_ax.set_xticks(step + width, months)
         bar_ax.legend(loc='upper left', ncols=3)
 
-    def standardize_expenses(self):
+    def standardize_dictionnaries(self):
         """
         Cette fonction sert à uniformiser les longueurs des dictionnaires des
         dépenses, revenus et épargne pour qu'ils aient la même longueur. Si

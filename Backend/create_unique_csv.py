@@ -83,7 +83,7 @@ def create_source_of_truth(raw_csv_directory, source_of_truth_filename):
             with open(source_of_truth_filename, "w", encoding="utf-8-sig") as\
                     file:
                 # la première ligne spécifie les noms des colonnes
-                column_names = "Date,Montant,Type,Description\n"
+                column_names = "Date,Amount,Type,Description\n"
                 file.write(column_names)
                 for line in unique_lines:
                     file.write(line)
