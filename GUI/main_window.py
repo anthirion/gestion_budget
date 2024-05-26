@@ -1,4 +1,4 @@
-from GUI.expenses_view import ExpensesWidget
+from GUI.expenses_widget import ExpensesWidget
 from GUI.menu_bar import MenuBar
 
 from PySide6.QtWidgets import (

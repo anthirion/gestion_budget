@@ -14,4 +14,4 @@ bank_transfer_chart_title = "Dépenses par virement"
 # Variables relatives à l'UI
 ###############################################################################
 horizontal_spacing = 30
-vertical_spacing = 30
+vertical_spacing = 10

@@ -6,66 +6,121 @@ from PySide6.QtWidgets import (
 class OneMonthParametersWidget(QWidget):
     """
     Cette classe définit le widget des paramètres de calcul, affiché dans
-    la vue sur un seul mois
+    la vue sur un seul mois, à savoir:
+        - la période à analyser (mois/année)
+        - la banque d'où les transactions sont tirées
     """
 
     def __init__(self, parent_widget):
         super().__init__(parent=parent_widget)
+        parameters_layout = QHBoxLayout(self)
         """
-        Définition des paramètres utiles pour la sélection du mois
-        et de l'année
+        Widget permettant de sélectioner le mois
         """
-        month_selection_title = "Mois sélectionné :"
         month_selection_list = [str(i) for i in range(1, 13)]
         month_selection_default_text = "11"
 
-        year_selection_title = "/"
+        month_selection_label = QLabel("Période sélectionnée:")
+        self.month_selection_combobox = QComboBox()
+        for selection_item in month_selection_list:
+            self.month_selection_combobox.addItem(selection_item)
+        self.month_selection_combobox.setCurrentText(
+            month_selection_default_text)
+
+        parameters_layout.addWidget(month_selection_label)
+        parameters_layout.addWidget(self.month_selection_combobox)
+
+        """
+        Widget permettant de sélectioner l'année
+        """
         year_selection_list = [str(i) for i in range(2020, 2031)]
         year_selection_default_text = "2023"
 
-        parameters_layout = QHBoxLayout(self)
-        """
-        Définition du widget de sélection du mois
-        """
-        month_selection_label = QLabel(month_selection_title)
-        month_selection_combobox = QComboBox()
-        for selection_item in month_selection_list:
-            month_selection_combobox.addItem(selection_item)
-        month_selection_combobox.setCurrentText(month_selection_default_text)
-
-        parameters_layout.addWidget(month_selection_label)
-        parameters_layout.addWidget(month_selection_combobox)
-
-        # récupérer le mois sélectionné via la combobox pour les calculs
-        # ultérieurs
-        self.month_selection_box = month_selection_combobox
-
-        """
-        Définition du widget de sélection de l'année
-        """
-        year_selection_label = QLabel(year_selection_title)
-        year_selection_combobox = QComboBox()
+        year_selection_label = QLabel("/")
+        self.year_selection_combobox = QComboBox()
         for selection_item in year_selection_list:
-            year_selection_combobox.addItem(selection_item)
-        year_selection_combobox.setCurrentText(year_selection_default_text)
+            self.year_selection_combobox.addItem(selection_item)
+        self.year_selection_combobox.setCurrentText(
+            year_selection_default_text)
 
         parameters_layout.addWidget(year_selection_label)
-        parameters_layout.addWidget(year_selection_combobox)
-
-        # récupérer l'année sélectionnée via la combobox pour les calculs
-        # ultérieurs
-        self.year_selection_box = year_selection_combobox
+        parameters_layout.addWidget(self.year_selection_combobox)
 
         """
-        Définition du widget permettant de sélectioner la banque
+        Widget permettant de sélectioner la banque
         """
         # ajout d'un peu d'espace avant le widget de sélection de la banque
         # pour aérer
         parameters_layout.insertSpacing(4, 300)
-        bank_label = QLabel("Banque sélectionnée :")
-        bank_combobox = QComboBox()
-        bank_combobox.addItem("Toutes les banques")
-        bank_combobox.addItem("LCL")
+        choice_bank_widget = ChoiceBankWidget(self)
+        parameters_layout.addWidget(choice_bank_widget)
 
-        parameters_layout.addWidget(bank_label)
-        parameters_layout.addWidget(bank_combobox)
+
+class SeveralMonthsParametersWidget(QWidget):
+    """
+    Cette classe définit le widget des paramètres de calcul, affiché dans
+    la vue sur plusieurs mois
+    """
+
+    def __init__(self, parent_widget):
+        super().__init__(parent=parent_widget)
+        parameters_layout = QHBoxLayout(self)
+
+        """
+        Widget permettant de sélectioner le nombre de mois à analyser
+        """
+        month_selection_list = [str(i) for i in range(1, 12)]
+        month_selection_default_text = "5"
+
+        month_selection_label = QLabel("Période :")
+        self.month_selection_combobox = QComboBox()
+        for selection_item in month_selection_list:
+            self.month_selection_combobox.addItem(selection_item)
+        self.month_selection_combobox.setCurrentText(
+            month_selection_default_text)
+        month_additional_label = QLabel("mois et")
+
+        parameters_layout.addWidget(month_selection_label)
+        parameters_layout.addWidget(self.month_selection_combobox)
+        parameters_layout.addWidget(month_additional_label)
+
+        """
+        Widget permettant de sélectioner le nombre d'années à analyser
+        """
+        year_selection_list = [str(i) for i in range(1, 10)]
+        year_selection_default_text = "0"
+
+        self.year_selection_combobox = QComboBox()
+        for selection_item in year_selection_list:
+            self.year_selection_combobox.addItem(selection_item)
+        self.year_selection_combobox.setCurrentText(
+            year_selection_default_text)
+        year_additional_label = QLabel("annees")
+
+        parameters_layout.addWidget(self.year_selection_combobox)
+        parameters_layout.addWidget(year_additional_label)
+
+        """
+        Définition du widget permettant de sélectionner la banque
+        """
+        # ajout d'un peu d'espace avant le widget de sélection de la banque
+        # pour aérer
+        parameters_layout.insertSpacing(4, 300)
+        choice_bank_widget = ChoiceBankWidget(self)
+        parameters_layout.addWidget(choice_bank_widget)
+
+
+class ChoiceBankWidget(QWidget):
+    """
+    Cette classe définit le widget permettant la sélection de la banque
+    """
+
+    def __init__(self, parent_widget):
+        super().__init__(parent=parent_widget)
+        layout = QHBoxLayout(self)
+        label = QLabel("Banque sélectionnée :")
+        bank_choice_combobox = QComboBox()
+        bank_choice_combobox.addItem("Toutes les banques")
+        bank_choice_combobox.addItem("LCL")
+        layout.addWidget(label)
+        layout.addWidget(bank_choice_combobox)

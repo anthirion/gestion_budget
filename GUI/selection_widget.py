@@ -6,10 +6,10 @@ from PySide6.QtCore import Qt, Slot
 import global_variables as GV
 
 
-class SelectionWidget(QWidget):
+class ViewSelectionWidget(QWidget):
     """
-    Cette classe définit le widget permettant de choisir entre la vue sur un mois
-    et la vue sur plusieurs mois.
+    Cette classe définit le widget permettant de choisir entre la vue sur un
+    mois et la vue sur plusieurs mois.
     Ce widget est composé de 2 boutons seulement:
         - un bouton pour sélectionner la vue sur un mois
         - un bouton pour sélectionner la vue sur plusieurs mois

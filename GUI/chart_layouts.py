@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtGui import QPainter
 from PySide6 import QtCharts
-import global_variables
+import global_variables as GV
 from PySide6.QtCore import Slot
 from GUI.pie_chart import ExpensesPieChart
 
@@ -89,21 +89,26 @@ class PieChartsLayout(QLayout):
         self.charts_layout = QHBoxLayout()
 
         # camembert des dépenses par carte
-        self.card_expenses_chart_ = ChartLayout(global_variables.card_chart_title,
-                                                one_month_widget,
-                                                card_chart=True,
-                                                )
-        self.card_expenses_chart_layout_ = self.card_expenses_chart_.chart_layout
+        self.card_expenses_chart_ = \
+            ChartLayout(GV.card_chart_title,
+                        one_month_widget,
+                        card_chart=True,
+                        )
+        self.card_expenses_chart_layout_ = \
+            self.card_expenses_chart_.chart_layout
 
         self.card_expenses_checkbox = self.card_expenses_chart_.checkbox
 
         # camembert des dépenses par virement
-        self.bank_transfer_expenses_chart_ = ChartLayout(global_variables.bank_transfer_chart_title,
-                                                         one_month_widget,
-                                                         card_chart=False,
-                                                         )
-        self.bank_transfer_expenses_chart_layout_ = self.bank_transfer_expenses_chart_.chart_layout
-        self.bank_transfer_expenses_checkbox = self.bank_transfer_expenses_chart_.checkbox
+        self.bank_transfer_expenses_chart_ = \
+            ChartLayout(GV.bank_transfer_chart_title,
+                        one_month_widget,
+                        card_chart=False,
+                        )
+        self.bank_transfer_expenses_chart_layout_ = \
+            self.bank_transfer_expenses_chart_.chart_layout
+        self.bank_transfer_expenses_checkbox = \
+            self.bank_transfer_expenses_chart_.checkbox
 
         # ajouter les 2 layouts au layout principal
         self.charts_layout.addLayout(self.card_expenses_chart_layout_)

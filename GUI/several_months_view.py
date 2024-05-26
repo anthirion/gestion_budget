@@ -1,18 +1,15 @@
 from pathlib import Path
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QPushButton, QMessageBox
+    QWidget, QVBoxLayout, QPushButton, QLabel, QMessageBox
 )
-from PySide6.QtCore import Slot
+from PySide6.QtCore import Qt, Slot
 
-from GUI.parameters_layout import OneMonthParametersWidget
-from GUI.sums_layout import SumsLayout
-from GUI.chart_layouts import PieChartsLayout
+from GUI.parameters_layout import SeveralMonthsParametersWidget
 from GUI.source_of_truth import get_source_of_truth
+from GUI.bar_chart import BarChart
 
 from Backend.transactions_statistics import compute_sum
 from Backend.select_transactions import (
-    select_transactions_by_card,
-    select_transactions_by_bank_transfer,
     extract_expenses_revenus_savings,
     select_transactions_of_several_months,
 )
@@ -26,12 +23,13 @@ class SeveralMonthsView(QWidget):
     dépenses, revenus ou de l'épargne, tout agrégé sur un diagramme en bâtons
     """
 
-    def __init__(self, parent_widget):
+    def __init__(self, parent_widget, transaction_type):
         super().__init__(parent=parent_widget)
-        self.transactions_selectionnees = []
-        self.depenses = []
-        self.revenus = []
-        self.epargne = []
+        self.transaction_type = transaction_type
+        self.selected_operations = []
+        self.transactions, self.transactions_card = [], []
+        self.transactions_bank_transfer = []
+        self.expenses, self.revenus, self.savings = [], [], []
 
         # Mise en page
         self.page_layout = QVBoxLayout(self)
@@ -41,44 +39,16 @@ class SeveralMonthsView(QWidget):
         """
         Le premier widget permet à l'utilisateur de sélectionner
         les paramètres de calcul:
-            - la période sur laquelle faire l'analyse et
+            - la période sur laquelle faire l'analyse (en mois et années) et
             - la ou les banque(s) sélectionnée(s)
         """
-        # sélectionner la période en mois
-        from_one_to_eleven_strings = [str(i) for i in range(1, 12)]
-        self.month_period_title = "Période :"
-        self.month_period_list = from_one_to_eleven_strings
-        self.month_period_default_text = "5"
-
-        month_period_parameters = \
-            parameters_tuple(self.month_period_title,
-                             self.month_period_list,
-                             self.month_period_default_text,
-                             )
-
-        # sélectionner la periode en années
-        zero_to_ten_strings = [str(i) for i in range(11)]
-        self.year_period_title = "et"
-        self.year_period_list = zero_to_ten_strings
-        self.year_period_default_text = "0"
-
-        year_period_parameters = \
-            parameters_tuple(self.year_period_title,
-                             self.year_period_list,
-                             self.year_period_default_text,
-                             )
-
-        # définition du layout des paramètres
-        parameters = ParametersLayout(month_period_parameters,
-                                      year_period_parameters,
-                                      additional_texts=("mois", "annee(s)")
-                                      )
-        # récupérer les différents attributs nécessaires du layout paramètres
-        parameters_layout = parameters.parameters_layout
-        self.month_choice = parameters.month_selection_box
-        self.year_choice = parameters.year_selection_box
+        parameters_widget = SeveralMonthsParametersWidget(self)
+        # récupérer les différents attributs du layout paramètres nécessaires
+        # aux calculs ultérieurs
+        self.month_choice = parameters_widget.month_selection_combobox
+        self.year_choice = parameters_widget.year_selection_combobox
         # ajouter le layout des paramètres au layout principal de la fenetre
-        self.page_layout.addLayout(parameters_layout)
+        self.page_layout.addWidget(parameters_widget)
 
         """
         Ajouter un bouton pour lancer les calculs une fois les paramètres
@@ -114,9 +84,9 @@ class SeveralMonthsView(QWidget):
         # retirer l'ancien widget du layout
         self.page_layout.removeWidget(self.bar_chart)
         # mettre à jour le widget avec le bon diagramme
-        self.bar_chart = bar_chart.BarChart(depenses=self.depenses,
-                                            revenus=self.revenus,
-                                            epargne=self.epargne).bar_canvas
+        self.bar_chart = BarChart(depenses=self.expenses,
+                                  revenus=self.revenus,
+                                  epargne=self.savings).bar_canvas
         # afficher le nouveau widget
         self.page_layout.addWidget(self.bar_chart)
 
@@ -130,25 +100,52 @@ class SeveralMonthsView(QWidget):
         à condition d'avoir la source de vérité
         En absence de source de vérité, afficher un message et ne rien faire
         """
-        # sélection des transactions
-        parameters = namedtuple("parameters",
-                                ["month_choice",
-                                 "year_choice"])
-        compute_parameters = parameters(self.month_choice, self.year_choice)
-        source_of_truth_found, self.transactions_selectionnees = \
-            select_transactions(compute_parameters,
-                                self,
-                                select_transactions_of_several_months)
+        # recherche de la source de vérité
+        GV.source_of_truth = get_source_of_truth(self)
+        if GV.source_of_truth:
+            # sélection des transactions
+            source_of_truth_path = Path(GV.source_of_truth)
+            # sélectionner les transactions souhaitées par l'utilisateur
+            transactions = source_of_truth_path.read_text(encoding="utf-8-sig")
+            # on split le fichier par transaction
+            transactions = transactions.split(("\n"))
+            # on retire la première ligne qui correspond aux colonnes
+            # et la dernière transaction qui est vide
+            transactions = transactions[1:-1]
+            nb_month = int(self.month_choice.currentText())
+            nb_year = int(self.year_choice.currentText())
+            self.selected_operations = \
+                select_transactions_of_several_months(transactions,
+                                                      n_month=nb_month,
+                                                      n_year=nb_year)
+            if not self.selected_operations:
+                # pas de transaction sélectionnée
+                # afficher un message d'avertissement à l'utilisateur
+                QMessageBox.warning(self, "Avertissement",
+                                    GV.no_transaction_found_msg)
 
-        if source_of_truth_found:
-            # on ne sélectionne que les dépenses pour tracer les graphes
-            self.depenses, self.revenus, self.epargne = \
-                extract_expenses_revenus_savings(
-                    self.transactions_selectionnees)
+            self.expenses, self.revenus, self.savings = \
+                extract_expenses_revenus_savings(self.selected_operations)
 
             # calculer la somme des dépenses et l'afficher
-            sum_expenses = compute_sum(self.transactions_selectionnees)
+            sum_expenses = compute_sum(self.selected_operations)
             self.display_sum_expenses.setNum(sum_expenses)
 
             # afficher le diagramme en batons des dépenses mensuelles
             self.plot_barchart()
+
+        # sélection des transactions
+        # parameters = namedtuple("parameters",
+        #                         ["month_choice",
+        #                          "year_choice"])
+        # compute_parameters = parameters(self.month_choice, self.year_choice)
+        # source_of_truth_found, self.transactions_selectionnees = \
+        #     select_transactions(compute_parameters,
+        #                         self,
+        #                         select_transactions_of_several_months)
+
+        # if source_of_truth_found:
+        #     # on ne sélectionne que les dépenses pour tracer les graphes
+        #     self.depenses, self.revenus, self.epargne = \
+        #         extract_expenses_revenus_savings(
+        #             self.transactions_selectionnees)

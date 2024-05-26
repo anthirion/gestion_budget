@@ -37,9 +37,9 @@ class OneMonthView(QWidget):
         super().__init__(parent=parent_widget)
         self.transaction_type = transaction_type
         self.selected_operations = []
-        self.transactions = []
-        self.transactions_card = []
+        self.transactions, self.transactions_card = [], []
         self.transactions_bank_transfer = []
+        self.expenses, self.revenus, self.savings = [], [], []
 
         # Mise en page
         self.page_layout = QVBoxLayout(self)
@@ -49,14 +49,14 @@ class OneMonthView(QWidget):
         """
         Le premier widget permet à l'utilisateur de sélectionner
         les paramètres de calcul:
-            - le mois sur lequel faire l'analyse et
+            - le mois et l'année sur lesquels faire l'analyse et
             - la ou les banque(s) sélectionnée(s)
         """
         parameters_widget = OneMonthParametersWidget(self)
         # récupérer les différents attributs du layout paramètres nécessaires
         # aux calculs ultérieurs
-        self.month_choice = parameters_widget.month_selection_box
-        self.year_choice = parameters_widget.year_selection_box
+        self.month_choice = parameters_widget.month_selection_combobox
+        self.year_choice = parameters_widget.year_selection_combobox
         # ajouter le layout des paramètres au layout principal de la fenetre
         self.page_layout.addWidget(parameters_widget)
 
@@ -128,21 +128,18 @@ class OneMonthView(QWidget):
                 QMessageBox.warning(self, "Avertissement",
                                     GV.no_transaction_found_msg)
 
+            self.expenses, self.revenus, self.savings = \
+                extract_expenses_revenus_savings(self.selected_operations)
+
             if (self.transaction_type == "expenses"):
                 # les camemberts à afficher sont ceux des dépenses
-                depenses, _, _ = extract_expenses_revenus_savings(
-                    self.selected_operations)
-                self.transactions = depenses
+                self.transactions = self.expenses
             elif (self.transaction_type == "revenus"):
                 # les camemberts à afficher sont ceux des revenus
-                _, revenus, _ = extract_expenses_revenus_savings(
-                    self.selected_operations)
-                self.transactions = revenus
+                self.transactions = self.revenus
             elif (self.transaction_type == "savings"):
                 # les camemberts à afficher sont ceux de l'épargne
-                _, _, savings = extract_expenses_revenus_savings(
-                    self.selected_operations)
-                self.transactions = savings
+                self.transactions = self.savings
             else:
                 raise ValueError("Le type de transaction fourni est incorrect")
 
