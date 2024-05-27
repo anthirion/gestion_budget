@@ -1,12 +1,12 @@
 from pathlib import Path
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QPushButton, QMessageBox
+    QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QMessageBox
 )
 from PySide6.QtCore import Slot
 
 from GUI.tool_widgets.parameters_widget import OneMonthParametersWidget
 from GUI.tool_widgets.sums_widget import SumsWidget
-from GUI.pie_chart_widget import PieChartsLayout
+from GUI.pie_chart_widget import PieChartWidget
 from GUI.source_of_truth import get_source_of_truth
 
 from Backend.transactions_statistics import compute_sum
@@ -64,7 +64,7 @@ class OneMonthView(QWidget):
         Ajouter un bouton pour lancer les calculs une fois les paramètres
         saisis par l'utilisateur
         """
-        launch_compute_button = QPushButton("Lancer les calculs")
+        launch_compute_button = QPushButton("Lancer les calculs", self)
         launch_compute_button.clicked.connect(self.lancer_calculs)
         self.page_layout.addWidget(launch_compute_button)
 
@@ -82,14 +82,21 @@ class OneMonthView(QWidget):
         dépenses et leur montant associé et un camembert des dépenses
         par virement
         """
-        self.pie_charts = PieChartsLayout(self)
-        self.pie_charts_layout = self.pie_charts.charts_layout
-        self.card_expenses_checkbox = self.pie_charts.card_expenses_checkbox
+        pies_layout = QHBoxLayout()
+        self.pie_chart_card = PieChartWidget(self,
+                                             GV.card_chart_title)
+        self.card_expenses_checkbox = self.pie_chart_card.checkbox
+
+        self.pie_chart_bank_transfer = \
+            PieChartWidget(self,
+                           GV.bank_transfer_chart_title)
         self.bank_transfer_expenses_checkbox = \
-            self.pie_charts.bank_transfer_expenses_checkbox
+            self.pie_chart_bank_transfer.checkbox
 
         # ajouter le layout des camemberts au layout principal de la fenetre
-        self.page_layout.addLayout(self.pie_charts_layout)
+        pies_layout.addWidget(self.pie_chart_card)
+        pies_layout.addWidget(self.pie_chart_bank_transfer)
+        self.page_layout.addLayout(pies_layout)
 
     """
     Slot du bouton de lancement des calculs
@@ -163,4 +170,10 @@ class OneMonthView(QWidget):
                 checkbox.setChecked(False)
 
             # mettre à jour les camemberts de dépenses par carte et virement
-            self.pie_charts.update_pie_charts(common_condenser_value=False)
+            cv = self.card_expenses_checkbox.isChecked()
+            self.pie_chart_card.update_pie_chart(self.transactions_card,
+                                                 condenser_value=cv)
+            cv = self.bank_transfer_expenses_checkbox.isChecked()
+            self.pie_chart_bank_transfer\
+                .update_pie_chart(self.transactions_bank_transfer,
+                                  condenser_value=cv)
