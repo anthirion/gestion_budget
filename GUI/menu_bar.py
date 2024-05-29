@@ -18,7 +18,8 @@ class MenuBar(QMenuBar):
         - quitter l'application
     Le menu Ouvrir permettra de :
         - sélectionner le dossier contenant les fichiers csv de dépenses brutes
-        - sélectionner le fichier "source de vérité" contenant les dépenses traitées
+        - sélectionner le fichier "source de vérité" contenant les dépenses
+            traitées
     """
 
     def __init__(self, parent=None):
@@ -44,13 +45,16 @@ class MenuBar(QMenuBar):
         Menu Ouvrir
         """
         # sélectionner le dossier contenant les fichiers csv de dépenses brutes
-        select_directory = QAction(
-            "Créer une source de vérité à partir d'un dossier de dépenses brutes", self.parent_window)
+        select_directory = \
+            QAction("Créer une source de vérité à partir d'un dossier de \
+                    dépenses brutes",
+                    self.parent_window)
         open_menu.addAction(select_directory)
         select_directory.setShortcut("Ctrl+Shift+O")
         select_directory.triggered.connect(self.open_directory)
 
-        # sélectionner le fichier "source de vérité" contenant les dépenses traitées
+        # sélectionner le fichier "source de vérité" contenant les dépenses
+        # traitées
         select_source_of_truth = QAction(
             "Sélectionner une source de vérité", self.parent_window)
         open_menu.addAction(select_source_of_truth)
@@ -76,13 +80,15 @@ class MenuBar(QMenuBar):
             # afficher un message de demande
             msgBox = QMessageBox(parent=dialog_src)
             msgBox.setText(
-                "Veuillez sélectionner le dossier où enregistrer la source de vérité")
+                "Veuillez sélectionner le dossier où enregistrer la source de\
+                    vérité")
             msgBox.exec()
             dialog_dest = QFileDialog(dialog_src)
             dialog_dest.setFileMode(QFileDialog.Directory)
             if dialog_dest.exec():
                 directory_dest = dialog_dest.selectedFiles()[0]
-                source_of_truth_filename = directory_dest + "/source_of_truth.csv"
+                source_of_truth_filename = directory_dest + \
+                    "/source_of_truth.csv"
                 # créer une source de vérité
                 create_source_of_truth(directory_src, source_of_truth_filename)
                 # afficher un message de validation
@@ -92,7 +98,8 @@ class MenuBar(QMenuBar):
                 validationmsgBox.exec()
                 # enregistrer la nouvelle source de vérité créée
                 save_source_of_truth(source_of_truth_filename)
-                # on met à jour la variable globale source_of_truth avec la valeur correcte
+                # on met à jour la variable globale source_of_truth avec la
+                # valeur correcte
                 global_variables.source_of_truth = source_of_truth_filename
 
     def open_source_of_truth(self):
@@ -105,5 +112,6 @@ class MenuBar(QMenuBar):
         if dialog.exec():
             source_of_truth_path = dialog.selectedFiles()[0]
             save_source_of_truth(source_of_truth_path)
-            # on met à jour la variable globale source_of_truth avec la valeur correcte
+            # on met à jour la variable globale source_of_truth avec la valeur
+            # correcte
             global_variables.source_of_truth = source_of_truth_path

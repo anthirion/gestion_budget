@@ -144,15 +144,15 @@ def fields_cleaning(fields):
         clean_fields = [field.strip() for field in fields[:-2] if field]
         # ajouter le moyen de paiement Carte pour les crédits
         if len(clean_fields) < 4:
-            montant = float(clean_fields[-2])
-            if montant > 0:
+            amount = float(clean_fields[-2])
+            if amount > 0:
                 # ajouter le moyen de paiement Carte
                 clean_fields.insert(-1, "Carte")
 
         clean_line = ",".join(clean_fields)
         clean_line += "\n"
     except ValueError:
-        error_msg = f"Le montant n'est pas entier : {montant}"
+        error_msg = f"Le montant n'est pas entier : {amount}"
         raise ValueError(error_msg)
         # print("L'erreur est la suivante :", e)
     except TypeError:

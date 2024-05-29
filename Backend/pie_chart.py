@@ -8,20 +8,22 @@ import copy
 import global_variables
 
 
-def calculer_depenses_par_categories(transactions, condenser=False):
+def split_transactions_by_categories(transactions, condenser=False):
     """
     @parameter {list} transactions : liste des transactions à traiter
-    Retourne un dictionnaire dont la clé correspond à une catégorie de dépense
-    et la valeur correspondante est la somme des montants dépensés dans cette
-    catégorie.
-    Si condenser vaut False, le dictionnaire contient l'ensemble des dépenses,
-    sinon le dictionnaire regroupera certaines dépenses dans une catégorie
-    "Autre"
+    Cette fonction est capable de traiter n'importe quel type d'opération:
+    dépenses, revenus ou épargne.
+    Retourne un dictionnaire dont la clé correspond à une catégorie
+    d'opérations et la valeur correspondante est la somme des montants
+    appartenant à cette catégorie.
+    Si condenser vaut False, le dictionnaire contient l'ensemble des
+    opérations, sinon le dictionnaire regroupera certaines opérations dans
+    une catégorie "Autre"
     """
-    depenses = defaultdict(int)
+    operations = defaultdict(int)
     for transaction in transactions:
-        _, montant, _, description = transaction.split(",")
-        depenses[description] += float(montant)
+        _, amount, _, description = transaction.split(",")
+        operations[description] += float(amount)
 
     """
     Pour éviter que les valeurs du dictionnaire soient illisibles sur un
@@ -30,21 +32,21 @@ def calculer_depenses_par_categories(transactions, condenser=False):
     **uniquement si condenser est True**
     """
     if condenser is True:
-        somme_depenses = sum(montant for montant in depenses.values())
+        sum_operations = sum(amount for amount in operations.values())
         # limite sous laquelle on retire la catégorie et on classe la dépense
         # dans "Autre"
-        limite = global_variables.pourcentage_cat_autres*somme_depenses
+        limite = global_variables.pourcentage_cat_autres*sum_operations
         # on crée un nouveau dictionnaire de dépenses condensé qui regroupe
         # les valeurs sous la limite dans une catégorie "Autre" pour ne pas
         # toucher au dictionnaire créé précédemment une shallow copie suffit
         # car les clés et valeurs sont des types immuables
-        depenses_condensees = copy.copy(depenses)
+        condensed_operations = copy.copy(operations)
         # on crée la catégorie "Autre" dans le dictionnaire nouvellement créé
-        depenses_condensees["Autre"] = 0
-        for categorie, montant in depenses.items():
-            if montant < limite:
-                depenses_condensees["Autre"] += montant
+        condensed_operations["Autre"] = 0
+        for categorie, amount in operations.items():
+            if amount < limite:
+                condensed_operations["Autre"] += amount
                 # on supprime la catégorie incluse dans Autre
-                del depenses_condensees[categorie]
+                del condensed_operations[categorie]
 
-    return (depenses if condenser is False else depenses_condensees)
+    return (operations if condenser is False else condensed_operations)
