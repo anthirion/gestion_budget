@@ -48,11 +48,11 @@ class ViewSelectionWidget(QWidget):
         """
         Afficher la vue sur un mois
         """
-        self.view_widget.setCurrentIndex(0)
+        self.view_widget.setCurrentIndex(1)
 
     @Slot()
     def several_months_view_selected(self):
         """
         Afficher la vue sur plusieurs mois
         """
-        self.view_widget.setCurrentIndex(1)
+        self.view_widget.setCurrentIndex(2)

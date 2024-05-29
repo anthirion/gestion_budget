@@ -1,4 +1,4 @@
-from GUI.tool_widgets.expenses_widget import ExpensesWidget
+from GUI.tool_widgets.sub_menu_widget import SubMenuWidget
 from GUI.menu_bar import MenuBar
 
 from PySide6.QtWidgets import (
@@ -36,27 +36,28 @@ class MainWindow(QMainWindow):
 
         # widget d'accueil
         home_widget = \
-            QLabel("Bienvenue sur l'app de visualisation de budget \n \
-                    Sélectionner un menu à gauche pour commencer!")
+            QLabel("Bienvenue sur l'app de visualisation de budget !\n\
+                    Sélectionner un menu à gauche pour commencer !")
+        home_widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
         # widget du sous-menu des dépenses
-        expenses_widget = ExpensesWidget(self.main_widget)
+        expenses_widget = SubMenuWidget(self.main_widget,
+                                        sub_menu="expenses")
         # widget du sous-menu des revenus
-        revenus_widget = QLabel("Bienvenue sur la vue des revenus")
+        revenus_widget = SubMenuWidget(self.main_widget,
+                                       sub_menu="revenus")
         # widget du sous-menu patrimoine
-        assets_widget = QLabel("Bienvenue sur la vue du patrimoine")
+        savings_widget = SubMenuWidget(self.main_widget,
+                                       sub_menu="savings")
         # widget du sous-menu des transactions
         transactions_widget = \
             QLabel("Bienvenue sur la vue des transactions")
-
-        for widget in [home_widget, revenus_widget, assets_widget,
-                       transactions_widget]:
-            widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        transactions_widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # ATTENTION: l'ordre est important !!!!
         self.main_widget.addWidget(home_widget)
         self.main_widget.addWidget(expenses_widget)
         self.main_widget.addWidget(revenus_widget)
-        self.main_widget.addWidget(assets_widget)
+        self.main_widget.addWidget(savings_widget)
         self.main_widget.addWidget(transactions_widget)
 
         """
