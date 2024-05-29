@@ -38,6 +38,12 @@ class PieChartWidget(QWidget):
     Méthodes
     """
 
+    def setCheckboxToFalse(self):
+        """
+        Cette méthode décoche la checkbox
+        """
+        self.checkbox.setChecked(False)
+
     def update_pie_chart(self, transactions, condenser_value):
         """
         Cette méthode calcule puis affiche le camembert des dépenses

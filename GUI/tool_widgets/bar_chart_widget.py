@@ -19,7 +19,7 @@ class BarChartWidget(QtWidgets.QWidget):
         self.revenus = parent_widget.revenus
         self.expenses = parent_widget.savings
 
-        self.bar_canvas = QtWidgets.QWidget()
+        self.bar_canvas = QtWidgets.QWidget(self)
 
         """
         Extraction des mois et sommes pour afficher le diagramme

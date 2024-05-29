@@ -24,9 +24,9 @@ class ViewSelectionWidget(QWidget):
         selection_layout = QHBoxLayout(self)
         selection_layout.setSpacing(GV.vertical_spacing)
         # boutons de sélection de la vue
-        one_month_selection = QPushButton("Vue sur un mois")
+        one_month_selection = QPushButton("Vue sur un mois", self)
         one_month_selection.clicked.connect(self.one_month_view_selected)
-        several_months_selection = QPushButton("Vue sur plusieurs mois")
+        several_months_selection = QPushButton("Vue sur plusieurs mois", self)
         several_months_selection.clicked.connect(
             self.several_months_view_selected)
         for btn in (one_month_selection, several_months_selection):

@@ -29,13 +29,14 @@ class SideMenu(QWidget):
     Cette classe définit le menu latéral à partir duquel l'utilisateur
     choisit ce qu'il souhaite visualiser.
     Le menu latéral contient plusieurs sous-menus:
-        - Sous-menu dépenses qui affiche une vue des dépenses par mois et
+        - Sous-menu Dépenses qui affiche une vue des dépenses par mois et
             sur plusieurs mois
-        - Sous-menu revenus qui affiche une vue des revenus par mois et
+        - Sous-menu Revenus qui affiche une vue des revenus par mois et
             sur plusieurs mois
-        - Sous-menu patrimoine qui affiche une vue de l'épargne par mois et
+        - Sous-menu Patrimoine qui affiche une vue de l'épargne par mois et
             sur plusieurs mois
-        - Sous-menu édition qui permet de voir les transactions et les modifier
+        - Sous-menu Transactions qui permet de voir les transactions et de les
+            modifier
     Il est prévu de rendre ce menu intéractif (avoir une version repliée du
     menu et une version complète)
     """
@@ -43,7 +44,7 @@ class SideMenu(QWidget):
     def __init__(self, parent_widget):
         super().__init__(parent_widget)
         # ce widget sert à afficher la bonne vue en fonction du sous-menu
-        # sélectionné depuis menu latéral
+        # sélectionné depuis le menu latéral
         self.parent_main_widget = parent_widget.main_widget
 
         side_menu_layout = QVBoxLayout(self)
@@ -69,7 +70,8 @@ class SideMenu(QWidget):
 
         # définir chaque bouton "auto-exclusive" pour ne pas que 2 sous-menus
         # soient sélectionnés en même temps
-        # et le rendre "checkable"
+        # et rendre chaque bouton "checkable" pour que l'utilisateur sache quel
+        # sous-menu est sélectionné
         sub_menus = [expenses_sub_menu, revenus_sub_menu,
                      assets_sub_menu, transactions_sub_menu]
 

@@ -20,10 +20,14 @@ import global_variables as GV
 class SeveralMonthsView(QWidget):
     """
     Cette classe construit le widget affichant la vue sur plusieurs mois des
-    dépenses, revenus ou de l'épargne, tout agrégé sur un diagramme en bâtons
+    dépenses, revenus ou de l'épargne, tout agrégé sur un diagramme en bâtons.
     """
 
     def __init__(self, parent_widget, transaction_type):
+        """
+        @parameter {str} transaction_type: indique si la vue à afficher
+            concerne les dépenses, les revenus ou l'épargne
+        """
         super().__init__(parent=parent_widget)
         self.transaction_type = transaction_type
         self.selected_operations = []
@@ -41,20 +45,16 @@ class SeveralMonthsView(QWidget):
         les paramètres de calcul:
             - la période sur laquelle faire l'analyse (en mois et années) et
             - la ou les banque(s) sélectionnée(s)
+        Ce widget est différent de celui utilisé par la vue sur un mois.
         """
-        parameters_widget = SeveralMonthsParametersWidget(self)
-        # récupérer les différents attributs du layout paramètres nécessaires
-        # aux calculs ultérieurs
-        self.month_choice = parameters_widget.month_selection_combobox
-        self.year_choice = parameters_widget.year_selection_combobox
-        # ajouter le layout des paramètres au layout principal de la fenetre
-        self.page_layout.addWidget(parameters_widget)
+        self.parameters_widget = SeveralMonthsParametersWidget(self)
+        self.page_layout.addWidget(self.parameters_widget)
 
         """
         Ajouter un bouton pour lancer les calculs une fois les paramètres
         saisis par l'utilisateur
         """
-        launch_compute_button = QPushButton("Lancer les calculs")
+        launch_compute_button = QPushButton("Lancer les calculs", self)
         launch_compute_button.clicked.connect(self.lancer_calculs)
         self.page_layout.addWidget(launch_compute_button)
 
@@ -63,15 +63,15 @@ class SeveralMonthsView(QWidget):
         sélectionnée
         """
         expenses_title = \
-            QLabel("Somme des dépenses sur la période sélectionnée:")
+            QLabel("Somme des dépenses sur la période sélectionnée:", self)
         expenses_title.setAlignment(Qt.AlignCenter)
-        self.display_sum_expenses = QLabel("0")
+        self.display_sum_expenses = QLabel("0", self)
         self.display_sum_expenses.setAlignment(Qt.AlignCenter)
 
         """
         Afficher le diagramme en bâtons des dépenses par mois
         """
-        self.bar_chart = QWidget()
+        self.bar_chart = QWidget(self)
 
         self.page_layout.addWidget(launch_compute_button)
         self.page_layout.addWidget(self.bar_chart)
@@ -110,8 +110,7 @@ class SeveralMonthsView(QWidget):
             # on retire la première ligne qui correspond aux colonnes
             # et la dernière transaction qui est vide
             transactions = transactions[1:-1]
-            nb_month = int(self.month_choice.currentText())
-            nb_year = int(self.year_choice.currentText())
+            nb_month, nb_year = self.parameters_widget.get_period()
             self.selected_operations = \
                 select_transactions_of_several_months(transactions,
                                                       n_month=nb_month,
