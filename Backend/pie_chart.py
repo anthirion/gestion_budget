@@ -35,7 +35,7 @@ def split_transactions_by_categories(transactions, condenser=False):
         sum_operations = sum(amount for amount in operations.values())
         # limite sous laquelle on retire la catégorie et on classe la dépense
         # dans "Autre"
-        limite = global_variables.pourcentage_cat_autres*sum_operations
+        limite = global_variables.pourcentage_cat_autres * sum_operations
         # on crée un nouveau dictionnaire de dépenses condensé qui regroupe
         # les valeurs sous la limite dans une catégorie "Autre" pour ne pas
         # toucher au dictionnaire créé précédemment une shallow copie suffit

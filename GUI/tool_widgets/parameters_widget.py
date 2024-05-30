@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import (
     QLabel, QHBoxLayout, QComboBox, QWidget
 )
+from datetime import datetime
 
 
 class OneMonthParametersWidget(QWidget):
@@ -17,8 +18,13 @@ class OneMonthParametersWidget(QWidget):
         """
         Widget permettant de sélectioner le mois
         """
+        # les mois et année par défaut sont les mois et année actuels
+        now = datetime.now()
+        current_month = now.month
+        current_year = now.year
+
         month_selection_list = [str(i) for i in range(1, 13)]
-        month_selection_default_text = "11"
+        month_selection_default_text = str(current_month)
 
         month_selection_label = QLabel("Période sélectionnée:", self)
         self.month_selection_combobox = QComboBox(self)
@@ -34,7 +40,7 @@ class OneMonthParametersWidget(QWidget):
         Widget permettant de sélectioner l'année
         """
         year_selection_list = [str(i) for i in range(2020, 2031)]
-        year_selection_default_text = "2023"
+        year_selection_default_text = str(current_year)
 
         year_selection_label = QLabel("/", self)
         self.year_selection_combobox = QComboBox(self)

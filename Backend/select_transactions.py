@@ -84,12 +84,12 @@ def select_transactions_of_several_months(transactions, n_month=1, n_year=0):
     first_year = last_year
     # on définit les premiers jour, mois et année où commencer la sélection
     n_month += n_year * 12
-    first_month = last_month - (n_month-1)
+    first_month = last_month - (n_month - 1)
     if first_month == 0:
         first_year = last_year - 1
         first_month = 12
     elif first_month < 0:
-        first_year = last_year + first_month//12
+        first_year = last_year + first_month // 12
         first_month = first_month % 12
     for transaction in transactions:
         if is_a_transaction(transaction):

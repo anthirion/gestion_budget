@@ -82,10 +82,10 @@ def check_expenses_sums(transactions):
         select_transactions_of_several_months(transactions, n_month=3)
     check_expenses_sum(three_last_months_transactions,
                        card_sum=1204,
-                       bank_transfer_sum=round(5.99*3, 2))
+                       bank_transfer_sum=round(5.99 * 3, 2))
     # vérifier que la somme des dépenses des 5 derniers mois est correcte
     three_last_months_transactions = \
         select_transactions_of_several_months(transactions, n_month=5)
     check_expenses_sum(three_last_months_transactions,
                        card_sum=2001.4,
-                       bank_transfer_sum=round(5.99*5, 2))
+                       bank_transfer_sum=round(5.99 * 5, 2))
