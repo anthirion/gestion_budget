@@ -1,10 +1,13 @@
 from Backend.pie_chart import split_transactions_by_categories
 from PySide6.QtWidgets import (
-    QVBoxLayout, QCheckBox, QWidget
+    QGridLayout, QVBoxLayout, QHBoxLayout,
+    QCheckBox, QWidget, QSlider, QLabel
 )
 from PySide6.QtGui import QPainter
 from PySide6 import QtCharts
-from PySide6.QtCore import Slot
+from PySide6.QtCore import Slot, Qt
+
+import global_variables as GV
 
 
 class PieChartWidget(QWidget):
@@ -12,6 +15,8 @@ class PieChartWidget(QWidget):
     Cette classe définit un widget contenant:
         - un camembert de dépenses (dépenses par carte ou par virement)
         - une checkbox pour afficher la catégorie "Autre" sur le camembert
+        - un slider pour paramétrer la valeur seuil utiliser pour la catégorie
+            "Autre"
     La vue des dépenses contiendra 2 exemplaires de ce widget (1 pour les
     dépenses par carte et 1 pour les dépenses par virement)
     """
@@ -22,17 +27,25 @@ class PieChartWidget(QWidget):
         self.chart_title_ = chart_title
         self.transactions_ = []
 
-        self.chart_layout = QVBoxLayout(self)
+        self.main_layout = QVBoxLayout(self)
+        tools_layout = QHBoxLayout()
 
         self.checkbox = QCheckBox("Afficher la catégorie Autres", self)
         self.checkbox.toggled.connect(self.checkbox_enclenchee)
+
+        self.slider = CustomSlider(self)
+        # par défaut ne pas afficher le slider tant que la checkbox n'est pas
+        # cochée
+        self.slider.setVisible(False)
 
         self.pie_chart = QtCharts.QChartView(self)
         self.pie_chart.setRenderHint(QPainter.Antialiasing)
 
         # ajouter les widgets précédents au layout
-        self.chart_layout.addWidget(self.checkbox)
-        self.chart_layout.addWidget(self.pie_chart)
+        tools_layout.addWidget(self.checkbox)
+        tools_layout.addWidget(self.slider)
+        self.main_layout.addLayout(tools_layout)
+        self.main_layout.addWidget(self.pie_chart)
 
     """
     Méthodes
@@ -97,12 +110,60 @@ class PieChartWidget(QWidget):
         # mettre à jour le graphe initial
         self.pie_chart.setChart(updated_chart)
 
-    """
-    Checkbox slot
-    """
-
     @Slot()
     def checkbox_enclenchee(self, checked):
+        # afficher le slider uniquement si la checkbox est cochée
+        self.slider.setVisible(checked)
         condenser_local = True if checked else False
         self.update_pie_chart(self.transactions_,
                               condenser_value=condenser_local)
+
+
+class CustomSlider(QWidget):
+    """
+    Cette classe définit un slider qui permet de changer la valeur seuil
+    de la catégorie Autre
+    """
+
+    def __init__(self, parent_widget):
+        super().__init__(parent=parent_widget)
+        self.parent_widget = parent_widget
+        layout = QGridLayout(self)
+
+        slider_min_value, slider_max_value = 0, 100
+        self.slider = QSlider(self)
+        self.slider.setOrientation(Qt.Horizontal)
+        # ATTENTION: les valeurs des sliders sont des entiers !!!
+        # la valeur du slider est un pourcentage entre 0 et 100
+        self.slider.setRange(slider_min_value, slider_max_value)
+        self.slider.setSingleStep(10)
+        # par défaut, afficher la valeur globale du fichier global_variables
+        self.slider.setSliderPosition(GV.pourcentage_cat_autres * 100)
+        self.slider.valueChanged.connect(self.slider_value_changed)
+        self.slider.sliderReleased.connect(self.slider_released)
+
+        # labels indiquant les limites de valeur possibles: 0 et 100
+        min_label = QLabel(str(slider_min_value), self)
+        max_label = QLabel(str(slider_max_value), self)
+        max_label.setAlignment(Qt.AlignmentFlag.AlignRight)
+        # label indiquant la valeur actuelle sélectionnée par l'utilisateur
+        self.value_label = QLabel(str(self.slider.value()), self)
+        self.value_label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+
+        layout.addWidget(self.slider, 1, 0, 1, 7)
+        layout.addWidget(min_label, 2, 0)
+        layout.addWidget(self.value_label, 2, 3)
+        layout.addWidget(max_label, 2, 6)
+
+    @Slot()
+    def slider_released(self):
+        # récupérer la valeur indiquée par l'utilisateur via le slider
+        value = self.slider.sliderPosition()
+        GV.pourcentage_cat_autres = value / 100
+        parent_wg = self.parent_widget
+        parent_wg.update_pie_chart(parent_wg.transactions_,
+                                   parent_wg.checkbox.isChecked())
+
+    @Slot()
+    def slider_value_changed(self):
+        self.value_label.setNum(self.slider.value())
