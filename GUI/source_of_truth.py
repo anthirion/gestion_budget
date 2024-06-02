@@ -5,10 +5,26 @@ vérité par l'interface graphique GUI
 
 
 from PySide6.QtWidgets import QMessageBox
-import global_variables
+import global_variables as GV
 from pathlib import Path
 
-save_file = global_variables.save_file
+save_file = GV.save_file
+
+
+def get_transactions():
+    """
+    Cette fonction récupère les transactions inscrites dans la source de vérité
+    @return transactions de la source de vérité
+    """
+    # sélection des transactions
+    source_of_truth_path = Path(GV.source_of_truth)
+    # sélectionner les transactions souhaitées par l'utilisateur
+    transactions = source_of_truth_path.read_text(encoding="utf-8-sig")
+    # on split le fichier par transaction
+    transactions = transactions.split(("\n"))
+    # on retire la première ligne qui correspond aux colonnes
+    # et la dernière transaction qui est vide
+    return transactions[1:-1]
 
 
 def check_save_file_exists(filename):
@@ -45,7 +61,7 @@ def get_source_of_truth(widget):
         # la source de vérité n'a pas été trouvée, remonter une erreur à
         # l'utilisateur qui doit alors sélectionner la source de vérité
         QMessageBox.warning(widget, "Avertissement",
-                            global_variables.source_of_truth_notfound_msg)
+                            GV.source_of_truth_notfound_msg)
         return ""
 
 

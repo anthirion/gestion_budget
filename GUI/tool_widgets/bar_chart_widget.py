@@ -1,8 +1,6 @@
 import numpy as np
 
-from matplotlib.backends.backend_qtagg import FigureCanvas
 from matplotlib.backends.qt_compat import QtWidgets
-from matplotlib.figure import Figure
 
 from Backend.expenses_barplot import get_expenses_per_month
 

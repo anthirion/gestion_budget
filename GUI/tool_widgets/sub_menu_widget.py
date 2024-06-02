@@ -1,4 +1,3 @@
-from pathlib import Path
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QMessageBox
 )
@@ -7,7 +6,10 @@ from PySide6.QtCore import Slot
 from GUI.tool_widgets.parameters_widget import SubMenuParametersWidget
 from GUI.tool_widgets.sums_widget import SubMenuSumsWidget
 from GUI.tool_widgets.pie_chart_widget import PieChartWidget
-from GUI.source_of_truth import get_source_of_truth
+from GUI.source_of_truth import (
+    get_source_of_truth,
+    get_transactions,
+)
 
 from Backend.transactions_statistics import compute_sum
 from Backend.select_transactions import (
@@ -114,15 +116,7 @@ class SubMenuWidget(QWidget):
         # recherche de la source de vérité
         GV.source_of_truth = get_source_of_truth(self)
         if GV.source_of_truth:
-            # sélection des transactions
-            source_of_truth_path = Path(GV.source_of_truth)
-            # sélectionner les transactions souhaitées par l'utilisateur
-            transactions = source_of_truth_path.read_text(encoding="utf-8-sig")
-            # on split le fichier par transaction
-            transactions = transactions.split(("\n"))
-            # on retire la première ligne qui correspond aux colonnes
-            # et la dernière transaction qui est vide
-            transactions = transactions[1:-1]
+            transactions = get_transactions()
             nb_month, nb_year = self.parameters_widget.get_period()
             self.selected_operations = \
                 select_one_month_transactions(transactions,
