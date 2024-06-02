@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, Slot
 
-from GUI.tool_widgets.parameters_widget import SeveralMonthsParametersWidget
+from GUI.tool_widgets.parameters_widget import SynthesisSubMenuParametersWidget
 from GUI.source_of_truth import get_source_of_truth
 from GUI.tool_widgets.bar_chart_widget import BarChartWidget
 
@@ -44,7 +44,7 @@ class OverviewWidget(QWidget):
             - la ou les banque(s) sélectionnée(s)
         Ce widget est différent de celui utilisé par la vue sur un mois.
         """
-        self.parameters_widget = SeveralMonthsParametersWidget(self)
+        self.parameters_widget = SynthesisSubMenuParametersWidget(self)
         self.page_layout.addWidget(self.parameters_widget)
 
         """

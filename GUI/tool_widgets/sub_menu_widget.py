@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Slot
 
-from GUI.tool_widgets.parameters_widget import OneMonthParametersWidget
+from GUI.tool_widgets.parameters_widget import SubMenuParametersWidget
 from GUI.tool_widgets.sums_widget import SumsWidget
 from GUI.tool_widgets.pie_chart_widget import PieChartWidget
 from GUI.source_of_truth import get_source_of_truth
@@ -64,7 +64,7 @@ class SubMenuWidget(QWidget):
             - la ou les banque(s) sélectionnée(s)
         Ce widget est différent de celui utilisé par la vue sur plusieurs mois.
         """
-        self.parameters_widget = OneMonthParametersWidget(self)
+        self.parameters_widget = SubMenuParametersWidget(self)
         self.page_layout.addWidget(self.parameters_widget)
 
         """
@@ -79,7 +79,7 @@ class SubMenuWidget(QWidget):
         Ajouter un layout affichant les sommes des dépenses mensuelles
         par carte et par virement
         """
-        self.sums_widget = SumsWidget(self)
+        self.sums_widget = SumsWidget(self, self.transaction_type)
         self.page_layout.addWidget(self.sums_widget)
 
         """
@@ -137,17 +137,19 @@ class SubMenuWidget(QWidget):
             self.expenses, self.revenus, self.savings = \
                 extract_expenses_revenus_savings(self.selected_operations)
 
-            if (self.transaction_type == "expenses"):
-                # les camemberts à afficher sont ceux des dépenses
-                self.transactions = self.expenses
-            elif (self.transaction_type == "revenus"):
-                # les camemberts à afficher sont ceux des revenus
-                self.transactions = self.revenus
-            elif (self.transaction_type == "savings"):
-                # les camemberts à afficher sont ceux de l'épargne
-                self.transactions = self.savings
-            else:
-                raise ValueError("Le type de transaction fourni est incorrect")
+            match self.transaction_type:
+                case "expenses":
+                    # les camemberts à afficher sont ceux des dépenses
+                    self.transactions = self.expenses
+                case "revenus":
+                    # les camemberts à afficher sont ceux des revenus
+                    self.transactions = self.revenus
+                case "savings":
+                    # les camemberts à afficher sont ceux de l'épargne
+                    self.transactions = self.savings
+                case _:
+                    raise ValueError(
+                        "Le type de transaction fourni est incorrect")
 
             # on extrait les transactions par carte
             self.card_transactions = \

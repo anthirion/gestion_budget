@@ -4,7 +4,7 @@ from PySide6.QtWidgets import (
 from datetime import datetime
 
 
-class OneMonthParametersWidget(QWidget):
+class SubMenuParametersWidget(QWidget):
     """
     Cette classe définit le widget des paramètres de calcul, affiché dans
     la vue sur un seul mois, à savoir:
@@ -71,7 +71,7 @@ class OneMonthParametersWidget(QWidget):
         return (month_choice, year_choice)
 
 
-class SeveralMonthsParametersWidget(QWidget):
+class SynthesisSubMenuParametersWidget(QWidget):
     """
     Cette classe définit le widget des paramètres de calcul, affiché dans
     la vue sur plusieurs mois

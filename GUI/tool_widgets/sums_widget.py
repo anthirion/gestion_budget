@@ -11,13 +11,30 @@ class SumsWidget(QWidget):
         - la somme des dépenses par virement
     """
 
-    def __init__(self, parent_widget):
+    def __init__(self, parent_widget, transaction_type):
+        """
+        @parameter {str} transaction_type: indique si le widget correspond
+            aux dépenses, revenus ou à l'épargne. Le type de transaction
+            impacte le titre à afficher
+        """
         super().__init__(parent=parent_widget)
 
         main_layout = QGridLayout(self)
 
-        card_title = "Somme des dépenses par carte :"
-        bank_transfer_title = "Somme des dépenses par virement :"
+        # adapter les titres en fonction du type de transaction
+        match transaction_type:
+            case "expenses":
+                card_title = "Somme des dépenses par carte :"
+                bank_transfer_title = "Somme des dépenses par virement :"
+            case "revenus":
+                card_title = "Somme des revenus par carte :"
+                bank_transfer_title = "Somme des revenus par virement :"
+            case "savings":
+                card_title = "Somme de l'épargne par carte :"
+                bank_transfer_title = "Somme de l'épargne par virement :"
+            case _:
+                raise ValueError(
+                    "Le type de transaction fourni est incorrect")
 
         # dépenses par carte
         main_layout.addWidget(QLabel(card_title, self), 0, 0, Qt.AlignCenter)
