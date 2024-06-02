@@ -4,9 +4,10 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, Slot
 
-from GUI.tool_widgets.parameters_widget import SynthesisSubMenuParametersWidget
+from GUI.tool_widgets.parameters_widget import OverviewSubMenuParametersWidget
 from GUI.source_of_truth import get_source_of_truth
 from GUI.tool_widgets.bar_chart_widget import BarChartWidget
+from GUI.tool_widgets.sums_widget import OverviewSumWidget
 
 from Backend.transactions_statistics import compute_sum
 from Backend.select_transactions import (
@@ -44,7 +45,7 @@ class OverviewWidget(QWidget):
             - la ou les banque(s) sélectionnée(s)
         Ce widget est différent de celui utilisé par la vue sur un mois.
         """
-        self.parameters_widget = SynthesisSubMenuParametersWidget(self)
+        self.parameters_widget = OverviewSubMenuParametersWidget(self)
         self.page_layout.addWidget(self.parameters_widget)
 
         """
@@ -56,14 +57,11 @@ class OverviewWidget(QWidget):
         self.page_layout.addWidget(launch_compute_button)
 
         """"
-        Afficher la somme des dépenses et des revenus sur la période
-        sélectionnée
+        Afficher la somme des dépenses, des revenus et de l'épargne sur
+        la période sélectionnée
         """
-        expenses_title = \
-            QLabel("Somme des dépenses sur la période sélectionnée:", self)
-        expenses_title.setAlignment(Qt.AlignCenter)
-        self.display_sum_expenses = QLabel("0", self)
-        self.display_sum_expenses.setAlignment(Qt.AlignCenter)
+        self.sums = OverviewSumWidget(self)
+        self.page_layout.addWidget(self.sums)
 
         """
         Afficher le diagramme en bâtons des dépenses par mois
@@ -121,9 +119,12 @@ class OverviewWidget(QWidget):
             self.expenses, self.revenus, self.savings = \
                 extract_expenses_revenus_savings(self.selected_operations)
 
-            # calculer la somme des dépenses et l'afficher
-            sum_expenses = compute_sum(self.selected_operations)
-            self.display_sum_expenses.setNum(sum_expenses)
+            # calculer la somme des dépenses, revenus et de l'épargne et les
+            # afficher
+            expenses_sum = compute_sum(self.expenses)
+            revenus_sum = compute_sum(self.revenus)
+            savings_sum = compute_sum(self.savings)
+            self.sums.setSums(expenses_sum, revenus_sum, savings_sum)
 
             # afficher le diagramme en batons des dépenses mensuelles
             self.plot_barchart()

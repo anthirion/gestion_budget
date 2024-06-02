@@ -71,7 +71,7 @@ class SubMenuParametersWidget(QWidget):
         return (month_choice, year_choice)
 
 
-class SynthesisSubMenuParametersWidget(QWidget):
+class OverviewSubMenuParametersWidget(QWidget):
     """
     Cette classe définit le widget des paramètres de calcul, affiché dans
     la vue sur plusieurs mois

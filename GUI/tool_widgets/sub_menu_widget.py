@@ -5,7 +5,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Slot
 
 from GUI.tool_widgets.parameters_widget import SubMenuParametersWidget
-from GUI.tool_widgets.sums_widget import SumsWidget
+from GUI.tool_widgets.sums_widget import SubMenuSumsWidget
 from GUI.tool_widgets.pie_chart_widget import PieChartWidget
 from GUI.source_of_truth import get_source_of_truth
 
@@ -79,7 +79,7 @@ class SubMenuWidget(QWidget):
         Ajouter un layout affichant les sommes des dépenses mensuelles
         par carte et par virement
         """
-        self.sums_widget = SumsWidget(self, self.transaction_type)
+        self.sums_widget = SubMenuSumsWidget(self, self.transaction_type)
         self.page_layout.addWidget(self.sums_widget)
 
         """
@@ -159,7 +159,7 @@ class SubMenuWidget(QWidget):
                 select_transactions_by_bank_transfer(self.transactions)
 
             # calculer la somme des transactions par carte et par virement
-            # et les afficher dans le widget SumsWidget
+            # et les afficher dans le widget SubMenuSumsWidget
             sum_card = compute_sum(self.card_transactions)
             sum_bank_transfer = compute_sum(self.bank_transfer_transactions)
             self.sums_widget.setSums(sum_card, sum_bank_transfer)
