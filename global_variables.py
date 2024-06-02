@@ -15,3 +15,5 @@ bank_transfer_chart_title = "Dépenses par virement"
 ###############################################################################
 horizontal_spacing = 30
 vertical_spacing = 10
+max_widget_width = 150
+widgets_spacing = 500

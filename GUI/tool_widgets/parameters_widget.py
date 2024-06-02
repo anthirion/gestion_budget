@@ -1,7 +1,10 @@
 from PySide6.QtWidgets import (
     QLabel, QHBoxLayout, QComboBox, QWidget
 )
+from PySide6.QtCore import Qt
 from datetime import datetime
+
+import global_variables as GV
 
 
 class SubMenuParametersWidget(QWidget):
@@ -15,6 +18,7 @@ class SubMenuParametersWidget(QWidget):
     def __init__(self, parent_widget):
         super().__init__(parent=parent_widget)
         parameters_layout = QHBoxLayout(self)
+
         """
         Widget permettant de sélectioner le mois
         """
@@ -57,9 +61,16 @@ class SubMenuParametersWidget(QWidget):
         """
         # ajout d'un peu d'espace avant le widget de sélection de la banque
         # pour aérer
-        parameters_layout.insertSpacing(4, 300)
+        parameters_layout.insertSpacing(4, GV.widgets_spacing)
         choice_bank_widget = ChoiceBankWidget(self)
-        parameters_layout.addWidget(choice_bank_widget)
+        parameters_layout.addWidget(choice_bank_widget,
+                                    Qt.AlignmentFlag.AlignRight)
+
+        # fixer une taille maximale à tous les widgets définis pour ne pas
+        # qu'ils soient trop étirés
+        for widget in [month_selection_label, self.month_selection_combobox,
+                       year_selection_label, self.year_selection_combobox]:
+            widget.setMaximumWidth(GV.max_widget_width)
 
     def get_period(self):
         """
@@ -115,14 +126,21 @@ class OverviewSubMenuParametersWidget(QWidget):
         parameters_layout.addWidget(self.year_selection_combobox)
         parameters_layout.addWidget(year_additional_label)
 
+        # fixer une taille maximale à tous les widgets définis pour ne pas
+        # qu'ils soient trop étirés
+        for widget in [month_selection_label, self.month_selection_combobox,
+                       year_additional_label, self.year_selection_combobox]:
+            widget.setMaximumWidth(GV.max_widget_width)
+
         """
         Définition du widget permettant de sélectionner la banque
         """
         # ajout d'un peu d'espace avant le widget de sélection de la banque
         # pour aérer
-        parameters_layout.insertSpacing(4, 300)
+        parameters_layout.insertSpacing(5, GV.widgets_spacing)
         choice_bank_widget = ChoiceBankWidget(self)
-        parameters_layout.addWidget(choice_bank_widget)
+        parameters_layout.addWidget(choice_bank_widget,
+                                    Qt.AlignmentFlag.AlignRight)
 
     def get_period(self):
         """
@@ -148,3 +166,8 @@ class ChoiceBankWidget(QWidget):
         bank_choice_combobox.addItem("LCL")
         layout.addWidget(label)
         layout.addWidget(bank_choice_combobox)
+
+        # fixer une taille maximale à tous les widgets définis pour ne pas
+        # qu'ils soient trop étirés
+        label.setMaximumWidth(150)
+        bank_choice_combobox.setMaximumWidth(300)
