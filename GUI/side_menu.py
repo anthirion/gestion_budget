@@ -17,7 +17,7 @@ from PySide6.QtCore import Qt, Slot
 
 expenses_widget_index = 1
 revenus_widget_index = 2
-assets_widget_index = 3
+savings_widget_index = 3
 overview_widget_index = 4
 transactions_widget_index = 5
 
@@ -33,7 +33,7 @@ class SideMenu(QWidget):
     Le menu latéral contient plusieurs sous-menus:
         - Sous-menu Dépenses qui affiche une vue des dépenses par mois
         - Sous-menu Revenus qui affiche une vue des revenus par mois
-        - Sous-menu Patrimoine qui affiche une vue de l'épargne par mois
+        - Sous-menu Epargne qui affiche une vue de l'épargne par mois
         - Sous-menu Transactions qui permet de voir les transactions et de les
             modifier
         - Sous-menu Synthèse qui affiche les dépenses, revenus et épargne sur
@@ -61,9 +61,9 @@ class SideMenu(QWidget):
                                        text="\t Revenus")
         revenus_sub_menu.clicked.connect(self.revenus_selected)
 
-        assets_sub_menu = QPushButton(icon=QIcon(stocks_icon),
-                                      text="\t Patrimoine")
-        assets_sub_menu.clicked.connect(self.assets_selected)
+        savings_sub_menu = QPushButton(icon=QIcon(stocks_icon),
+                                       text="\t Epargne")
+        savings_sub_menu.clicked.connect(self.savings_selected)
 
         transactions_sub_menu = QPushButton(icon=QIcon(list_icon),
                                             text="\t Transactions")
@@ -77,7 +77,7 @@ class SideMenu(QWidget):
         # et rendre chaque bouton "checkable" pour que l'utilisateur sache quel
         # sous-menu est sélectionné
         sub_menus = [expenses_sub_menu, revenus_sub_menu,
-                     assets_sub_menu, transactions_sub_menu,
+                     savings_sub_menu, transactions_sub_menu,
                      overview_sub_menu]
 
         for sub_menu in sub_menus:
@@ -87,7 +87,7 @@ class SideMenu(QWidget):
         # ATTENTION: l'ordre est important !!!!
         side_menu_layout.addWidget(expenses_sub_menu)
         side_menu_layout.addWidget(revenus_sub_menu)
-        side_menu_layout.addWidget(assets_sub_menu)
+        side_menu_layout.addWidget(savings_sub_menu)
         side_menu_layout.addWidget(overview_sub_menu)
         side_menu_layout.addWidget(transactions_sub_menu)
 
@@ -117,12 +117,12 @@ class SideMenu(QWidget):
         self.parent_main_widget.setCurrentIndex(revenus_widget_index)
 
     @Slot()
-    def assets_selected(self):
+    def savings_selected(self):
         """
         Lorsque le sous-menu patrimoine est sélectionné, afficher la vue du
         patrimoine
         """
-        self.parent_main_widget.setCurrentIndex(assets_widget_index)
+        self.parent_main_widget.setCurrentIndex(savings_widget_index)
 
     @Slot()
     def transactions_selected(self):

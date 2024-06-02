@@ -69,7 +69,8 @@ class MainWindow(QMainWindow):
         Création d'un menu latéral avec plusieurs sous-menus:
             - Dépenses
             - Revenus
-            - Patrimoine
+            - Epargne
+            - Synthèse
             - Transactions
         """
         side_menu_widget = SideMenu(self)
