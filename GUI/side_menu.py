@@ -7,6 +7,7 @@ from GUI.resources import (
     list_icon,
     money_icon,
     stocks_icon,
+    overview_icon,
 )
 from PySide6.QtCore import Qt, Slot
 
@@ -17,7 +18,8 @@ from PySide6.QtCore import Qt, Slot
 expenses_widget_index = 1
 revenus_widget_index = 2
 assets_widget_index = 3
-transactions_widget_index = 4
+overview_widget_index = 4
+transactions_widget_index = 5
 
 ###############################################################################
 # Classe principale du module
@@ -29,14 +31,13 @@ class SideMenu(QWidget):
     Cette classe définit le menu latéral à partir duquel l'utilisateur
     choisit ce qu'il souhaite visualiser.
     Le menu latéral contient plusieurs sous-menus:
-        - Sous-menu Dépenses qui affiche une vue des dépenses par mois et
-            sur plusieurs mois
-        - Sous-menu Revenus qui affiche une vue des revenus par mois et
-            sur plusieurs mois
-        - Sous-menu Patrimoine qui affiche une vue de l'épargne par mois et
-            sur plusieurs mois
+        - Sous-menu Dépenses qui affiche une vue des dépenses par mois
+        - Sous-menu Revenus qui affiche une vue des revenus par mois
+        - Sous-menu Patrimoine qui affiche une vue de l'épargne par mois
         - Sous-menu Transactions qui permet de voir les transactions et de les
             modifier
+        - Sous-menu Synthèse qui affiche les dépenses, revenus et épargne sur
+        plusieurs mois, aggrégés en un seul diagramme en bâtons
     Il est prévu de rendre ce menu intéractif (avoir une version repliée du
     menu et une version complète)
     """
@@ -67,21 +68,27 @@ class SideMenu(QWidget):
         transactions_sub_menu = QPushButton(icon=QIcon(list_icon),
                                             text="\t Transactions")
         transactions_sub_menu.clicked.connect(self.transactions_selected)
+        overview_sub_menu = QPushButton(icon=QIcon(overview_icon),
+                                        text="\t Synthèse")
+        overview_sub_menu.clicked.connect(self.overview_selected)
 
         # définir chaque bouton "auto-exclusive" pour ne pas que 2 sous-menus
         # soient sélectionnés en même temps
         # et rendre chaque bouton "checkable" pour que l'utilisateur sache quel
         # sous-menu est sélectionné
         sub_menus = [expenses_sub_menu, revenus_sub_menu,
-                     assets_sub_menu, transactions_sub_menu]
+                     assets_sub_menu, transactions_sub_menu,
+                     overview_sub_menu]
 
         for sub_menu in sub_menus:
             sub_menu.setAutoExclusive(True)
             sub_menu.setCheckable(True)
 
+        # ATTENTION: l'ordre est important !!!!
         side_menu_layout.addWidget(expenses_sub_menu)
         side_menu_layout.addWidget(revenus_sub_menu)
         side_menu_layout.addWidget(assets_sub_menu)
+        side_menu_layout.addWidget(overview_sub_menu)
         side_menu_layout.addWidget(transactions_sub_menu)
 
         # aligner le menu en haut à gauche
@@ -124,3 +131,11 @@ class SideMenu(QWidget):
         transactions
         """
         self.parent_main_widget.setCurrentIndex(transactions_widget_index)
+
+    @Slot()
+    def overview_selected(self):
+        """
+        Lorsque le sous-menu Synthèse est sélectionné, afficher la vue des
+        de la sytnhèse
+        """
+        self.parent_main_widget.setCurrentIndex(overview_widget_index)

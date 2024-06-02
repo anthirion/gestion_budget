@@ -6,7 +6,9 @@ from PySide6.QtWidgets import (
     QStackedWidget
 )
 from PySide6.QtCore import Qt
+
 from GUI.side_menu import SideMenu
+from GUI.tool_widgets.overview_widget import OverviewWidget
 
 
 class MainWindow(QMainWindow):
@@ -41,23 +43,26 @@ class MainWindow(QMainWindow):
         home_widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
         # widget du sous-menu des dépenses
         expenses_widget = SubMenuWidget(self.main_widget,
-                                        sub_menu="expenses")
+                                        transaction_type="expenses")
         # widget du sous-menu des revenus
         revenus_widget = SubMenuWidget(self.main_widget,
-                                       sub_menu="revenus")
+                                       transaction_type="revenus")
         # widget du sous-menu patrimoine
         savings_widget = SubMenuWidget(self.main_widget,
-                                       sub_menu="savings")
+                                       transaction_type="savings")
         # widget du sous-menu des transactions
         transactions_widget = \
             QLabel("Bienvenue sur la vue des transactions")
         transactions_widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        # ATTENTION: l'ordre est important !!!!
+        # widget du sous-menu de la synthèse
+        overview_widget = OverviewWidget(self.main_widget)
+
         self.main_widget.addWidget(home_widget)
         self.main_widget.addWidget(expenses_widget)
         self.main_widget.addWidget(revenus_widget)
         self.main_widget.addWidget(savings_widget)
+        self.main_widget.addWidget(overview_widget)
         self.main_widget.addWidget(transactions_widget)
 
         """

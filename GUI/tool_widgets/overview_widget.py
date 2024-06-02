@@ -17,19 +17,16 @@ from Backend.select_transactions import (
 import global_variables as GV
 
 
-class SeveralMonthsView(QWidget):
+class OverviewWidget(QWidget):
     """
-    Cette classe construit le widget affichant la vue sur plusieurs mois des
-    dépenses, revenus ou de l'épargne, tout agrégé sur un diagramme en bâtons.
+    Cette classe construit le widget affichant la vue de sytnhèse à la
+    sélection du sous-menu correspondant dans le menu latéral.
+    Ce widget affiche un aggrégat des dépenses, revenus et de l'épargne sur
+    plusieurs mois sous la forme d'un diagramme en bâtons.
     """
 
-    def __init__(self, parent_widget, transaction_type):
-        """
-        @parameter {str} transaction_type: indique si la vue à afficher
-            concerne les dépenses, les revenus ou l'épargne
-        """
+    def __init__(self, parent_widget):
         super().__init__(parent=parent_widget)
-        self.transaction_type = transaction_type
         self.selected_operations = []
         self.transactions, self.transactions_card = [], []
         self.transactions_bank_transfer = []
