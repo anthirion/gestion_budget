@@ -19,8 +19,6 @@ class BarChartWidget(QtWidgets.QWidget):
         self.revenus = parent_widget.revenus
         self.expenses = parent_widget.savings
 
-        self.bar_canvas = QtWidgets.QWidget(self)
-
         """
         Extraction des mois et sommes pour afficher le diagramme
         """
@@ -43,8 +41,8 @@ class BarChartWidget(QtWidgets.QWidget):
         # ATTENTION lors du changement de la figsize
         # celle-ci semble ne pas introduire trop de bugs d'affichage
         # utiliser plutôt les barplots natifs de PySide 6 ???
-        self.bar_canvas = FigureCanvas(Figure(figsize=(6, 8)))
-        bar_ax = self.bar_canvas.figure.subplots()
+        self.bar_canvas = parent_widget.bar_canvas
+        bar_ax = parent_widget.bar_axes
 
         months = list(self.month_expenses.keys())
         step = np.arange(len(months))     # the label locations
@@ -60,9 +58,8 @@ class BarChartWidget(QtWidgets.QWidget):
 
         # Add some text for labels, title and custom x-axis tick labels, etc.
         bar_ax.set_ylabel('Montant (en euros)')
-        bar_ax.set_title(
-            "Sommes des dépenses et revenus par mois et l'épargne sur la\
-                période sélectionnée")
+        title = "Sommes des dépenses, revenus et de l'épargne par mois"
+        bar_ax.set_title(title)
         bar_ax.set_xticks(step + width, months)
         bar_ax.legend(loc='upper left', ncols=3)
 
@@ -88,5 +85,6 @@ class BarChartWidget(QtWidgets.QWidget):
             for left_dictionnary in left_dictionnaries:
                 for month in dictionnary.keys():
                     if month not in left_dictionnary:
-                        # le mois est absent du dictionnaire
+                        # le mois est absent du dictionnaire, on fixe la somme
+                        # à 0
                         left_dictionnary[month] = 0.0

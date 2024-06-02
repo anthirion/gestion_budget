@@ -75,9 +75,9 @@ class OverviewSumWidget(QWidget):
         super().__init__(parent=parent_widget)
         main_layout = QGridLayout(self)
 
-        expenses_title = "Sommes des dépenses sur la période :"
-        revenus_title = "Sommes des revenus sur la période :"
-        savings_title = "Sommes de l'épargne sur la période :"
+        expenses_title = "Somme des dépenses sur la période :"
+        revenus_title = "Somme des revenus sur la période :"
+        savings_title = "Somme de l'épargne sur la période :"
 
         # dépenses
         main_layout.addWidget(QLabel(expenses_title, self), 1, 1,

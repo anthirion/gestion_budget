@@ -1,8 +1,11 @@
 from pathlib import Path
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QPushButton, QLabel, QMessageBox
+    QWidget, QVBoxLayout, QPushButton, QMessageBox
 )
-from PySide6.QtCore import Qt, Slot
+from PySide6 import QtCharts
+from matplotlib.backends.backend_qtagg import FigureCanvas
+from matplotlib.figure import Figure
+from PySide6.QtCore import Slot
 
 from GUI.tool_widgets.parameters_widget import OverviewSubMenuParametersWidget
 from GUI.source_of_truth import get_source_of_truth
@@ -12,7 +15,7 @@ from GUI.tool_widgets.sums_widget import OverviewSumWidget
 from Backend.transactions_statistics import compute_sum
 from Backend.select_transactions import (
     extract_expenses_revenus_savings,
-    select_transactions_of_several_months,
+    select_several_months_transactions,
 )
 
 import global_variables as GV
@@ -29,8 +32,6 @@ class OverviewWidget(QWidget):
     def __init__(self, parent_widget):
         super().__init__(parent=parent_widget)
         self.selected_operations = []
-        self.transactions, self.transactions_card = [], []
-        self.transactions_bank_transfer = []
         self.expenses, self.revenus, self.savings = [], [], []
 
         # Mise en page
@@ -66,22 +67,24 @@ class OverviewWidget(QWidget):
         """
         Afficher le diagramme en bâtons des dépenses par mois
         """
-        self.bar_chart = QWidget(self)
+        self.bar_canvas = FigureCanvas(Figure(figsize=(6, 8)))
+        self.bar_axes = self.bar_canvas.figure.subplots()
 
         self.page_layout.addWidget(launch_compute_button)
-        self.page_layout.addWidget(self.bar_chart)
+        self.page_layout.addWidget(self.bar_canvas)
 
     """
     Méthodes
     """
 
     def plot_barchart(self):
-        # retirer l'ancien graphe pour en dessiner un nouveau
-        self.page_layout.removeWidget(self.bar_chart)
-        # mettre à jour le widget avec le bon diagramme
-        self.bar_chart = BarChartWidget(self).bar_canvas
-        # afficher le nouveau widget
-        self.page_layout.addWidget(self.bar_chart)
+        # effacer les anciens axes pour éviter le chevauchement
+        # des anciens et nouveaux axes
+        self.bar_axes.clear()
+        # calculer le nouveau diagramme en batons
+        BarChartWidget(self)
+        # afficher le nouveau diagramme en batons
+        self.bar_canvas.draw()
 
     """
     Button slot
@@ -107,9 +110,9 @@ class OverviewWidget(QWidget):
             transactions = transactions[1:-1]
             nb_month, nb_year = self.parameters_widget.get_period()
             self.selected_operations = \
-                select_transactions_of_several_months(transactions,
-                                                      n_month=nb_month,
-                                                      n_year=nb_year)
+                select_several_months_transactions(transactions,
+                                                   n_month=nb_month,
+                                                   n_year=nb_year)
             if not self.selected_operations:
                 # pas de transaction sélectionnée
                 # afficher un message d'avertissement à l'utilisateur

@@ -14,7 +14,7 @@ from Backend.select_transactions import (
     select_transactions_by_card,
     select_transactions_by_bank_transfer,
     extract_expenses_revenus_savings,
-    select_transactions_of_one_month,
+    select_one_month_transactions,
 )
 
 import global_variables as GV
@@ -125,9 +125,9 @@ class SubMenuWidget(QWidget):
             transactions = transactions[1:-1]
             nb_month, nb_year = self.parameters_widget.get_period()
             self.selected_operations = \
-                select_transactions_of_one_month(transactions,
-                                                 n_month=nb_month,
-                                                 n_year=nb_year)
+                select_one_month_transactions(transactions,
+                                              n_month=nb_month,
+                                              n_year=nb_year)
             if not self.selected_operations:
                 # pas de transaction sélectionnée
                 # afficher un message d'avertissement à l'utilisateur

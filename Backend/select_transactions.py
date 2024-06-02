@@ -73,7 +73,7 @@ def get_last_month_year(transactions):
         raise TransactionError(transactions[0])
 
 
-def select_transactions_of_several_months(transactions, n_month=1, n_year=0):
+def select_several_months_transactions(transactions, n_month=1, n_year=0):
     """
     @parameter month: sélectionner les transactions des n derniers mois
     @parameter year: sélectionner les transactions des n dernières années
@@ -126,7 +126,7 @@ def select_transactions_of_several_months(transactions, n_month=1, n_year=0):
     return selected_transactions
 
 
-def select_transactions_of_one_month(transactions, n_month=1, n_year=2024):
+def select_one_month_transactions(transactions, n_month=1, n_year=2024):
     """
     @parameter {int} n_month: sélectionner les transactions du mois n
     @parameter {int} n_year: sélectionner les transactions de l'année n

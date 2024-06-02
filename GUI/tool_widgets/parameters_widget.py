@@ -102,7 +102,7 @@ class OverviewSubMenuParametersWidget(QWidget):
         """
         Widget permettant de sélectioner le nombre d'années à analyser
         """
-        year_selection_list = [str(i) for i in range(1, 10)]
+        year_selection_list = [str(i) for i in range(0, 10)]
         year_selection_default_text = "0"
 
         self.year_selection_combobox = QComboBox(self)
