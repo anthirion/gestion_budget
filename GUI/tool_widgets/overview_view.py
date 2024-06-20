@@ -24,7 +24,7 @@ import global_variables as GV
 
 class OverviewWidget(QWidget):
     """
-    Cette classe construit le widget affichant la vue de sytnhèse à la
+    Cette classe construit le widget affichant la vue de synthèse à la
     sélection du sous-menu correspondant dans le menu latéral.
     Ce widget affiche un aggrégat des dépenses, revenus et de l'épargne sur
     plusieurs mois sous la forme d'un diagramme en bâtons.

@@ -1,4 +1,4 @@
-from GUI.tool_widgets.sub_menu_widget import SubMenuWidget
+from GUI.tool_widgets.sub_menu_view import SubMenuWidget
 from GUI.menu_bar import MenuBar
 
 from PySide6.QtWidgets import (
@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt
 
 from GUI.side_menu import SideMenu
-from GUI.tool_widgets.overview_widget import OverviewWidget
+from GUI.tool_widgets.overview_view import OverviewWidget
 
 
 class MainWindow(QMainWindow):
