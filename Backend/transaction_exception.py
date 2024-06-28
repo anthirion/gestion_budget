@@ -10,7 +10,7 @@ def is_a_transaction(transaction):
     if isinstance(transaction, str):
         fields = transaction.split(",")
         date = fields[0].split("/")
-        check = (len(fields) == 4 and len(date) == 3)
+        check = (len(fields) == 5 and len(date) == 3)
     else:
         error_msg = f"La transaction {transaction} n'est pas une string"
         raise AttributeError(error_msg)

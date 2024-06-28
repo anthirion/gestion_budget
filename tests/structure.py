@@ -13,7 +13,7 @@ def check_first_line(first_line):
     descriptions des champs du fichier csv
     """
     first_line = first_line.strip()
-    assert first_line == "Date,Amount,Type,Description"
+    assert first_line == "Date,Amount,Type,Description,Bank"
 
 
 def check_line_length(line):
@@ -21,7 +21,7 @@ def check_line_length(line):
     @parameter {string} line: ligne à tester
     Cette fonction teste que la ligne contient bien 4 champs
     """
-    assert len(line.split(",")) == 4
+    assert len(line.split(",")) == 5
 
 
 def check_date_field(date):
@@ -86,7 +86,8 @@ def check_structure(first_line, transactions):
     check_first_line(first_line)
     for transaction in transactions:
         check_line_length(transaction)
-        date, amount, transaction_type, description = transaction.split(",")
+        date, amount, transaction_type, description = \
+            transaction.split(",")[:4]
         check_date_field(date)
         check_amount_field(amount)
         check_transaction_type_field(transaction_type)

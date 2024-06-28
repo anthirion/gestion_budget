@@ -22,7 +22,7 @@ def split_transactions_by_categories(transactions, condenser=False):
     """
     operations = defaultdict(int)
     for transaction in transactions:
-        _, amount, _, description = transaction.split(",")
+        _, amount, _, description = transaction.split(",")[:4]
         operations[description] += float(amount)
 
     """

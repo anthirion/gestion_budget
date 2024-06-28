@@ -1,6 +1,6 @@
 """
-L'objectif de ce module est de nettoyer le csv fourni et de retourner les
-lignes "propres" avec la fonction clean_entry_file.
+L'objectif de ce module est de nettoyer un csv fourni par LCL et de retourner
+les lignes "propres" avec la fonction clean_entry_file.
 Le procédé de nettoyage se déroule comme suit:
 - Retire les colonnes vides, "divers" et "0" qui n'apportent rien.
 - Enlever les caractères inutiles suivants:
@@ -85,7 +85,7 @@ def delete_line(line):
     return False
 
 
-def ajouter_moyen_paiement(line):
+def add_payment_type(line):
     """
     Ajoute le moyen de paiement Virement pour la transaction ASSURANCE
     MOYEN DE PAIEMENT
@@ -110,7 +110,7 @@ def ajouter_moyen_paiement(line):
 
 def line_cleaning(line):
     """
-    Traite la ligne en entier en retirant les paramètres inutiles, les dates
+    Traite une ligne en retirant les paramètres inutiles, les dates
     dans la description, renomme certaines transactions pas claires et remplace
     les virgules par des points
     """
@@ -150,6 +150,8 @@ def fields_cleaning(fields):
                 clean_fields.insert(-1, "Carte")
 
         clean_line = ",".join(clean_fields)
+        # ajout d'un champ supplémentaire indiquant la banque
+        clean_line += ",LCL"
         clean_line += "\n"
     except ValueError:
         error_msg = f"Le montant n'est pas entier : {amount}"
@@ -176,7 +178,7 @@ def clean_entry_file(csv_filename):
                     # extraire les champs séparés par des ;
                     fields = new_line.split(";")
                     line_with_clean_fields = fields_cleaning(fields)
-                    clean_line = ajouter_moyen_paiement(line_with_clean_fields)
+                    clean_line = add_payment_type(line_with_clean_fields)
                     clean_lines.append(clean_line)
     except FileNotFoundError:
         error_msg = f"Le fichier {csv_filename} n'a pas été trouvé. \n \

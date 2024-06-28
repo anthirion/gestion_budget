@@ -182,7 +182,7 @@ def extract_expenses_revenus_savings(transactions):
             else:
                 # changer le signe du montant pour le rendre positif
                 date, amount, type_transaction, description = \
-                    transaction.split(",")
+                    transaction.split(",")[:4]
                 new_amount = -float(amount)
                 new_transaction = ",".join(
                     [date, str(new_amount), type_transaction, description])
