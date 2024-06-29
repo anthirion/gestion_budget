@@ -29,9 +29,9 @@ import re
 useless_parameters = ["VIR.PERMANENT ", "VIREMENT ", "VIR ", "PRLV ", "CB "]
 # liste de transactions à supprimer du csv car non-pertinentes
 transactions_to_delete = ["TOTAL OPTION SYSTEM' EPARGNE"]
-# dictionnaire indiquant les transactions à remplacer (clés) par
-# la clé correspondante
-transactions_to_replace = {
+# dictionnaire indiquant les descriptions à modifier; la clé indique l'ancienne
+# description à modifier et la valeur indique la nouvelle description
+descriptions_to_replace = {
     "AMAZON PAYMENTS": "AMAZON",
     "AMAZON EU SARL": "AMAZON",
     "SNCF INTERNET": "SNCF",
@@ -122,7 +122,7 @@ def line_cleaning(line):
         for parameter in useless_parameters:
             line = line.replace(parameter, "")
         # on renomme les transactions au nom pas clair
-        for old_name, new_name in transactions_to_replace.items():
+        for old_name, new_name in descriptions_to_replace.items():
             line = line.replace(old_name, new_name)
         # on retire les dates
         line = re.sub(pattern, '', line)

@@ -12,6 +12,12 @@ description "Banque prime ouverture)
     - retirer le numéro du PEA
 """
 
+# dictionnaire indiquant les descriptions à modifier; la clé indique l'ancienne
+# description à modifier et la valeur indique la nouvelle description
+descriptions_to_replace = {
+    "SNCF INTERNET PARIS 10": "SNCF",
+}
+
 
 def clean_description(description_field):
     """
@@ -19,6 +25,7 @@ def clean_description(description_field):
     ci-dessus
     """
     cleaned_description = ""
+    description_field = description_field.strip()
     # si le virement concerne le PEA, écrire simplement PEA
     if "PEA" in description_field:
         cleaned_description = "PEA"
@@ -29,6 +36,11 @@ def clean_description(description_field):
         description_words = description_field.split()
         if len(description_words) > 2:
             cleaned_description = " ".join(description_words[2:])
+    # renommer certaines descriptions peu claires
+    # ATTENTION faire correspondre aux descriptions de LCL
+    for key in descriptions_to_replace.keys():
+        if key in description_field:
+            cleaned_description = descriptions_to_replace[key]
     return cleaned_description
 
 
@@ -90,3 +102,13 @@ def clean_entry_file(csv_filename):
                     Assurez-vous que le nom du fichier est correct."
         raise FileNotFoundError(error_msg)
     return clean_lines
+
+
+if __name__ == "__main__":
+    base_path = "/home/thiran/projets_persos/gestion_budget/csv_files/raw_csv_files/"
+    entry_file = base_path + "Fortuneo/transactions_test.csv"
+    output_file = base_path + "source_of_truth.csv"
+    clean_lines = clean_entry_file(entry_file)
+    with open(output_file, "w", encoding="utf-8-sig") as f:
+        for line in clean_lines:
+            f.write(line)
