@@ -112,8 +112,8 @@ def create_source_of_truth(raw_csv_dir, source_of_truth_filename):
         raise BadDirectoryError(raw_csv_dir_path)
 
 
-if __name__ == "__main__":
-    base_path = "/home/thiran/projets_persos/gestion_budget/csv_files/"
-    raw_csv_dir = base_path + "raw_csv_files/"
-    dest_file = base_path + "source_of_truth.csv"
-    create_source_of_truth(raw_csv_dir, dest_file)
+# if __name__ == "__main__":
+#     base_path = "/home/thiran/projets_persos/gestion_budget/csv_files/"
+#     raw_csv_dir = base_path + "raw_csv_files/"
+#     dest_file = base_path + "source_of_truth.csv"
+#     create_source_of_truth(raw_csv_dir, dest_file)

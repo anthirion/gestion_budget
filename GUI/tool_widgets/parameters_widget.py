@@ -41,7 +41,7 @@ class SubMenuParametersWidget(QWidget):
         parameters_layout.addWidget(self.month_selection_combobox)
 
         """
-        Widget permettant de sélectioner l'année
+        Widget permettant de sélectionner l'année
         """
         year_selection_list = [str(i) for i in range(2020, 2031)]
         year_selection_default_text = str(current_year)
@@ -57,13 +57,13 @@ class SubMenuParametersWidget(QWidget):
         parameters_layout.addWidget(self.year_selection_combobox)
 
         """
-        Widget permettant de sélectioner la banque
+        Widget permettant de sélectionner la banque
         """
         # ajout d'un peu d'espace avant le widget de sélection de la banque
         # pour aérer
         parameters_layout.insertSpacing(4, GV.widgets_spacing)
-        choice_bank_widget = ChoiceBankWidget(self)
-        parameters_layout.addWidget(choice_bank_widget,
+        self.choice_bank_widget = ChoiceBankWidget(self)
+        parameters_layout.addWidget(self.choice_bank_widget,
                                     Qt.AlignmentFlag.AlignRight)
 
         # fixer une taille maximale à tous les widgets définis pour ne pas
@@ -81,11 +81,20 @@ class SubMenuParametersWidget(QWidget):
         year_choice = int(self.year_selection_combobox.currentText())
         return (month_choice, year_choice)
 
+    def get_bank(self):
+        """
+        Cette méthode retourne une string correspondant à la banque choisie
+        par l'utilisateur à travers via la combobox associée
+        Il est possible que toutes les banques soient sélectionnées, dans ce
+        cas, cette méthdode retourne "Toutes les banques"
+        """
+        return self.choice_bank_widget.get_bank()
+
 
 class OverviewSubMenuParametersWidget(QWidget):
     """
     Cette classe définit le widget des paramètres de calcul, affiché dans
-    la vue sur plusieurs mois
+    la vue sur plusieurs mois (menu synthèse du menu latéral)
     """
 
     def __init__(self, parent_widget):
@@ -93,7 +102,7 @@ class OverviewSubMenuParametersWidget(QWidget):
         parameters_layout = QHBoxLayout(self)
 
         """
-        Widget permettant de sélectioner le nombre de mois à analyser
+        Widget permettant de sélectionner le nombre de mois à analyser
         """
         month_selection_list = [str(i) for i in range(1, 12)]
         month_selection_default_text = "5"
@@ -138,8 +147,8 @@ class OverviewSubMenuParametersWidget(QWidget):
         # ajout d'un peu d'espace avant le widget de sélection de la banque
         # pour aérer
         parameters_layout.insertSpacing(5, GV.widgets_spacing)
-        choice_bank_widget = ChoiceBankWidget(self)
-        parameters_layout.addWidget(choice_bank_widget,
+        self.choice_bank_widget = ChoiceBankWidget(self)
+        parameters_layout.addWidget(self.choice_bank_widget,
                                     Qt.AlignmentFlag.AlignRight)
 
     def get_period(self):
@@ -151,6 +160,15 @@ class OverviewSubMenuParametersWidget(QWidget):
         year_choice = int(self.year_selection_combobox.currentText())
         return (month_choice, year_choice)
 
+    def get_bank(self):
+        """
+        Cette méthode retourne une string correspondant à la banque choisie
+        par l'utilisateur à travers via la combobox associée
+        Il est possible que toutes les banques soient sélectionnées, dans ce
+        cas, cette méthdode retourne "Toutes les banques"
+        """
+        return self.choice_bank_widget.get_bank()
+
 
 class ChoiceBankWidget(QWidget):
     """
@@ -161,13 +179,17 @@ class ChoiceBankWidget(QWidget):
         super().__init__(parent=parent_widget)
         layout = QHBoxLayout(self)
         label = QLabel("Banque sélectionnée :", self)
-        bank_choice_combobox = QComboBox(self)
-        bank_choice_combobox.addItem("Toutes les banques")
-        bank_choice_combobox.addItem("LCL")
+        self.bank_choice_combobox = QComboBox(self)
+        self.bank_choice_combobox.addItem("Toutes les banques")
+        for bank in GV.banks:
+            self.bank_choice_combobox.addItem(bank)
         layout.addWidget(label)
-        layout.addWidget(bank_choice_combobox)
+        layout.addWidget(self.bank_choice_combobox)
 
         # fixer une taille maximale à tous les widgets définis pour ne pas
         # qu'ils soient trop étirés
         label.setMaximumWidth(150)
-        bank_choice_combobox.setMaximumWidth(300)
+        self.bank_choice_combobox.setMaximumWidth(300)
+
+    def get_bank(self):
+        return self.bank_choice_combobox.currentText()
