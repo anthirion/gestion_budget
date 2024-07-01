@@ -5,12 +5,15 @@ def is_a_transaction(transaction):
         - elle a exactement 4 champs
         - son premier champ est une date qui comprend exactement 3 valeurs
             (jour, mois, annee)
+    Dans les fonctions utilisant cette fonction de vérification, si check
+    est False, l'exception TransactionError est levée en indiquant la ligne
+    incorrecte
     """
     check = False
     if isinstance(transaction, str):
         fields = transaction.split(",")
         date = fields[0].split("/")
-        check = (len(fields) == 4 and len(date) == 3)
+        check = (len(fields) == 5 and len(date) == 3)
     else:
         error_msg = f"La transaction {transaction} n'est pas une string"
         raise AttributeError(error_msg)

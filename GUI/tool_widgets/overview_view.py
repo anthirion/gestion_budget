@@ -55,7 +55,7 @@ class OverviewWidget(QWidget):
         saisis par l'utilisateur
         """
         launch_compute_button = QPushButton("Lancer les calculs", self)
-        launch_compute_button.clicked.connect(self.lancer_calculs)
+        launch_compute_button.clicked.connect(self.compute)
         self.page_layout.addWidget(launch_compute_button)
 
         """"
@@ -91,7 +91,7 @@ class OverviewWidget(QWidget):
     Button slot
     """
     @Slot()
-    def lancer_calculs(self):
+    def compute(self):
         """
         Cette méthode lance les calculs lors de l'appui sur le bouton
         à condition d'avoir la source de vérité
@@ -100,10 +100,12 @@ class OverviewWidget(QWidget):
         # recherche de la source de vérité
         GV.source_of_truth = get_source_of_truth(self)
         if GV.source_of_truth:
+            selected_bank = self.parameters_widget.get_bank()
             transactions = get_transactions()
             nb_month, nb_year = self.parameters_widget.get_period()
             self.selected_operations = \
                 select_several_months_transactions(transactions,
+                                                   selected_bank,
                                                    n_month=nb_month,
                                                    n_year=nb_year)
             if not self.selected_operations:
