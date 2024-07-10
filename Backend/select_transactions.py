@@ -80,6 +80,7 @@ def select_several_months_transactions(transactions, bank, n_month=1, n_year=0):
     @parameter {int} year: sélectionner les transactions des n dernières années
     @parameter {str} bank: la string correspondant à la banque sélectionnée, le
         cas échéant, bank vaut "Toutes les banques"
+    @return la liste des transactions des n derniers mois
     Par défaut, sélectionner les transactions du mois passé (mois courant)
     """
     selected_transactions = []
@@ -103,6 +104,8 @@ def select_several_months_transactions(transactions, bank, n_month=1, n_year=0):
     for transaction in transactions:
         if is_a_transaction(transaction):
             current_bank = transaction.split(",")[-1]
+            # retirer le "\n" à la fin du nom de la banque
+            current_bank = current_bank[:-1]
             if current_bank in allowed_banks:
                 _, current_month, current_year = \
                     transaction.split(",")[0].split("/")
@@ -143,6 +146,7 @@ def select_one_month_transactions(transactions, bank, n_month=1, n_year=2024):
     @parameter {int} n_year: sélectionner les transactions de l'année n
     @parameter {str} bank: la string correspondant à la banque sélectionnée, le
         cas échéant, bank vaut "Toutes les banques"
+    @return la liste des transactions du mois demandé
     Par défaut, sélectionner la liste des transactions de janvier 2024
     """
     selected_transactions = []
@@ -155,6 +159,8 @@ def select_one_month_transactions(transactions, bank, n_month=1, n_year=2024):
     for transaction in transactions:
         if is_a_transaction(transaction):
             current_bank = transaction.split(",")[-1]
+            # retirer le "\n" à la fin du nom de la banque
+            current_bank = current_bank[:-1]
             if current_bank in allowed_banks:
                 _, current_month, current_year = \
                     transaction.split(",")[0].split("/")
@@ -165,7 +171,7 @@ def select_one_month_transactions(transactions, bank, n_month=1, n_year=2024):
                 elif (current_month > n_month and current_year == n_year):
                     # arreter de parcourir la liste des transactions
                     # puisque les transactions sont rangées par ordre
-                    # # chronologique
+                    # chronologique
                     break
         else:
             raise TransactionError(transaction)

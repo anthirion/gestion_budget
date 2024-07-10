@@ -14,7 +14,8 @@ import global_variables as GV
 # nettoyage utiliser
 clean_function = {"LCL": Backend.clean_lcl_csv.clean_entry_file,
                   "Fortuneo": Backend.clean_fortuneo_csv.clean_entry_file,
-                  "HelloBank": Backend.clean_hellobank_csv.clean_entry_file,
+                  # ATTENTION: l'espace à HelloBank est primordial !
+                  "Hello Bank": Backend.clean_hellobank_csv.clean_entry_file,
                   }
 
 

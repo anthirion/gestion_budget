@@ -14,6 +14,8 @@ from Backend.select_transactions import (
     extract_expenses_revenus_savings
 )
 
+import global_variables as GV
+
 
 def check_monthly_expenses_sum(transactions, card_sum, bank_transfer_sum):
     """
@@ -31,43 +33,55 @@ def check_monthly_expenses_sum(transactions, card_sum, bank_transfer_sum):
         select_transactions_by_card(all_expenses)
     expenses_by_bank_transfer = \
         select_transactions_by_bank_transfer(all_expenses)
-    assert compute_sum(expenses_by_card) == card_sum
-    assert compute_sum(expenses_by_bank_transfer) == bank_transfer_sum
+    assert round(compute_sum(expenses_by_card), 2) == card_sum
+    assert round(compute_sum(expenses_by_bank_transfer), 2) == \
+        bank_transfer_sum
     sum_expenses = round(card_sum + bank_transfer_sum, 2)
-    assert compute_sum(all_expenses) == sum_expenses
+    assert round(compute_sum(all_expenses), 2) == sum_expenses
 
 
 def check_period_expenses_sums(transactions):
     """
     Vérifier que les sommes des dépenses mensuelles sont correctes
     """
+    nb_banks = len(GV.banks)
     # vérifier que la somme des dépenses du mois de janvier 2024 est correcte
     all_january_transactions = \
         select_one_month_transactions(transactions,
+                                      "Toutes les banques",
                                       n_month=1,
                                       n_year=2024)
+    """
+    Par construction, la somme des dépenses par carte est identique pour toutes
+    les banques. La somme des dépenses par carte sur le mois est donc égale à
+    la somme des dépenses d'une banque sur un mois mutliplié par le nombre de
+    banques
+    """
     check_monthly_expenses_sum(all_january_transactions,
-                               card_sum=405.6*2,
-                               bank_transfer_sum=5.99)
+                               card_sum=round(405.6*nb_banks, 2),
+                               bank_transfer_sum=505.99)
     # vérifier que la somme des dépenses du mois de février 2024 est correcte
     all_febrary_transactions = \
         select_one_month_transactions(transactions,
+                                      "Toutes les banques",
                                       n_month=2,
                                       n_year=2024)
     check_monthly_expenses_sum(all_febrary_transactions,
-                               card_sum=391.8*2,
+                               card_sum=round(391.8*nb_banks, 2),
                                bank_transfer_sum=5.99)
     # vérifier que la somme des dépenses du mois de mars 2024 est correcte
     all_march_transactions = \
         select_one_month_transactions(transactions,
+                                      "Toutes les banques",
                                       n_month=3,
                                       n_year=2024)
     check_monthly_expenses_sum(all_march_transactions,
-                               card_sum=401.5*2,
+                               card_sum=round(401.5*nb_banks, 2),
                                bank_transfer_sum=5.99)
     # vérifier que la somme des dépenses du mois de janvier 2025 est correcte
     all_january_transactions = \
         select_one_month_transactions(transactions,
+                                      "Toutes les banques",
                                       n_month=1,
                                       n_year=2025)
     check_monthly_expenses_sum(all_january_transactions,
@@ -78,13 +92,17 @@ def check_period_expenses_sums(transactions):
     """
     # vérifier que la somme des dépenses des 3 derniers mois est correcte
     three_last_months_transactions = \
-        select_several_months_transactions(transactions, n_month=3)
+        select_several_months_transactions(transactions,
+                                           "Toutes les banques",
+                                           n_month=3)
     check_monthly_expenses_sum(three_last_months_transactions,
                                card_sum=1204,
                                bank_transfer_sum=round(5.99 * 3, 2))
     # vérifier que la somme des dépenses des 5 derniers mois est correcte
     three_last_months_transactions = \
-        select_several_months_transactions(transactions, n_month=5)
+        select_several_months_transactions(transactions,
+                                           "Toutes les banques",
+                                           n_month=5)
     check_monthly_expenses_sum(three_last_months_transactions,
                                card_sum=2001.4,
                                bank_transfer_sum=round(5.99 * 5, 2))

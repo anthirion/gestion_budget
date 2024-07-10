@@ -146,13 +146,3 @@ def clean_entry_file(csv_filename):
                     Assurez-vous que le nom du fichier est correct."
         raise FileNotFoundError(error_msg)
     return clean_lines
-
-
-# if __name__ == "__main__":
-#     base_path = "/home/thiran/projets_persos/gestion_budget/csv_files/raw_csv_files/"
-#     entry_file = base_path + "HelloBank/transactions_07_2024.csv"
-#     output_file = base_path + "source_of_truth.csv"
-#     clean_lines = clean_entry_file(entry_file)
-#     with open(output_file, "w", encoding="utf-8-sig") as f:
-#         for line in clean_lines:
-#             f.write(line)
