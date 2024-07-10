@@ -6,13 +6,15 @@ from pathlib import Path
 
 import Backend.clean_lcl_csv
 import Backend.clean_fortuneo_csv
+import Backend.clean_hellobank_csv
 
 import global_variables as GV
 
-# dictionnaire définissant à partir de la banque quelle fonction de nettoyage
-# utiliser
+# dictionnaire définissant en fonction de la banque quelle fonction de
+# nettoyage utiliser
 clean_function = {"LCL": Backend.clean_lcl_csv.clean_entry_file,
                   "Fortuneo": Backend.clean_fortuneo_csv.clean_entry_file,
+                  "HelloBank": Backend.clean_hellobank_csv.clean_entry_file,
                   }
 
 
@@ -112,8 +114,8 @@ def create_source_of_truth(raw_csv_dir, source_of_truth_filename):
         raise BadDirectoryError(raw_csv_dir_path)
 
 
-# if __name__ == "__main__":
-#     base_path = "/home/thiran/projets_persos/gestion_budget/csv_files/"
-#     raw_csv_dir = base_path + "raw_csv_files/"
-#     dest_file = base_path + "source_of_truth.csv"
-#     create_source_of_truth(raw_csv_dir, dest_file)
+if __name__ == "__main__":
+    base_path = "/home/thiran/projets_persos/gestion_budget/csv_files/"
+    raw_csv_dir = base_path + "raw_csv_files/"
+    dest_file = base_path + "source_of_truth.csv"
+    create_source_of_truth(raw_csv_dir, dest_file)

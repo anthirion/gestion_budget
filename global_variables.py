@@ -6,7 +6,8 @@ save_file = "./save.txt"
 source_of_truth_notfound_msg = "La source de vérité n'a pas été trouvée, veuillez l'indiquer pour pouvoir lancer les calculs"
 no_transaction_found_msg = "Aucune transaction sélectionnée ! Vérifiez que des transactions existent pour la période sélectionnée."
 
-banks = ["LCL", "Fortuneo"]
+# ATTENTION: ne pas mettre d'espace à HelloBank !
+banks = ["LCL", "Fortuneo", "HelloBank"]
 
 ###############################################################################
 # Variables relatives à l'UI

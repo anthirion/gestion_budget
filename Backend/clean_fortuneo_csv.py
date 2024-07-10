@@ -5,8 +5,8 @@ Le procédé de nettoyage se déroule comme suit:
 1. Remplacer ; par , ET , par .
 2. Retirer les champs vides et le 2ème champ qui est identique au 1er
 3. Récupérer le montant et le mettre en 2ème position
-4. Type: en fonction du premier mot de la description (attention à la
-description "Banque prime ouverture)
+4. Type de transaction: en fonction du premier mot de la description
+(attention à la description "Banque prime ouverture")
 5. Description:
     - retirer le type (VIR et CARTE) et le mot suivant
     - retirer le numéro du PEA
@@ -104,11 +104,11 @@ def clean_entry_file(csv_filename):
     return clean_lines
 
 
-if __name__ == "__main__":
-    base_path = "/home/thiran/projets_persos/gestion_budget/csv_files/raw_csv_files/"
-    entry_file = base_path + "Fortuneo/transactions_test.csv"
-    output_file = base_path + "source_of_truth.csv"
-    clean_lines = clean_entry_file(entry_file)
-    with open(output_file, "w", encoding="utf-8-sig") as f:
-        for line in clean_lines:
-            f.write(line)
+# if __name__ == "__main__":
+#     base_path = "/home/thiran/projets_persos/gestion_budget/csv_files/raw_csv_files/"
+#     entry_file = base_path + "Fortuneo/transactions_test.csv"
+#     output_file = base_path + "source_of_truth.csv"
+#     clean_lines = clean_entry_file(entry_file)
+#     with open(output_file, "w", encoding="utf-8-sig") as f:
+#         for line in clean_lines:
+#             f.write(line)
