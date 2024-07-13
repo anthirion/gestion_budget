@@ -3,11 +3,15 @@ from PySide6.QtWidgets import (
     QMenuBar, QFileDialog, QMessageBox
 )
 
-import global_variables
 from Backend.create_unique_csv import create_source_of_truth
 from GUI.source_of_truth import (
     save_source_of_truth
 )
+
+from tests.structure import check_structure
+from tests.chronological_order import check_chronological_order
+
+import global_variables as GV
 
 
 class MenuBar(QMenuBar):
@@ -91,16 +95,35 @@ class MenuBar(QMenuBar):
                     "/source_of_truth.csv"
                 # créer une source de vérité
                 create_source_of_truth(directory_src, source_of_truth_filename)
-                # afficher un message de validation
+                # vérifier que la source de vérité est correcte au niveau de
+                # la structure générale (bon nombre de champs, bonnes valeurs)
+                # et que les transactions sont bien rangées dans l'ordre
+                # chronologique
+                with open(source_of_truth_filename, "r", encoding="utf-8-sig")\
+                        as file:
+                    content = file.readlines()
+                first_line, transactions = content[0], content[1:]
+                # retirer le saut de ligne "\n" à chaque transaction
+                transactions = [transaction[:-1]
+                                for transaction in transactions]
+
+                try:
+                    check_structure(first_line, transactions)
+                    check_chronological_order(transactions)
+                except AssertionError:
+                    errormsgbox = QMessageBox(parent=dialog_dest)
+                    errormsgbox.setText(GV.source_of_truth_incorrect)
+                # afficher un message de validation qui indique que la
+                # source de vérité a été correctement créée
                 validationmsgBox = QMessageBox(parent=dialog_dest)
                 validationmsgBox.setText(
-                    "La source de vérité a bien été créée")
+                    GV.source_of_truth_correctly_created)
                 validationmsgBox.exec()
                 # enregistrer la nouvelle source de vérité créée
                 save_source_of_truth(source_of_truth_filename)
                 # on met à jour la variable globale source_of_truth avec la
                 # valeur correcte
-                global_variables.source_of_truth = source_of_truth_filename
+                GV.source_of_truth = source_of_truth_filename
 
     def open_source_of_truth(self):
         """
@@ -114,4 +137,4 @@ class MenuBar(QMenuBar):
             save_source_of_truth(source_of_truth_path)
             # on met à jour la variable globale source_of_truth avec la valeur
             # correcte
-            global_variables.source_of_truth = source_of_truth_path
+            GV.source_of_truth = source_of_truth_path

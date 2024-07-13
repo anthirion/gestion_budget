@@ -24,6 +24,8 @@ def build_source_of_truth():
     with open(source_of_truth_filename, "r", encoding="utf-8-sig") as file:
         content = file.readlines()
     first_line, transactions = content[0], content[1:]
+    # retirer le saut de ligne "\n" à chaque transaction
+    transactions = [transaction[:-1] for transaction in transactions]
     return (first_line, transactions)
 
 
@@ -45,3 +47,7 @@ def test_last():
     source_of_truth_path = Path(source_of_truth_filename)
     source_of_truth_path.unlink()
     assert source_of_truth_path.exists() is False
+
+
+if __name__ == "__main__":
+    first_line, transactions = build_source_of_truth()

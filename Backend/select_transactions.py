@@ -104,8 +104,6 @@ def select_several_months_transactions(transactions, bank, n_month=1, n_year=0):
     for transaction in transactions:
         if is_a_transaction(transaction):
             current_bank = transaction.split(",")[-1]
-            # retirer le "\n" à la fin du nom de la banque
-            current_bank = current_bank[:-1]
             if current_bank in allowed_banks:
                 _, current_month, current_year = \
                     transaction.split(",")[0].split("/")
@@ -159,8 +157,6 @@ def select_one_month_transactions(transactions, bank, n_month=1, n_year=2024):
     for transaction in transactions:
         if is_a_transaction(transaction):
             current_bank = transaction.split(",")[-1]
-            # retirer le "\n" à la fin du nom de la banque
-            current_bank = current_bank[:-1]
             if current_bank in allowed_banks:
                 _, current_month, current_year = \
                     transaction.split(",")[0].split("/")
